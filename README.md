@@ -21,8 +21,37 @@ To run the `R` code, you need the following files in the current working directo
   - `QG-AP-test_data.txt`: contains all data necessary for the statistical analyses
   - `QG-AP-test_pedigree.txt`: contains the pedigree for the entire experiment
 
+### `R` code overview
+  - __Section 1__ make Figure 1
+  
+  - __Section 2__ make Figure 2
+  
+  - __Section 3A__ make the A-inverse to run animal models (requires pedigree and data files/objects)
+    - saves data + A-inverses as `.RData` file
+    
+  - __Section 3B__ run `MCMCglmm` models
+    - load `.RData` produced in __Section 3A__
+    - check model output as shown in Table S1
+    - saves `MCMCglmm` models as `.RData` file
+    
+  - __Section 3C__ extract genetic correlations
+    - load `MCMCglmm` models produced in __Section 3B__
+    - saves posteriors as `.RData` file
+    
+  - __Section 3D__ make Figure 3
+    - requires posteriors with estimates for breeding values and genetic correlations
+    
+  - __Section 4__ make Figure 4
+  
+  - __Section 5__ make Figure S1
+  
+  - __Section 6__ make Table S1
+  
+  - __Section 7__ make Table S2
 
-### Data citation
+
+
+## Data citation
 If you use the data or code, please cite as:
 
 >TODO once get Zenodo doi
