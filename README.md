@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/TODO.svg)](https://zenodo.org/badge/latestdoi/TODO)
 
-![trade off evolution](./QG-AP-test_FigureS1_evolutionInMotion.gif)
+![trade-off evolution](./QG-AP-test_FigureS1_evolutionInMotion.gif)
 
 
 ## Overview of Repository
@@ -39,17 +39,29 @@ For the file "QG-AP-test_data.txt"
  - `sex` integer to indicate whether the mouse was a female (`0`) or male (`1`)
  - `damid` character value for the dam/mother
  - `sireid` character value for the sire/father
- - `line` integer value indicating which of the 8 replicate lines each mouse belonged to
+ - `line` integer value indicating which of the 8 replicate lines to which each mouse belonged
  - `linetype` integer indicating whether the mouse was from before selection began (`linetype = -1`) or, after selection began, from the lines designated as Control (`0`) or Selected for high voluntary wheel running behavior (`1`)
- - `WSTRTymd` 
- - `WHLSTAGE` 
- - `RUN56` 
- - `RPM56` 
- - `INT56` 
- - `RUN56l` 
- - `RPM56l` 
- - `INT56l` 
- - `pups`
+ - `WSTRTymd` character indicating the year, month, and day that marks the start of each mouse on wheels for 6 days 
+ - `WHLSTAGE` integer that indicates XXX
+ - `RUN56` numeric value for the number of wheel revolutions run as an average of the values for days 5 and 6 (out of 6 days) 
+ - `RPM56` numeric value for the average of day 5 and 6 values representing the average number of revolutions per minute recorded each day
+ - `INT56` numeric value for the average of day 5 and 6 values representing the average duration, or number of intervals, in which a mouse was recorded as running each day
+ - `RUN56l` numeric value for the natural log-transformed value of `RUN56` 
+ - `RPM56l` numeric value for the natural log-transformed value of `RPM56`
+ - `INT56l` numeric value for the natural log-transformed value of `INT56`
+ - `pups` integer value of the total number of pups (offspring) produced by each individual. Mice not selected as breeders for the next generation were all assigned 0.
+  
+
+For the file "QG-AP-test_pedigree.txt"
+ - `animal` character values of the unique identity of each mouse
+ - `sire` character value for the sire/father
+ - `dam` character value for the dam/mother
+ - `GEN` integers denoting the generation of the experiment
+ - `LINE` integer value indicating which of the 8 replicate lines to which each mouse belonged <!-- TODO: why value of 9  -->
+ - `SEX` integer to indicate whether the mouse was a female (`0`) or male (`1`)
+ - `Fcoeff` a numerical value indicating each individual's coefficient of inbreeding 
+ - `ratio`<!-- TODO what is this  -->
+ 
 
 ## Changes
 For ease of reference, an overview of significant changes to be noted below. Tag with commits or issues, where appropriate.
