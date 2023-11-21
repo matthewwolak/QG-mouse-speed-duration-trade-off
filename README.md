@@ -17,7 +17,7 @@ Vincent Careau, University of Ottawa, vcareau@uottawa.ca
 `R` code replicates the data preparation, statistical analyses, figure construction, and results reporting that were used in the above referenced manuscript.
 
 ## Data
-To run the `R` code, you need the following files:
+To run the `R` code, you need the following files in the current working directory for your R session:
   - `QG-AP-test_data.txt`: contains all data necessary for the statistical analyses
   - `QG-AP-test_pedigree.txt`: contains the pedigree for the entire experiment
 
