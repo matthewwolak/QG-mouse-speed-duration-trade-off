@@ -1,9 +1,8 @@
 # QG-test-AP-hypothesis
 
-[![DOI](https://zenodo.org/badge/TODO.svg)](https://zenodo.org/badge/latestdoi/TODO)
-
 ![trade-off evolution](./QG-AP-test_FigureS1_evolutionInMotion.gif)
 
+[![DOI](https://zenodo.org/badge/TODO.svg)](https://zenodo.org/badge/latestdoi/TODO)
 
 ## Overview of Repository
 
