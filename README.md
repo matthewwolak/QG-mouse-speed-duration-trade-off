@@ -42,7 +42,7 @@ For the file "QG-AP-test_data.txt"
  - `line` integer value indicating which of the 8 replicate lines to which each mouse belonged
  - `linetype` integer indicating whether the mouse was from before selection began (`linetype = -1`) or, after selection began, from the lines designated as Control (`0`) or Selected for high voluntary wheel running behavior (`1`)
  - `WSTRTymd` character indicating the year, month, and day that marks the start of each mouse on wheels for 6 days 
- - `WHLSTAGE` integer that indicates XXX
+ - `WHLSTAGE` integer that indicates <!-- TODO  -->
  - `RUN56` numeric value for the number of wheel revolutions run as an average of the values for days 5 and 6 (out of 6 days) 
  - `RPM56` numeric value for the average of day 5 and 6 values representing the average number of revolutions per minute recorded each day
  - `INT56` numeric value for the average of day 5 and 6 values representing the average duration, or number of intervals, in which a mouse was recorded as running each day
