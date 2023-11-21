@@ -2,7 +2,7 @@
 
 ![trade-off evolution](./QG-AP-test_FigureS1_evolutionInMotion.gif)
 
-[![Data and Code DOI](https://zenodo.org/badge/TODO.svg)](https://zenodo.org/badge/latestdoi/TODO)
+Data and Code [![DOI](https://zenodo.org/badge/721354286.svg)](https://zenodo.org/doi/10.5281/zenodo.10182353)
 
 ## Overview of Repository
 
