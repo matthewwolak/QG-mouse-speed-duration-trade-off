@@ -1355,3 +1355,21 @@ S.RUN<-rbind(Va.S.RUN.est,Va.S.RUN.calc,NA,
              Ve.S.RUN.est,Ve.S.RUN.calc)
 cbind(C.RUN,NA,S.RUN)
 
+
+
+
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+
+# Collect R and package version information
+R.version.string
+packageVersion("fields")
+packageVersion("nadiv")
+packageVersion("MCMCglmm")
+packageVersion("heplots")
+packageVersion("ggplot2")
+packageVersion("gganimate")
+
+
