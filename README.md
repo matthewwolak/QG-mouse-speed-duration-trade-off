@@ -70,13 +70,13 @@ For the file "QG-AP-test_data.txt"
  - `line` integer value indicating which of the 8 replicate lines to which each mouse belonged
  - `linetype` integer indicating whether the mouse was from before selection began (`linetype = -1`) or, after selection began, from the lines designated as Control (`0`) or Selected for high voluntary wheel running behavior (`1`)
  - `WSTRTymd` character indicating the year, month, and day that marks the start of each mouse on wheels for 6 days 
- - `WHLSTAGE` integer that indicates <!-- TODO  -->
+ - `WHLSTAGE` integer that indicates the age in days of each mouse at the start of wheel running
  - `RUN56` numeric value for the number of wheel revolutions run as an average of the total values for days 5 and 6 (out of 6 days access to the wheel) 
  - `RPM56` numeric value indicating the __speed__ trait: the distance run per day divided by number of active intervals (see `INT56`)
  - `INT56` numeric value indicating the __duration__ trait: the average of day 5 and 6 values representing the number of active 1-minute intervals in which a mouse was recorded as running at least one revolution (active).
- - `RUN56l` numeric value for the natural log-transformed value of `RUN56` 
- - `RPM56l` numeric value for the natural log-transformed value of `RPM56`
- - `INT56l` numeric value for the natural log-transformed value of `INT56`
+ - `RUN56l` numeric value for the log 10 transformed value of `RUN56` 
+ - `RPM56l` numeric value for the log 10 transformed value of `RPM56`
+ - `INT56l` numeric value for the log 10 transformed value of `INT56`
  - `pups` integer value of the total number of pups (offspring) produced by each individual. Mice not selected as breeders for the next generation were all assigned 0.
   
 
@@ -85,10 +85,9 @@ For the file "QG-AP-test_pedigree.txt"
  - `sire` character value for the sire/father
  - `dam` character value for the dam/mother
  - `GEN` integers denoting the generation of the experiment
- - `LINE` integer value indicating which of the 8 replicate lines to which each mouse belonged <!-- TODO: why value of 9  -->
+ - `LINE` integer value indicating which of the 8 replicate lines to which each mouse belonged
  - `SEX` integer to indicate whether the mouse was a female (`0`) or male (`1`)
  - `Fcoeff` a numerical value indicating each individual's coefficient of inbreeding 
- - `ratio`<!-- TODO what is this  -->
  
 
 ## Changes
