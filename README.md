@@ -18,7 +18,7 @@ Vincent Careau, University of Ottawa, vcareau@uottawa.ca
 ### Citation
 If you use the data or code, please cite as:
 
->TODO once get Zenodo doi
+>Wilson, A. J., Wolak, M. E., Hiramatsu, L., Garland, Jr., T., & Careau, V. (2023). matthewwolak/QG-test-AP-hypothesis (v2.0.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.10197082
 
 
 
