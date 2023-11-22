@@ -111,6 +111,8 @@ The following `R` and package versions were used to run the code:
 [1] ‘3.4.2’
 > packageVersion("gganimate")
 [1] ‘1.0.8’
+> packageVersion("transformr")
+[1] ‘0.1.4’
 
 ```
  

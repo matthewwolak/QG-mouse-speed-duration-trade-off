@@ -516,6 +516,7 @@ rm(list=ls())  # delete all objects, to start fresh in new section below
 #.############# section #3A - make A-inverse to run animal models#################
 #.############# section #3A - make A-inverse to run animal models#################
 #.############# section #3A - make A-inverse to run animal models#################
+library(MCMCglmm)
 library(nadiv)
 PED_pruned <-read.table("QG-AP-test_pedigree.txt", header = TRUE)
 dat 	   <- read.table("QG-AP-test_data.txt", header = TRUE)
@@ -529,8 +530,8 @@ BLOCK$GENfac  <-factor(BLOCK$GEN)
 PED.tmp.2  <-subset(PED_pruned, GEN > -2)
 PED.tmp.1 <-prepPed(PED.tmp.2)
 PED      <-prunePed(PED.tmp.1, unique(BLOCK$animal))
-AINVout <- makeAinv(PED[, c("animal", "dam", "sire")])
-fout <- AINVout$f
+AINVout <- inverseA(PED[, c("animal", "dam", "sire")])
+fout <- AINVout$inbreeding
 AINV <- AINVout$Ainv
 stopifnot(all(abs(fout[match(BLOCK$animal, PED$animal)] - BLOCK$Fcoeff) < 1e-6))
 C0Ainv <- AINV
@@ -547,8 +548,8 @@ BLOCK$GENfac <-factor(BLOCK$GEN)
 PED.tmp.2  <-subset(PED_pruned, GEN > -2)
 PED.tmp.1 <-prepPed(PED.tmp.2)
 PED      <-prunePed(PED.tmp.1, unique(BLOCK$animal))
-AINVout <- makeAinv(PED[, c("animal", "dam", "sire")])
-fout <- AINVout$f
+AINVout <- inverseA(PED[, c("animal", "dam", "sire")])
+fout <- AINVout$inbreeding
 AINV <- AINVout$Ainv
 stopifnot(all(abs(fout[match(BLOCK$animal, PED$animal)] - BLOCK$Fcoeff) < 1e-6))
 HR1Ainv <- AINV
@@ -562,7 +563,7 @@ nrow(HR1datf)+nrow(C0datf)
 
 
 #save as RData for section below
-save(HR1datf,C0datf,HR1Ainv,C0Ainv,file="QG-AP-test_Rdata.RData")
+save(HR1datf, C0datf,HR1Ainv, C0Ainv, file="QG-AP-test_Rdata.RData")
 rm(list=ls())  # delete all objects, to start fresh in section below
 
 #.##################### section #3B - run MCMCglmm models ############################
@@ -616,6 +617,12 @@ C_RPM_INT_mnth <- MCMCglmm(cbind(RPM56l, INT56l) ~ trait +
 summary(C_RPM_INT_mnth)    #these numbers are in Table S1
 
 #SELECTED MICE  - run bivariate model
+#set number of iterations
+nsamp <- 3000
+THIN <- 500
+BURN <- 10000
+(NITT <- BURN + nsamp*THIN)
+
 HR_RPM_INT_mnth<- MCMCglmm(cbind(RPM56l, INT56l) ~ trait +
                                                    trait:sex +
                                                    trait:line +
@@ -643,6 +650,10 @@ univPEflatR <- list(R = list(V = diag(1), nu = 0),
     G2 = list(V = 1, nu = 1, alpha.mu = 0, alpha.V = 1000)))
 
 
+nsamp <- 3000
+THIN <- 250
+BURN <- 10000
+(NITT <- BURN + nsamp*THIN)
 C_RUN_mnth <- MCMCglmm(RUN56l ~ 1 + sex + line + GENfac + WHLSTAGE + Fcoeff + Mnth,
   random = ~ animal + damid,
   data = C0datf,
@@ -652,6 +663,11 @@ C_RUN_mnth <- MCMCglmm(RUN56l ~ 1 + sex + line + GENfac + WHLSTAGE + Fcoeff + Mn
   nitt = NITT, thin = THIN, burnin = BURN,
   pr = TRUE, saveX = TRUE, saveZ = TRUE)
 
+
+nsamp <- 3000
+THIN <- 400
+BURN <- 10000
+(NITT <- BURN + nsamp*THIN)
 HR_RUN_mnth <- MCMCglmm(RUN56l ~ 1 + sex + line + GENfac + WHLSTAGE + Fcoeff + Mnth,
   random = ~ animal + damid,
   data = HR1datf,
@@ -667,7 +683,7 @@ save(C_RPM_INT_mnth, HR_RPM_INT_mnth,
   file="QG-AP-test_bivariate_models.RData")
 save(C_RUN_mnth, HR_RUN_mnth,      
   file="QG-AP-test_univariate_models.RData")
-rm(list=ls())  # delete all objects, to start fresh ion section below
+rm(list=ls())  # delete all objects, to start fresh section below
 
 #.######### section #3C - breeding values and genetic correlations ################
 #.######### section #3C - breeding values and genetic correlations ################
@@ -678,13 +694,13 @@ rm(list=ls())  # delete all objects, to start fresh ion section below
 #.######### section #3C - breeding values and genetic correlations ################
 #.######### section #3C - breeding values and genetic correlations ################
 #.######### section #3C - breeding values and genetic correlations ################
+
+library(MCMCglmm)
 #load models fitted in section #2
 load(file="QG-AP-test_bivariate_models.RData")
 #load data (needed to assign generations and lines and breeding values)
 load(file="QG-AP-test_Rdata.RData")
 
-#load("C_RPM_INT_mnth_nit760k.rdata")
-#load("HR_RPM_INT_mnth_nit1510k.rdata")
 
 traits <- c("RPM56l", "INT56l")
 
@@ -938,6 +954,9 @@ rm(list=ls())  # delete all objects, to start fresh ion section below
 #.######### section #3D - make Figure 3 breeding values and genetic correlations ################
 #.######### section #3D - make Figure 3 breeding values and genetic correlations ################
 #.######### section #3D - make Figure 3 breeding values and genetic correlations ################
+
+library(MCMCglmm)
+
 GEN.list<-c(0:31,36:51,53:62,65,66,68:78)#list of GENs without data
 #load(file = "covar_POST.LINES.RData")
 load(file = "QG-AP-test_covar_POST.LINES.RData")
@@ -1012,11 +1031,8 @@ load(file="QG-AP-test_Rdata.RData")
 nrow(C0datf)     #N = 10,878
 nrow(HR1datf)    #N = 25,124
 
-library(MCMCglmm)
 load(file="QG-AP-test_bivariate_models.RData")
 # Speed and Duration models
-#  load("C_RPM_INT_mnth_nit760k.rdata")
-#  load("HR_RPM_INT_mnth_nit1510k.rdata")
 #extract breeding values
 SOL.C<-C_RPM_INT_mnth$Sol
 SOL.S<-HR_RPM_INT_mnth$Sol
@@ -1257,6 +1273,7 @@ cor.test(DATA$BLUP.INT[which(DATA$GEN==78&DATA$linetype==1)],DATA$BLUP.RPM[which
 #.######################## section #5 ANIMATED GIF VERSION FIGURE S1 ###################
 #.######################## section #5 ANIMATED GIF VERSION FIGURE S1 ###################
 #.######################## section #5 ANIMATED GIF VERSION FIGURE S1 ###################
+library(transformr)
 library(gganimate)
 library(ggplot2)
 
@@ -1320,6 +1337,8 @@ rbind(cbind(Va.C,NA,Va.S),NA,
 #.######################## section 7 MAKE Table S2 ###############################
 #.######################## section 7 MAKE Table S2 ###############################
 #.######################## section 7 MAKE Table S2 ###############################
+library(MCMCglmm)
+load("QG-AP-test_bivariate_models.RData")
 load("QG-AP-test_univariate_models.RData")
 summary(C_RUN_mnth)
 summary(HR_RUN_mnth)
@@ -1371,5 +1390,6 @@ packageVersion("MCMCglmm")
 packageVersion("heplots")
 packageVersion("ggplot2")
 packageVersion("gganimate")
+packageVersion("transformr")
 
 
