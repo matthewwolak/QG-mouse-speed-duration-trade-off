@@ -562,7 +562,7 @@ nrow(HR1datf)+nrow(C0datf)
 
 
 #save as RData for section below
-save(HR1datf,C0datf,HR1Ainv,C0Ainv,file="WILSON_CAREAU_et_al_Rdata.RData")
+save(HR1datf,C0datf,HR1Ainv,C0Ainv,file="QG-AP-test_Rdata.RData")
 rm(list=ls())  # delete all objects, to start fresh in section below
 
 #.##################### section #3B - run MCMCglmm models ############################
@@ -925,7 +925,7 @@ for(l in 1:length(LINES)){
 postRa <- list(rA = postCovLines[[1L]] /sqrt(postVarLines[["RPM56l.animal"]] * postVarLines[["INT56l.animal"]]))
 POST.S.LINES <- c(postVarLines, postCovLines, postRa)
 
-save("POST.C.LINES", "POST.S.LINES", file = "WILSON_CAREAU_et_al_covar_POST.LINES.rdata")
+save("POST.C.LINES", "POST.S.LINES", file = "QG-AP-test_covar_POST.LINES.RData")
 rm(list=ls())  # delete all objects, to start fresh ion section below
 
 
@@ -939,8 +939,8 @@ rm(list=ls())  # delete all objects, to start fresh ion section below
 #.######### section #3D - make Figure 3 breeding values and genetic correlations ################
 #.######### section #3D - make Figure 3 breeding values and genetic correlations ################
 GEN.list<-c(0:31,36:51,53:62,65,66,68:78)#list of GENs without data
-#load(file = "covar_POST.LINES.rdata")
-load(file = "WILSON_CAREAU_et_al_covar_POST.LINES.rdata")
+#load(file = "covar_POST.LINES.RData")
+load(file = "QG-AP-test_covar_POST.LINES.RData")
 
 rA.C.LINES<-POST.C.LINES$rA
 rA.S.LINES<-POST.S.LINES$rA

@@ -15,16 +15,18 @@ Vincent Careau, University of Ottawa, vcareau@uottawa.ca
 
 `R` code replicates the data preparation, statistical analyses, figure construction, and results reporting that were used in the above referenced manuscript.
 
+### Citation
+If you use the data or code, please cite as:
+
+>TODO once get Zenodo doi
+
+
+
 ## Data
 To run the `R` code, you need the following files in the current working directory for your R session:
   - `QG-AP-test_data.txt`: contains all data necessary for the statistical analyses
   - `QG-AP-test_pedigree.txt`: contains the pedigree for the entire experiment
 
-
-### Data citation
-If you use the data or code, please cite as:
-
->TODO once get Zenodo doi
 
 ### Data metadata
 
