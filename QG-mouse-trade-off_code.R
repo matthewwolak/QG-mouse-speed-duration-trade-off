@@ -1,13 +1,13 @@
 #This code reproduces results in the paper titled:
-#"How do trade-offs emerge? A test of the antagonistic pleiotropy hypothesis using a replicated artificial selection experiment"
-#by Wilson, Wolak, Hiramatsu, Garland, and Careau
+#"How do trade-offs emerge across populations while being absent within? A replicated selection experiment suggests all four evolutionary mechanisms are at play"
+#by Wolak, Wilson, Hiramatsu, Garland, and Careau
 
 #For questions, please contact the corresponding author of the article:
 #Vincent Careau, University of Ottawa, vcareau@uottawa.ca
 
 #to run this code, you need the following files:
-# "QG-AP-test_data.txt"
-# "QG-AP-test_pedigree.txt""
+# "QG-mouse-trade-off_data.txt"
+# "QG-mouse-trade-off_pedigree.txt""
 
 #overview of the main sections of the code:
 #section #1 - make Figure 1 -> requires data as .txt file
@@ -37,7 +37,7 @@
 #.################ section #1 - make figure 1 adaptive landscapes ###############
 #.################ section #1 - make figure 1 adaptive landscapes ###############
 #.################ section #1 - make figure 1 adaptive landscapes ###############
-dat 	   <- read.table("QG-AP-test_data.txt", header = TRUE)
+dat 	   <- read.table("QG-mouse-trade-off_data.txt", header = TRUE)
 
 #show missing data for generations:
   plot(RPM56l~GEN,subset(dat,linetype==1), col=rgb(1,0,0,0.05),pch=16)
@@ -371,7 +371,7 @@ rm(list=ls())  # delete all objects, to start fresh in new section below
 #.################ section #2 - make figure 2 responses to selection ###############
 #.################ section #2 - make figure 2 responses to selection ###############
 #.################ section #2 - make figure 2 responses to selection ###############
-dat 	   <- read.table("QG-AP-test_data.txt", header = TRUE)
+dat 	   <- read.table("QG-mouse-trade-off_data.txt", header = TRUE)
 dat$n<-1
 MEANS       <-aggregate(RPM56~GEN+line,dat,FUN=mean)
 MEANS$SD.RPM<-aggregate(RPM56~GEN+line,dat,FUN=sd)[3]
@@ -518,8 +518,8 @@ rm(list=ls())  # delete all objects, to start fresh in new section below
 #.############# section #3A - make A-inverse to run animal models#################
 library(MCMCglmm)
 library(nadiv)
-PED_pruned <-read.table("QG-AP-test_pedigree.txt", header = TRUE)
-dat 	   <- read.table("QG-AP-test_data.txt", header = TRUE)
+PED_pruned <-read.table("QG-mouse-trade-off_pedigree.txt", header = TRUE)
+dat 	   <- read.table("QG-mouse-trade-off_data.txt", header = TRUE)
 
 #CONTROL MICE
 BLOCK<-subset(dat,GEN >= -1 & linetype=="0")
@@ -563,7 +563,7 @@ nrow(HR1datf)+nrow(C0datf)
 
 
 #save as RData for section below
-save(HR1datf, C0datf,HR1Ainv, C0Ainv, file="QG-AP-test_Rdata.RData")
+save(HR1datf, C0datf,HR1Ainv, C0Ainv, file="QG-mouse-trade-off.RData")
 rm(list=ls())  # delete all objects, to start fresh in section below
 
 #.##################### section #3B - run MCMCglmm models ############################
@@ -575,7 +575,7 @@ rm(list=ls())  # delete all objects, to start fresh in section below
 #.##################### section #3B - run MCMCglmm models ############################
 #.##################### section #3B - run MCMCglmm models ############################
 #load data and pedigree objects prepared in section #1
-load(file="QG-AP-test_Rdata.RData")
+load(file="QG-mouse-trade-off.RData")
 
 #get data ready for running the models
 C0datf$WSTRTymd <-as.Date(C0datf$WSTRTymd, "%Y-%m-%d")
@@ -680,9 +680,9 @@ HR_RUN_mnth <- MCMCglmm(RUN56l ~ 1 + sex + line + GENfac + WHLSTAGE + Fcoeff + M
 
 #save models as RData
 save(C_RPM_INT_mnth, HR_RPM_INT_mnth,
-  file="QG-AP-test_bivariate_models.RData")
+  file="QG-mouse-trade-off_bivariate_models.RData")
 save(C_RUN_mnth, HR_RUN_mnth,      
-  file="QG-AP-test_univariate_models.RData")
+  file="QG-mouse-trade-off_univariate_models.RData")
 rm(list=ls())  # delete all objects, to start fresh section below
 
 #.######### section #3C - breeding values and genetic correlations ################
@@ -697,9 +697,9 @@ rm(list=ls())  # delete all objects, to start fresh section below
 
 library(MCMCglmm)
 #load models fitted in section #2
-load(file="QG-AP-test_bivariate_models.RData")
+load(file="QG-mouse-trade-off_bivariate_models.RData")
 #load data (needed to assign generations and lines and breeding values)
-load(file="QG-AP-test_Rdata.RData")
+load(file="QG-mouse-trade-off.RData")
 
 
 traits <- c("RPM56l", "INT56l")
@@ -941,7 +941,7 @@ for(l in 1:length(LINES)){
 postRa <- list(rA = postCovLines[[1L]] /sqrt(postVarLines[["RPM56l.animal"]] * postVarLines[["INT56l.animal"]]))
 POST.S.LINES <- c(postVarLines, postCovLines, postRa)
 
-save("POST.C.LINES", "POST.S.LINES", file = "QG-AP-test_covar_POST.LINES.RData")
+save("POST.C.LINES", "POST.S.LINES", file = "QG-mouse-trade-off_covar_POST.LINES.RData")
 rm(list=ls())  # delete all objects, to start fresh ion section below
 
 
@@ -959,7 +959,7 @@ library(MCMCglmm)
 
 GEN.list<-c(0:31,36:51,53:62,65,66,68:78)#list of GENs without data
 #load(file = "covar_POST.LINES.RData")
-load(file = "QG-AP-test_covar_POST.LINES.RData")
+load(file = "QG-mouse-trade-off_covar_POST.LINES.RData")
 
 rA.C.LINES<-POST.C.LINES$rA
 rA.S.LINES<-POST.S.LINES$rA
@@ -1027,11 +1027,11 @@ Ra.7<-Ra.7[order(Ra.7$GEN),]
 Ra.8<-Ra.8[order(Ra.8$GEN),]
 
 # get breeding values for running speed and distance
-load(file="QG-AP-test_Rdata.RData")
+load(file="QG-mouse-trade-off.RData")
 nrow(C0datf)     #N = 10,878
 nrow(HR1datf)    #N = 25,124
 
-load(file="QG-AP-test_bivariate_models.RData")
+load(file="QG-mouse-trade-off_bivariate_models.RData")
 # Speed and Duration models
 #extract breeding values
 SOL.C<-C_RPM_INT_mnth$Sol
@@ -1303,7 +1303,7 @@ rm(list=ls())
 #.######################## section 6 MAKE Table S1 ###############################
 #.######################## section 6 MAKE Table S1 ###############################
 #.######################## section 6 MAKE Table S1 ###############################
-load(file="QG-AP-test_bivariate_models.RData")
+load(file="QG-mouse-trade-off_bivariate_models.RData")
 #make table S1 showing the estimates for the MCMCglmm models
 Va.C<-rbind(c(posterior.mode(C_RPM_INT_mnth$VCV[,"traitRPM56l:traitRPM56l.animal"]),HPDinterval(C_RPM_INT_mnth$VCV[,"traitRPM56l:traitRPM56l.animal"])),
             c(posterior.mode(C_RPM_INT_mnth$VCV[,"traitINT56l:traitINT56l.animal"]),HPDinterval(C_RPM_INT_mnth$VCV[,"traitINT56l:traitINT56l.animal"])),
@@ -1338,8 +1338,8 @@ rbind(cbind(Va.C,NA,Va.S),NA,
 #.######################## section 7 MAKE Table S2 ###############################
 #.######################## section 7 MAKE Table S2 ###############################
 library(MCMCglmm)
-load("QG-AP-test_bivariate_models.RData")
-load("QG-AP-test_univariate_models.RData")
+load("QG-mouse-trade-off_bivariate_models.RData")
+load("QG-mouse-trade-off_univariate_models.RData")
 summary(C_RUN_mnth)
 summary(HR_RUN_mnth)
 
