@@ -1,6 +1,6 @@
-# QG-test-AP-hypothesis
+# QG-mouse-speed-duration-trade-off
 
-![trade-off evolution](./QG-AP-test_FigureS1_evolutionInMotion.gif)
+![trade-off evolution](./QG-mouse-trade-off_FigureS1_evolutionInMotion.gif)
 
 Data and Code [![DOI](https://zenodo.org/badge/721354286.svg)](https://zenodo.org/doi/10.5281/zenodo.10182353)
 
@@ -18,21 +18,21 @@ Vincent Careau, University of Ottawa, vcareau@uottawa.ca
 ### Citation
 If you use the data or code, please cite as:
 
->Wilson, A. J., Wolak, M. E., Hiramatsu, L., Garland, Jr., T., & Careau, V. (2023). matthewwolak/QG-test-AP-hypothesis (v2.0.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.10197082
+>Wilson, A. J., Wolak, M. E., Hiramatsu, L., Garland, Jr., T., & Careau, V. (2023). matthewwolak/QG-mouse-speed-duration-trade-off (v2.0.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.10197082
 
 
 
 ## Data
 To run the `R` code, you need the following files in the current working directory for your R session:
-  - `QG-AP-test_data.txt`: contains all data necessary for the statistical analyses
-  - `QG-AP-test_pedigree.txt`: contains the pedigree for the entire experiment
+  - `QG-mouse-trade-off_data.txt`: contains all data necessary for the statistical analyses
+  - `QG-mouse-trade-off_pedigree.txt`: contains the pedigree for the entire experiment
 
 
 ### Data metadata
 
 Column headings for the datasets reflect variables defined and discussed in the main manuscript and supplementary materials. In brief, these are:
 
-For the file "QG-AP-test_data.txt"
+For the file "QG-mouse-trade-off_data.txt"
  - `animal` character values of the unique identity of each mouse
  - `GEN` integers denoting the generation of the experiment
  - `UNI` character values indicating the location of the experiment, either the University of Wisconsin-Madison ("WIS") or the University of California, Riverside ("UCR")
@@ -53,7 +53,7 @@ For the file "QG-AP-test_data.txt"
  - `pups` integer value of the total number of pups (offspring) produced by each individual. Mice not selected as breeders for the next generation were all assigned 0.
   
 
-For the file "QG-AP-test_pedigree.txt"
+For the file "QG-mouse-trade-off_pedigree.txt"
  - `animal` character values of the unique identity of each mouse
  - `sire` character value for the sire/father
  - `dam` character value for the dam/mother
