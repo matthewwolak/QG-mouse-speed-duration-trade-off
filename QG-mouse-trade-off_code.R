@@ -38,118 +38,128 @@
 #.################ section #1 - make figure 1 adaptive landscapes ###############
 #.################ section #1 - make figure 1 adaptive landscapes ###############
 library(fields)  #<-- needed for thin plate splines `Tps()`
-
 dat       <- read.table("QG-mouse-trade-off_data.txt", header = TRUE)
-plot(RUN56l~RPM56l,dat,col=as.numeric(dat$linetype+1))
-plot(RUN56l~INT56l,dat,col=as.numeric(dat$linetype+1))
-plot(RPM56l~INT56l,dat,col=as.numeric(dat$linetype+1))
-plot(RPM56~INT56,dat, col=as.numeric(dat$linetype+1))
-
-#show missing data for generations:
-  plot(RPM56~GEN,subset(dat,linetype==1), col=rgb(1,0,0,0.05),pch=16)
-points(RPM56~GEN,subset(dat,linetype==0), col=rgb(0,0,1,0.05),pch=16)
-abline(v=32);abline(v=33);abline(v=34);abline(v=35);abline(v=52);abline(v=63);abline(v=64);abline(v=67)
-GEN.list<-c(0:31,37:51,53:62,65,66,68:77)#list of GENs without running gdata
+GEN.lst <- c(0:31, 37:51, 53:62, 65, 66, 68:77) #<-- GENs with running data
 
 #calculate SELECTION GRADIENTS ###########################
-DATA.C.WIS<-subset(dat,linetype=="0" & UNI=="WIS")
-DATA.S.WIS<-subset(dat,linetype=="1" & UNI=="WIS")
+DATA.C.WIS <- subset(dat, linetype == "0" & UNI == "WIS")
+DATA.S.WIS <- subset(dat, linetype == "1" & UNI == "WIS")
 #calculate relative fitness using the number of pups produced
-DATA.C.WIS$relFIT<-DATA.C.WIS$pups/mean(DATA.C.WIS$pups)
-DATA.S.WIS$relFIT<-DATA.S.WIS$pups/mean(DATA.S.WIS$pups)
+DATA.C.WIS$relFIT <- DATA.C.WIS$pups / mean(DATA.C.WIS$pups)
+DATA.S.WIS$relFIT <- DATA.S.WIS$pups / mean(DATA.S.WIS$pups)
 #fit linear model
-SEL.C.WIS<-lm(relFIT~scale(RPM56)+scale(INT56)+GEN+WHLSTAGE+sex+Fcoeff+line,DATA.C.WIS)
-SEL.S.WIS<-lm(relFIT~scale(RPM56)+scale(INT56)+GEN+WHLSTAGE+sex+Fcoeff+line,DATA.S.WIS)
-RUN.S    <-lm(relFIT~scale(RUN56)+             GEN+WHLSTAGE+sex+Fcoeff+line,DATA.S.WIS)
+SEL.C.WIS <- lm(relFIT ~ scale(RPM56) + scale(INT56) + GEN + 
+    WHLSTAGE + sex + Fcoeff + line,
+  data = DATA.C.WIS)
+SEL.S.WIS <- lm(relFIT ~ scale(RPM56) + scale(INT56) + GEN +
+    WHLSTAGE + sex + Fcoeff + line,
+  data = DATA.S.WIS)
+RUN.S <- lm(relFIT ~ scale(RUN56)+ GEN +
+    WHLSTAGE + sex + Fcoeff + line,
+  data = DATA.S.WIS)
 
 #extract betas OVERALL
-BETA.RPM.C.WIS<-summary(SEL.C.WIS)$coefficients[2,1:2]
-BETA.INT.C.WIS<-summary(SEL.C.WIS)$coefficients[3,1:2]
-BETA.RPM.S.WIS<-summary(SEL.S.WIS)$coefficients[2,1:2]
-BETA.INT.S.WIS<-summary(SEL.S.WIS)$coefficients[3,1:2]
+BETA.RPM.C.WIS <- summary(SEL.C.WIS)$coefficients[2,1:2]
+BETA.INT.C.WIS <- summary(SEL.C.WIS)$coefficients[3,1:2]
+BETA.RPM.S.WIS <- summary(SEL.S.WIS)$coefficients[2,1:2]
+BETA.INT.S.WIS <- summary(SEL.S.WIS)$coefficients[3,1:2]
 ############## estimate BETAS in the UCR generations #########################
-DATA.C.UCR<-subset(dat,linetype=="0" & UNI=="UCR")
-DATA.S.UCR<-subset(dat,linetype=="1" & UNI=="UCR")
+DATA.C.UCR <- subset(dat, linetype == "0" & UNI == "UCR")
+DATA.S.UCR <- subset(dat, linetype == "1" & UNI == "UCR")
 #calculate relative fitness using the number of pups produced
-DATA.C.UCR$relFIT<-DATA.C.UCR$pups/mean(DATA.C.UCR$pups)
-DATA.S.UCR$relFIT<-DATA.S.UCR$pups/mean(DATA.S.UCR$pups)
+DATA.C.UCR$relFIT <-DATA.C.UCR$pups / mean(DATA.C.UCR$pups)
+DATA.S.UCR$relFIT <-DATA.S.UCR$pups / mean(DATA.S.UCR$pups)
 #fit linear model
-SEL.C.UCR<-lm(relFIT~scale(RPM56)+scale(INT56)+GEN+WHLSTAGE+sex+Fcoeff+line,DATA.C.UCR)
-SEL.S.UCR<-lm(relFIT~scale(RPM56)+scale(INT56)+GEN+WHLSTAGE+sex+Fcoeff+line,DATA.S.UCR)
+SEL.C.UCR<-lm(relFIT ~ scale(RPM56) + scale(INT56) + GEN +
+    WHLSTAGE + sex + Fcoeff + line,
+  data = DATA.C.UCR)
+SEL.S.UCR<-lm(relFIT ~ scale(RPM56) + scale(INT56) + GEN +
+    WHLSTAGE + sex + Fcoeff + line,
+  data = DATA.S.UCR)
 #extract betas OVERALL
-BETA.RPM.C.UCR<-summary(SEL.C.UCR)$coefficients[2,1:2]
-BETA.INT.C.UCR<-summary(SEL.C.UCR)$coefficients[3,1:2]
-BETA.RPM.S.UCR<-summary(SEL.S.UCR)$coefficients[2,1:2]
-BETA.INT.S.UCR<-summary(SEL.S.UCR)$coefficients[3,1:2]
+BETA.RPM.C.UCR <- summary(SEL.C.UCR)$coefficients[2,1:2]
+BETA.INT.C.UCR <- summary(SEL.C.UCR)$coefficients[3,1:2]
+BETA.RPM.S.UCR <- summary(SEL.S.UCR)$coefficients[2,1:2]
+BETA.INT.S.UCR <- summary(SEL.S.UCR)$coefficients[3,1:2]
 ################### estimate BETAS in each generation ##########################
-DATA.C<-subset(dat,linetype=="0")
-DATA.S<-subset(dat,linetype=="1")
-summary(DATA.C)
-BETAS<-data.frame(BLOCK=NA,GEN=0:77,
-B.RPM.C=0,se.RPM.C=0,B.INT.C=0,se.INT.C=0,
-B.RPM.S=0,se.RPM.S=0,B.INT.S=0,se.INT.S=0,
-B.RUN.C=0,se.RUN.C=0,B.RUN.S=0,se.RUN.S=0,
- X.RUN.S=0, X.RPM.S=0, X.INT.S=0,
-sd.RUN.S=0,sd.RPM.S=0,sd.INT.S=0)
-#
-for(i in GEN.list) {
-#estimate gradients for the first block
-BLOCK.C<-subset(dat,GEN==i & linetype=="0")
-BLOCK.S<-subset(dat,GEN==i & linetype=="1")
-#calculate relative fitness using the number of pups produced
-BLOCK.C$relFIT<-BLOCK.C$pups/mean(BLOCK.C$pups)
-BLOCK.S$relFIT<-BLOCK.S$pups/mean(BLOCK.S$pups)
-#fit linear model
-SEL.C<-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+line,BLOCK.C)
-SEL.S<-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+line,BLOCK.S)
-RUN.C<-lm(relFIT~scale(RUN56)+WHLSTAGE+sex+line,BLOCK.C)
-RUN.S<-lm(relFIT~scale(RUN56)+WHLSTAGE+sex+line,BLOCK.S)
-#extract betas
-BETAS[which(BETAS$GEN==i),3:4] <-summary(SEL.C)$coefficients[2,1:2]
-BETAS[which(BETAS$GEN==i),5:6] <-summary(SEL.C)$coefficients[3,1:2]
-BETAS[which(BETAS$GEN==i),7:8] <-summary(SEL.S)$coefficients[2,1:2]
-BETAS[which(BETAS$GEN==i),9:10]<-summary(SEL.S)$coefficients[3,1:2]
-BETAS[which(BETAS$GEN==i),11:12]<-summary(RUN.C)$coefficients[2,1:2]
-BETAS[which(BETAS$GEN==i),13:14]<-summary(RUN.S)$coefficients[2,1:2]
-#
-BETAS$X.RUN.S[which(BETAS$GEN==i)]<-mean(BLOCK.S$RUN56)
-BETAS$X.RPM.S[which(BETAS$GEN==i)]<-mean(BLOCK.S$RPM56)
-BETAS$X.INT.S[which(BETAS$GEN==i)]<-mean(BLOCK.S$INT56)
-BETAS$sd.RUN.S[which(BETAS$GEN==i)]<-sd(BLOCK.S$RUN56)
-BETAS$sd.RPM.S[which(BETAS$GEN==i)]<-sd(BLOCK.S$RPM56)
-BETAS$sd.INT.S[which(BETAS$GEN==i)]<-sd(BLOCK.S$INT56)
+DATA.C<-subset(dat, linetype == "0")
+DATA.S<-subset(dat, linetype == "1")
+#summary(DATA.C)
+BETAS <- data.frame(BLOCK = NA, GEN = 0:77,
+  B.RPM.C = 0, se.RPM.C = 0, B.INT.C = 0, se.INT.C = 0,
+  B.RPM.S = 0, se.RPM.S = 0, B.INT.S = 0, se.INT.S = 0,
+  B.RUN.C = 0, se.RUN.C = 0, B.RUN.S = 0, se.RUN.S = 0,
+  X.RUN.S = 0, X.RPM.S = 0, X.INT.S = 0,
+  sd.RUN.S = 0,sd.RPM.S = 0, sd.INT.S = 0)
+for(g in GEN.lst) {
+  #estimate gradients for the first block
+  BLOCK.C <- subset(dat, GEN == g & linetype == "0")
+  BLOCK.S <- subset(dat, GEN == g & linetype == "1")
+  #calculate relative fitness using the number of pups produced
+  BLOCK.C$relFIT <- BLOCK.C$pups / mean(BLOCK.C$pups)
+  BLOCK.S$relFIT <- BLOCK.S$pups / mean(BLOCK.S$pups)
+  #fit linear model
+  SEL.C <- lm(relFIT ~ scale(RPM56) + scale(INT56) + WHLSTAGE + sex + line,
+    data = BLOCK.C)
+  SEL.S <- lm(relFIT ~ scale(RPM56) + scale(INT56) + WHLSTAGE + sex + line,
+    data = BLOCK.S)
+  RUN.C <- lm(relFIT ~ scale(RUN56) + WHLSTAGE + sex + line, data = BLOCK.C)
+  RUN.S <- lm(relFIT ~ scale(RUN56) + WHLSTAGE + sex + line, data = BLOCK.S)
+  #extract betas
+  betasGENind <- which(BETAS$GEN == g) 
+  BETAS[betasGENind, 3:4] <- summary(SEL.C)$coefficients[2, 1:2]
+  BETAS[betasGENind, 5:6] <- summary(SEL.C)$coefficients[3, 1:2]
+  BETAS[betasGENind, 7:8] <- summary(SEL.S)$coefficients[2, 1:2]
+  BETAS[betasGENind, 9:10] <- summary(SEL.S)$coefficients[3, 1:2]
+  BETAS[betasGENind, 11:12] <- summary(RUN.C)$coefficients[2, 1:2]
+  BETAS[betasGENind, 13:14] <- summary(RUN.S)$coefficients[2, 1:2]
+  #
+  BETAS$X.RUN.S[betasGENind] <- mean(BLOCK.S$RUN56)
+  BETAS$X.RPM.S[betasGENind] <- mean(BLOCK.S$RPM56)
+  BETAS$X.INT.S[betasGENind] <- mean(BLOCK.S$INT56)
+  BETAS$sd.RUN.S[betasGENind] <- sd(BLOCK.S$RUN56)
+  BETAS$sd.RPM.S[betasGENind] <- sd(BLOCK.S$RPM56)
+  BETAS$sd.INT.S[betasGENind] <- sd(BLOCK.S$INT56)
 }
-#mean-strandardisez gradients?
-BETAS$Bu.RUN<-(BETAS$B.RUN.S/BETAS$sd.RUN.S)*BETAS$sd.RUN.S
-BETAS$Bu.INT<-(BETAS$B.INT.S/BETAS$sd.INT.S)*BETAS$sd.INT.S
-BETAS$Bu.RPM<-(BETAS$B.RPM.S/BETAS$sd.RPM.S)*BETAS$sd.RPM.S
 
 #selection gradients throughout the experiment
-BETAS$n<-1
-BETAS[!BETAS$GEN%in%GEN.list,3:11]<-NA
-BETAS$GEN.C<-BETAS$GEN-0.05
-BETAS$GEN.S<-BETAS$GEN+0.05
+BETAS$n <- 1
+BETAS[!BETAS$GEN %in% GEN.lst, 3:11] <- NA
+BETAS$GEN.C <- BETAS$GEN - 0.05
+BETAS$GEN.S <- BETAS$GEN + 0.05
 #
 #calculate MEAN + SE BETAS
-BETAS$UNI<-"UCR"
-BETAS$UNI[which(BETAS$GEN<32)]<-"WIS"
-BETAS[!BETAS$GEN%in%GEN.list,]<-NA
-BETAS.WIS<-subset(BETAS,UNI=="WIS")
-BETAS.UCR<-subset(BETAS,UNI=="UCR")
+BETAS$UNI <- "UCR"
+BETAS$UNI[which(BETAS$GEN < 32)] <- "WIS"
+BETAS[!BETAS$GEN %in% GEN.lst, ] <- NA
+BETAS.WIS <- subset(BETAS, UNI == "WIS")
+BETAS.UCR <- subset(BETAS, UNI == "UCR")
 #
-BETA.RUN.C.WIS<-cbind(mean(BETAS.WIS$B.RUN.C,na.rm=T),sd(BETAS.WIS$B.RUN.C,na.rm=T)/sqrt(sum(BETAS.WIS$n,na.rm=T)))
-BETA.RUN.S.WIS<-cbind(mean(BETAS.WIS$B.RUN.S,na.rm=T),sd(BETAS.WIS$B.RUN.S,na.rm=T)/sqrt(sum(BETAS.WIS$n,na.rm=T)))
-BETA.RPM.C.WIS<-cbind(mean(BETAS.WIS$B.RPM.C,na.rm=T),sd(BETAS.WIS$B.RPM.C,na.rm=T)/sqrt(sum(BETAS.WIS$n,na.rm=T)))
-BETA.INT.C.WIS<-cbind(mean(BETAS.WIS$B.INT.C,na.rm=T),sd(BETAS.WIS$B.INT.C,na.rm=T)/sqrt(sum(BETAS.WIS$n,na.rm=T)))
-BETA.RPM.S.WIS<-cbind(mean(BETAS.WIS$B.RPM.S,na.rm=T),sd(BETAS.WIS$B.RPM.S,na.rm=T)/sqrt(sum(BETAS.WIS$n,na.rm=T)))
-BETA.INT.S.WIS<-cbind(mean(BETAS.WIS$B.INT.S,na.rm=T),sd(BETAS.WIS$B.INT.S,na.rm=T)/sqrt(sum(BETAS.WIS$n,na.rm=T)))
+BETA.RUN.C.WIS <- cbind(mean(BETAS.WIS$B.RUN.C, na.rm = TRUE),
+  sd(BETAS.WIS$B.RUN.C, na.rm = TRUE) / sqrt(sum(BETAS.WIS$n, na.rm = TRUE)))
+BETA.RUN.S.WIS <- cbind(mean(BETAS.WIS$B.RUN.S, na.rm = TRUE),
+  sd(BETAS.WIS$B.RUN.S, na.rm = TRUE) / sqrt(sum(BETAS.WIS$n, na.rm = TRUE)))
+BETA.RPM.C.WIS<-cbind(mean(BETAS.WIS$B.RPM.C,na.rm = TRUE),
+  sd(BETAS.WIS$B.RPM.C, na.rm = TRUE) / sqrt(sum(BETAS.WIS$n, na.rm = TRUE)))
+BETA.INT.C.WIS<-cbind(mean(BETAS.WIS$B.INT.C, na.rm = TRUE),
+  sd(BETAS.WIS$B.INT.C, na.rm = TRUE) / sqrt(sum(BETAS.WIS$n, na.rm = TRUE)))
+BETA.RPM.S.WIS<-cbind(mean(BETAS.WIS$B.RPM.S, na.rm = TRUE),
+  sd(BETAS.WIS$B.RPM.S, na.rm = TRUE) / sqrt(sum(BETAS.WIS$n, na.rm = TRUE)))
+BETA.INT.S.WIS<-cbind(mean(BETAS.WIS$B.INT.S, na.rm = TRUE),
+  sd(BETAS.WIS$B.INT.S, na.rm = TRUE) / sqrt(sum(BETAS.WIS$n, na.rm = TRUE)))
 #
-BETA.RUN.C.UCR<-cbind(mean(BETAS.UCR$B.RUN.C,na.rm=T),sd(BETAS.UCR$B.RUN.C,na.rm=T)/sqrt(sum(BETAS.UCR$n,na.rm=T)))
-BETA.RUN.S.UCR<-cbind(mean(BETAS.UCR$B.RUN.S,na.rm=T),sd(BETAS.UCR$B.RUN.S,na.rm=T)/sqrt(sum(BETAS.UCR$n,na.rm=T)))
-BETA.RPM.C.UCR<-cbind(mean(BETAS.UCR$B.RPM.C,na.rm=T),sd(BETAS.UCR$B.RPM.C,na.rm=T)/sqrt(sum(BETAS.UCR$n,na.rm=T)))
-BETA.INT.C.UCR<-cbind(mean(BETAS.UCR$B.INT.C,na.rm=T),sd(BETAS.UCR$B.INT.C,na.rm=T)/sqrt(sum(BETAS.UCR$n,na.rm=T)))
-BETA.RPM.S.UCR<-cbind(mean(BETAS.UCR$B.RPM.S,na.rm=T),sd(BETAS.UCR$B.RPM.S,na.rm=T)/sqrt(sum(BETAS.UCR$n,na.rm=T)))
-BETA.INT.S.UCR<-cbind(mean(BETAS.UCR$B.INT.S,na.rm=T),sd(BETAS.UCR$B.INT.S,na.rm=T)/sqrt(sum(BETAS.UCR$n,na.rm=T)))
+BETA.RUN.C.UCR <- cbind(mean(BETAS.UCR$B.RUN.C, na.rm = TRUE),
+  sd(BETAS.UCR$B.RUN.C, na.rm = TRUE) / sqrt(sum(BETAS.UCR$n, na.rm = TRUE)))
+BETA.RUN.S.UCR <- cbind(mean(BETAS.UCR$B.RUN.S, na.rm = TRUE),
+  sd(BETAS.UCR$B.RUN.S, na.rm = TRUE) / sqrt(sum(BETAS.UCR$n, na.rm = TRUE)))
+BETA.RPM.C.UCR <- cbind(mean(BETAS.UCR$B.RPM.C, na.rm = TRUE),
+  sd(BETAS.UCR$B.RPM.C, na.rm = TRUE) / sqrt(sum(BETAS.UCR$n, na.rm = TRUE)))
+BETA.INT.C.UCR <- cbind(mean(BETAS.UCR$B.INT.C, na.rm = TRUE),
+  sd(BETAS.UCR$B.INT.C, na.rm = TRUE) / sqrt(sum(BETAS.UCR$n, na.rm = TRUE)))
+BETA.RPM.S.UCR <- cbind(mean(BETAS.UCR$B.RPM.S, na.rm = TRUE),
+  sd(BETAS.UCR$B.RPM.S, na.rm = TRUE) / sqrt(sum(BETAS.UCR$n, na.rm = TRUE)))
+BETA.INT.S.UCR <- cbind(mean(BETAS.UCR$B.INT.S, na.rm = TRUE),
+  sd(BETAS.UCR$B.INT.S, na.rm = TRUE) / sqrt(sum(BETAS.UCR$n, na.rm = TRUE)))
 
 #numbers provided in the main text
 #"with a noticeable reduction in the average standardized selection gradients (se) in the Riverside generations
@@ -163,179 +173,128 @@ BETA.INT.S.WIS
 
 #
 ############ estimate BETAS in each generation for each LINE ###################
-BETAS.LINE<-data.frame(BLOCK=NA,
-                  GEN=0:77,
-                  B.RPM.1=0,se.RPM.1=0,B.INT.1=0,se.INT.1=0,B.RUN.1=0,se.RUN.1=0,
-                  B.RPM.2=0,se.RPM.2=0,B.INT.2=0,se.INT.2=0,B.RUN.2=0,se.RUN.2=0,
-                  B.RPM.3=0,se.RPM.3=0,B.INT.3=0,se.INT.3=0,B.RUN.3=0,se.RUN.3=0,
-                  B.RPM.4=0,se.RPM.4=0,B.INT.4=0,se.INT.4=0,B.RUN.4=0,se.RUN.4=0,
-                  B.RPM.5=0,se.RPM.5=0,B.INT.5=0,se.INT.5=0,B.RUN.5=0,se.RUN.5=0,
-                  B.RPM.6=0,se.RPM.6=0,B.INT.6=0,se.INT.6=0,B.RUN.6=0,se.RUN.6=0,
-                  B.RPM.7=0,se.RPM.7=0,B.INT.7=0,se.INT.7=0,B.RUN.7=0,se.RUN.7=0,
-                  B.RPM.8=0,se.RPM.8=0,B.INT.8=0,se.INT.8=0,B.RUN.8=0,se.RUN.8=0)
-for(i in GEN.list) {
-#estimate gradients for the first block
-BLOCK.1<-subset(DATA.C,GEN==i & line==1)
-BLOCK.2<-subset(DATA.C,GEN==i & line==2)
-BLOCK.3<-subset(DATA.S,GEN==i & line==3)
-BLOCK.4<-subset(DATA.C,GEN==i & line==4)
-BLOCK.5<-subset(DATA.C,GEN==i & line==5)
-BLOCK.6<-subset(DATA.S,GEN==i & line==6)
-BLOCK.7<-subset(DATA.S,GEN==i & line==7)
-BLOCK.8<-subset(DATA.S,GEN==i & line==8)
-#calculate relative fitness using the number of pups produced
-BLOCK.1$relFIT<-BLOCK.1$pups/mean(BLOCK.1$pups)
-BLOCK.2$relFIT<-BLOCK.2$pups/mean(BLOCK.2$pups)
-BLOCK.3$relFIT<-BLOCK.3$pups/mean(BLOCK.3$pups)
-BLOCK.4$relFIT<-BLOCK.4$pups/mean(BLOCK.4$pups)
-BLOCK.5$relFIT<-BLOCK.5$pups/mean(BLOCK.5$pups)
-BLOCK.6$relFIT<-BLOCK.6$pups/mean(BLOCK.6$pups)
-BLOCK.7$relFIT<-BLOCK.7$pups/mean(BLOCK.7$pups)
-BLOCK.8$relFIT<-BLOCK.8$pups/mean(BLOCK.8$pups)
-#fit linear model
-SEL.1    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.1)
-SEL.2    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.2)
-SEL.3    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.3)
-SEL.4    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.4)
-SEL.5    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.5)
-SEL.6    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.6)
-SEL.7    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.7)
-SEL.8    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.8)
-SEL.1.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.1)
-SEL.2.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.2)
-SEL.3.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.3)
-SEL.4.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.4)
-SEL.5.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.5)
-SEL.6.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.6)
-SEL.7.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.7)
-SEL.8.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.8)
-#extract BETAS.line
-BETAS.LINE[which(BETAS.LINE$GEN==i), 3:4 ] <-summary(SEL.1)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i), 5:6 ] <-summary(SEL.1)$coefficients[3,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i), 9:10] <-summary(SEL.2)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),11:12] <-summary(SEL.2)$coefficients[3,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),15:16] <-summary(SEL.3)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),17:18] <-summary(SEL.3)$coefficients[3,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),21:22] <-summary(SEL.4)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),23:24] <-summary(SEL.4)$coefficients[3,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),27:28] <-summary(SEL.5)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),29:30] <-summary(SEL.5)$coefficients[3,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),33:34] <-summary(SEL.6)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),35:36] <-summary(SEL.6)$coefficients[3,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),39:40] <-summary(SEL.7)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),41:42] <-summary(SEL.7)$coefficients[3,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),45:46] <-summary(SEL.8)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),47:48] <-summary(SEL.8)$coefficients[3,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),7:8]   <-summary(SEL.1.RUN)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),13:14] <-summary(SEL.2.RUN)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),19:20] <-summary(SEL.3.RUN)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),25:26] <-summary(SEL.4.RUN)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),31:32] <-summary(SEL.5.RUN)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),37:38] <-summary(SEL.6.RUN)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),43:44] <-summary(SEL.7.RUN)$coefficients[2,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),49:50] <-summary(SEL.8.RUN)$coefficients[2,1:2]
-                  }
+BETAS.LINE <- data.frame(BLOCK = NA, GEN = 0:77)
+nms <- paste(rep(paste(rep(c("B", "se"), 3), rep(c("RPM", "INT", "RUN"), each = 2),
+                sep = "."), 8),
+      rep(seq.int(8), each = 6), sep = ".")
+BETAS.LINE[, nms] <- 0
+                 
+for(g in GEN.lst) {
+  for(l in 1:8){
+    #estimate gradients for the first block
+    if(l %in% c(1, 2, 4, 5)){
+      BLOCK <- subset(DATA.C, subset = GEN == g & line == l)
+    } else{
+        BLOCK <- subset(DATA.S, subset = GEN == g & line == l)
+      }
+    #calculate relative fitness using the number of pups produced
+    BLOCK$relFIT <- BLOCK$pups / mean(BLOCK$pups)
+    #fit linear model
+    SEL <- lm(relFIT ~ scale(RPM56) + scale(INT56) + WHLSTAGE + sex + Fcoeff,
+      data = BLOCK)
+    SEL.RUN <-lm(relFIT ~ scale(RUN56l) + WHLSTAGE + sex + Fcoeff,
+      data = BLOCK)
+    #extract BETAS.line
+    BETAS.LINE[which(BETAS.LINE$GEN == g), 
+               paste(c("B", "se"), "RPM", l, sep = ".")] <-
+                                               summary(SEL)$coefficients[2, 1:2]
+    BETAS.LINE[which(BETAS.LINE$GEN == g),
+               paste(c("B", "se"), "INT", l, sep = ".")] <-
+                                               summary(SEL)$coefficients[3, 1:2]
+    BETAS.LINE[which(BETAS.LINE$GEN == g),
+               paste(c("B", "se"), "RUN", l, sep = ".")]   <-
+                                           summary(SEL.RUN)$coefficients[2, 1:2]
+  }  #<-- end for l
+}  #<-- end for g
+
+
+
 #
 #selection gradients throughout the experiment
-BETAS.LINE$n<-1
-BETAS.LINE[!BETAS.LINE$GEN%in%GEN.list,]<-NA
-BETAS.LINE$GEN.1<-BETAS.LINE$GEN-0.1
-BETAS.LINE$GEN.2<-BETAS.LINE$GEN-0.075
-BETAS.LINE$GEN.4<-BETAS.LINE$GEN-0.05
-BETAS.LINE$GEN.5<-BETAS.LINE$GEN-0.025
-BETAS.LINE$GEN.3<-BETAS.LINE$GEN+0.1
-BETAS.LINE$GEN.6<-BETAS.LINE$GEN+0.075
-BETAS.LINE$GEN.7<-BETAS.LINE$GEN+0.05
-BETAS.LINE$GEN.8<-BETAS.LINE$GEN+0.025
+BETAS.LINE$n <- 1
+BETAS.LINE[!BETAS.LINE$GEN %in% GEN.lst,] <- NA
+BETAS.LINE$GEN.1 <- BETAS.LINE$GEN - 0.1
+BETAS.LINE$GEN.2 <- BETAS.LINE$GEN - 0.075
+BETAS.LINE$GEN.4 <- BETAS.LINE$GEN - 0.05
+BETAS.LINE$GEN.5 <- BETAS.LINE$GEN - 0.025
+BETAS.LINE$GEN.3 <- BETAS.LINE$GEN + 0.1
+BETAS.LINE$GEN.6 <- BETAS.LINE$GEN + 0.075
+BETAS.LINE$GEN.7 <- BETAS.LINE$GEN + 0.05
+BETAS.LINE$GEN.8 <- BETAS.LINE$GEN + 0.025
 #
 #calculate MEAN + SE BETAS.LINE
-BETA.RPM.1<-cbind(mean(BETAS.LINE$B.RPM.1,na.rm=T),sd(BETAS.LINE$B.RPM.1,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.INT.1<-cbind(mean(BETAS.LINE$B.INT.1,na.rm=T),sd(BETAS.LINE$B.INT.1,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.RPM.2<-cbind(mean(BETAS.LINE$B.RPM.2,na.rm=T),sd(BETAS.LINE$B.RPM.2,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.INT.2<-cbind(mean(BETAS.LINE$B.INT.2,na.rm=T),sd(BETAS.LINE$B.INT.2,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.RPM.3<-cbind(mean(BETAS.LINE$B.RPM.3,na.rm=T),sd(BETAS.LINE$B.RPM.3,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.INT.3<-cbind(mean(BETAS.LINE$B.INT.3,na.rm=T),sd(BETAS.LINE$B.INT.3,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.RPM.4<-cbind(mean(BETAS.LINE$B.RPM.4,na.rm=T),sd(BETAS.LINE$B.RPM.4,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.INT.4<-cbind(mean(BETAS.LINE$B.INT.4,na.rm=T),sd(BETAS.LINE$B.INT.4,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.RPM.5<-cbind(mean(BETAS.LINE$B.RPM.5,na.rm=T),sd(BETAS.LINE$B.RPM.5,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.INT.5<-cbind(mean(BETAS.LINE$B.INT.5,na.rm=T),sd(BETAS.LINE$B.INT.5,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.RPM.6<-cbind(mean(BETAS.LINE$B.RPM.6,na.rm=T),sd(BETAS.LINE$B.RPM.6,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.INT.6<-cbind(mean(BETAS.LINE$B.INT.6,na.rm=T),sd(BETAS.LINE$B.INT.6,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.RPM.7<-cbind(mean(BETAS.LINE$B.RPM.7,na.rm=T),sd(BETAS.LINE$B.RPM.7,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.INT.7<-cbind(mean(BETAS.LINE$B.INT.7,na.rm=T),sd(BETAS.LINE$B.INT.7,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.RPM.8<-cbind(mean(BETAS.LINE$B.RPM.8,na.rm=T),sd(BETAS.LINE$B.RPM.8,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-BETA.INT.8<-cbind(mean(BETAS.LINE$B.INT.8,na.rm=T),sd(BETAS.LINE$B.INT.8,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
-
-# use thin-plate splines to display the fitness surfaces
-LINE.3<-subset(dat,line==3 &GEN<78)
-LINE.6<-subset(dat,line==6 &GEN<78)
-LINE.7<-subset(dat,line==7 &GEN<78)
-LINE.8<-subset(dat,line==8 &GEN<78)
-LINE.3$relFIT<-LINE.3$pups/mean(LINE.3$pups)
-LINE.6$relFIT<-LINE.6$pups/mean(LINE.6$pups)
-LINE.7$relFIT<-LINE.7$pups/mean(LINE.7$pups)
-LINE.8$relFIT<-LINE.8$pups/mean(LINE.8$pups)
-LINE.3$RPM56z<-NA
-LINE.6$RPM56z<-NA
-LINE.7$RPM56z<-NA
-LINE.8$RPM56z<-NA
-LINE.3$INT56z<-NA
-LINE.6$INT56z<-NA
-LINE.7$INT56z<-NA
-LINE.8$INT56z<-NA
-LINE.3$relFIT<-NA
-LINE.6$relFIT<-NA
-LINE.7$relFIT<-NA
-LINE.8$relFIT<-NA
-#
-for(i in GEN.list) {
-      LINE.3$RPM56z[which(LINE.3$GEN==i)]<-scale(LINE.3$RPM56[which(LINE.3$GEN==i)])
-      LINE.6$RPM56z[which(LINE.6$GEN==i)]<-scale(LINE.6$RPM56[which(LINE.6$GEN==i)])
-      LINE.7$RPM56z[which(LINE.7$GEN==i)]<-scale(LINE.7$RPM56[which(LINE.7$GEN==i)])
-      LINE.8$RPM56z[which(LINE.8$GEN==i)]<-scale(LINE.8$RPM56[which(LINE.8$GEN==i)])
-      LINE.3$INT56z[which(LINE.3$GEN==i)]<-scale(LINE.3$INT56[which(LINE.3$GEN==i)])
-      LINE.6$INT56z[which(LINE.6$GEN==i)]<-scale(LINE.6$INT56[which(LINE.6$GEN==i)])
-      LINE.7$INT56z[which(LINE.7$GEN==i)]<-scale(LINE.7$INT56[which(LINE.7$GEN==i)])
-      LINE.8$INT56z[which(LINE.8$GEN==i)]<-scale(LINE.8$INT56[which(LINE.8$GEN==i)])
-      LINE.3$relFIT[which(LINE.3$GEN==i)]<-LINE.3$pups[which(LINE.3$GEN==i)]/mean(LINE.3$pups[which(LINE.3$GEN==i)],na.rm=T)
-      LINE.6$relFIT[which(LINE.6$GEN==i)]<-LINE.6$pups[which(LINE.6$GEN==i)]/mean(LINE.6$pups[which(LINE.6$GEN==i)],na.rm=T)
-      LINE.7$relFIT[which(LINE.7$GEN==i)]<-LINE.7$pups[which(LINE.7$GEN==i)]/mean(LINE.7$pups[which(LINE.7$GEN==i)],na.rm=T)
-      LINE.8$relFIT[which(LINE.8$GEN==i)]<-LINE.8$pups[which(LINE.8$GEN==i)]/mean(LINE.8$pups[which(LINE.8$GEN==i)],na.rm=T)
+for(l in 1:8){
+  assign(paste0("tmpBETA.RPM.", l),
+    cbind(mean(BETAS.LINE[, paste0("B.RPM.", l)], na.rm = TRUE),
+          sd(BETAS.LINE[, paste0("B.RPM.", l)], na.rm = TRUE) /
+                                         sqrt(sum(BETAS.LINE$n, na.rm = TRUE))))
+  assign(paste0("tmpBETA.INT.", l),
+    cbind(mean(BETAS.LINE[, paste0("B.INT.", l)], na.rm = TRUE),
+          sd(BETAS.LINE[, paste0("B.INT.", l)], na.rm = TRUE) /
+                                         sqrt(sum(BETAS.LINE$n, na.rm = TRUE))))
 }
 
 
+
+
+
+
+
+# use thin-plate splines to display the fitness surfaces
+LINE.3 <- subset(dat, line == 3 & GEN < 78)
+LINE.6 <- subset(dat, line == 6 & GEN < 78)
+LINE.7 <- subset(dat, line == 7 & GEN < 78)
+LINE.8 <- subset(dat, line == 8 & GEN < 78)
+LINE.3[, c("RPM56z", "INT56z", "relFIT")] <- NA
+LINE.6[, c("RPM56z", "INT56z", "relFIT")] <- NA
+LINE.7[, c("RPM56z", "INT56z", "relFIT")] <- NA
+LINE.8[, c("RPM56z", "INT56z", "relFIT")] <- NA
+
+for(l in c(3, 6, 7, 8)){
+  tmpL <- get(paste0("LINE.", l))
+  for(g in GEN.lst) {
+    genINDl <- which(tmpL$GEN == g)
+    tmpL$RPM56z[genINDl] <- scale(tmpL$RPM56[genINDl])
+    tmpL$INT56z[genINDl] <- scale(tmpL$INT56[genINDl])
+    tmpL$relFIT[genINDl] <- tmpL$pups[genINDl] / mean(tmpL$pups[genINDl],
+                                                                   na.rm = TRUE)
+  }  #<-- end for g
+  assign(paste0("LINE.", l), tmpL)
+}  #<-- end for l
+
+
+
+
 # fields::Tps()
-     TPS.3<-Tps(data.matrix(data.frame(LINE.3$INT56z,LINE.3$RPM56z)),LINE.3$relFIT)
-save(TPS.3,file="TPS.3.scale.RData")
-     TPS.6<-Tps(data.matrix(data.frame(LINE.6$INT56z,LINE.6$RPM56z)),LINE.6$relFIT)
-save(TPS.6,file="TPS.6.scale.RData")
-     TPS.7<-Tps(data.matrix(data.frame(LINE.7$INT56z,LINE.7$RPM56z)),LINE.7$relFIT)
-save(TPS.7,file="TPS.7.scale.RData")
-     TPS.8<-Tps(data.matrix(data.frame(LINE.8$INT56z,LINE.8$RPM56z)),LINE.8$relFIT)
-save(TPS.8,file="TPS.8.scale.RData")
-load(file="TPS.3.scale.RData")
-load(file="TPS.6.scale.RData")
-load(file="TPS.7.scale.RData")
-load(file="TPS.8.scale.RData")
+#XXX WARNING: since each line has a lot of data (>6,000 rows) the call to `Tps()`
+## takes a while. These calls are commented out and objects created in a previous
+### session are loaded from the hard drive
+#TPS.3 <- Tps(data.matrix(data.frame(LINE.3$INT56z,LINE.3$RPM56z)), LINE.3$relFIT)
+#  save(TPS.3,file = "TPS.3.scale.RData")
+#TPS.6 <- Tps(data.matrix(data.frame(LINE.6$INT56z,LINE.6$RPM56z)), LINE.6$relFIT)
+#  save(TPS.6,file = "TPS.6.scale.RData")
+#TPS.7 <- Tps(data.matrix(data.frame(LINE.7$INT56z,LINE.7$RPM56z)), LINE.7$relFIT)
+#  save(TPS.7,file = "TPS.7.scale.RData")
+#TPS.8 <- Tps(data.matrix(data.frame(LINE.8$INT56z,LINE.8$RPM56z)), LINE.8$relFIT)
+#  save(TPS.8,file = "TPS.8.scale.RData")
+load(file = "TPS.3.scale.RData")
+load(file = "TPS.6.scale.RData")
+load(file = "TPS.7.scale.RData")
+load(file = "TPS.8.scale.RData")
+
 sp.3<-predictSurface(TPS.3)
 sp.6<-predictSurface(TPS.6)
 sp.7<-predictSurface(TPS.7)
 sp.8<-predictSurface(TPS.8)
-ZLIM<-range(c(sp.3$z,sp.6$z,sp.7$z,sp.8$z),na.rm=T)
-LIM<-range(c(scale(LINE.3$INT56),scale(LINE.6$INT56),scale(LINE.7$INT56),scale(LINE.8$INT56),scale(LINE.3$RPM56),scale(LINE.6$RPM56),scale(LINE.7$RPM56),scale(LINE.8$RPM56)),na.rm=T)*1.45
-par(mfrow=c(2,2))
-image(sp.3,col=heat.colors(n=30,rev=T),zlim=ZLIM,ylim=LIM,xlim=LIM);abline(v=0,lty=3);abline(h=0,lty=3)
-contour(sp.3, add = TRUE)
-image(sp.6,col=heat.colors(n=30,rev=T),zlim=ZLIM,ylim=LIM,xlim=LIM);abline(v=0,lty=3);abline(h=0,lty=3)
-contour(sp.6, add = TRUE)
-image(sp.7,col=heat.colors(n=30,rev=T),zlim=ZLIM,ylim=LIM,xlim=LIM);abline(v=0,lty=3);abline(h=0,lty=3)
-contour(sp.7, add = TRUE)
-image(sp.8,col=heat.colors(n=30,rev=T),zlim=ZLIM,ylim=LIM,xlim=LIM);abline(v=0,lty=3);abline(h=0,lty=3)
-contour(sp.8, add = TRUE)
-abline(v=0,lty=3);abline(h=0,lty=3)
+ZLIM <- range(c(sp.3$z, sp.6$z, sp.7$z, sp.8$z), na.rm = TRUE)
+LIM <- range(c(scale(LINE.3[, c("INT56", "RPM56")]),
+    scale(LINE.6[, c("INT56", "RPM56")]),
+    scale(LINE.7[, c("INT56", "RPM56")]),
+    scale(LINE.8[, c("INT56", "RPM56")])),
+  na.rm = TRUE)*1.45
 
 
-#make Figure 1
+# Figure 1
 dev.new(width=10,height=4, units = "cm")
 par(mfrow=c(6,5),las=1, oma=c(4,3,0.5,0), mar=c(0,2,2,2))
 layout(matrix(c(1,1,1,2,3,
@@ -1097,7 +1056,7 @@ rm(list=ls())  # delete all objects, to start fresh ion section below
 
 library(MCMCglmm)
 
-GEN.list<-c(0:31,36:51,53:62,65,66,68:78)#list of GENs without data
+GEN.lst <- c(0:31, 36:51, 53:62, 65, 66, 68:78)#<-- GENs with data
 #load(file = "covar_POST.LINES.RData")
 load(file = "QG-mouse-trade-off_covar_POST.LINES.RData")
 
@@ -1112,14 +1071,14 @@ rA.LINE.6<-rA.S.LINES[,,2]
 rA.LINE.7<-rA.S.LINES[,,3]
 rA.LINE.8<-rA.S.LINES[,,4]
 #
-Ra.1<-data.frame (GEN=GEN.list,r=NA)
-Ra.2<-data.frame (GEN=GEN.list,r=NA)
-Ra.3<-data.frame (GEN=GEN.list,r=NA)
-Ra.4<-data.frame (GEN=GEN.list,r=NA)
-Ra.5<-data.frame (GEN=GEN.list,r=NA)
-Ra.6<-data.frame (GEN=GEN.list,r=NA)
-Ra.7<-data.frame (GEN=GEN.list,r=NA)
-Ra.8<-data.frame (GEN=GEN.list,r=NA)
+Ra.1<-data.frame (GEN=GEN.lst,r=NA)
+Ra.2<-data.frame (GEN=GEN.lst,r=NA)
+Ra.3<-data.frame (GEN=GEN.lst,r=NA)
+Ra.4<-data.frame (GEN=GEN.lst,r=NA)
+Ra.5<-data.frame (GEN=GEN.lst,r=NA)
+Ra.6<-data.frame (GEN=GEN.lst,r=NA)
+Ra.7<-data.frame (GEN=GEN.lst,r=NA)
+Ra.8<-data.frame (GEN=GEN.lst,r=NA)
 #
 Ra.1$r<-posterior.mode(as.mcmc(rA.LINE.1))
 Ra.2$r<-posterior.mode(as.mcmc(rA.LINE.2))
@@ -1130,8 +1089,8 @@ Ra.6$r<-posterior.mode(as.mcmc(rA.LINE.6))
 Ra.7$r<-posterior.mode(as.mcmc(rA.LINE.7))
 Ra.8$r<-posterior.mode(as.mcmc(rA.LINE.8))
 
-Ra.C<-data.frame (GEN=GEN.list,r=NA, lower=NA,upper=NA)
-Ra.S<-data.frame (GEN=GEN.list,r=NA, lower=NA,upper=NA)
+Ra.C<-data.frame (GEN=GEN.lst,r=NA, lower=NA,upper=NA)
+Ra.S<-data.frame (GEN=GEN.lst,r=NA, lower=NA,upper=NA)
 acrossLinePost.C <- as.mcmc(apply(POST.C.LINES$rA, MARGIN = 2,FUN = function(v){ c(v)}))
 acrossLinePost.S <- as.mcmc(apply(POST.S.LINES$rA, MARGIN = 2,FUN = function(v){ c(v)}))
 Ra.C$r<-posterior.mode(acrossLinePost.C)
