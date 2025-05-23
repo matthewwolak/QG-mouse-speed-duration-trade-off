@@ -171,7 +171,6 @@ BETA.RUN.S.WIS
 BETA.RPM.S.WIS
 BETA.INT.S.WIS
 
-#
 ############ estimate BETAS in each generation for each LINE ###################
 BETAS.LINE <- data.frame(BLOCK = NA, GEN = 0:77)
 nms <- paste(rep(paste(rep(c("B", "se"), 3), rep(c("RPM", "INT", "RUN"), each = 2),
@@ -209,8 +208,7 @@ for(g in GEN.lst) {
 
 
 
-#
-#selection gradients throughout the experiment
+# selection gradients throughout the experiment
 BETAS.LINE$n <- 1
 BETAS.LINE[!BETAS.LINE$GEN %in% GEN.lst,] <- NA
 BETAS.LINE$GEN.1 <- BETAS.LINE$GEN - 0.1
@@ -221,8 +219,8 @@ BETAS.LINE$GEN.3 <- BETAS.LINE$GEN + 0.1
 BETAS.LINE$GEN.6 <- BETAS.LINE$GEN + 0.075
 BETAS.LINE$GEN.7 <- BETAS.LINE$GEN + 0.05
 BETAS.LINE$GEN.8 <- BETAS.LINE$GEN + 0.025
-#
-#calculate MEAN + SE BETAS.LINE
+
+# calculate MEAN + SE BETAS.LINE
 for(l in 1:8){
   assign(paste0("tmpBETA.RPM.", l),
     cbind(mean(BETAS.LINE[, paste0("B.RPM.", l)], na.rm = TRUE),
@@ -282,10 +280,10 @@ load(file = "TPS.6.scale.RData")
 load(file = "TPS.7.scale.RData")
 load(file = "TPS.8.scale.RData")
 
-sp.3<-predictSurface(TPS.3)
-sp.6<-predictSurface(TPS.6)
-sp.7<-predictSurface(TPS.7)
-sp.8<-predictSurface(TPS.8)
+sp.3 <- predictSurface(TPS.3)
+sp.6 <- predictSurface(TPS.6)
+sp.7 <- predictSurface(TPS.7)
+sp.8 <- predictSurface(TPS.8)
 ZLIM <- range(c(sp.3$z, sp.6$z, sp.7$z, sp.8$z), na.rm = TRUE)
 LIM <- range(c(scale(LINE.3[, c("INT56", "RPM56")]),
     scale(LINE.6[, c("INT56", "RPM56")]),
@@ -296,7 +294,7 @@ LIM <- range(c(scale(LINE.3[, c("INT56", "RPM56")]),
 
 # Figure 1
 dev.new(width=10,height=4, units = "cm")
-par(mfrow=c(6,5),las=1, oma=c(4,3,0.5,0), mar=c(0,2,2,2))
+par(mfrow=c(6,5),las = 1, oma = c(4,3,0.5,0), mar = c(0,2,2,2))
 layout(matrix(c(1,1,1,2,3,
                 1,1,1,2,3,
                 4,4,4,2,3,
@@ -326,18 +324,18 @@ plot(B.RUN.S ~ GEN, data = BETAS, pch = 16, col = "red", cex = 1, type="o",
   arrows(x0 = BETAS$GEN.S, y0 = BETAS$B.RUN.S-BETAS$se.RUN.S,
     x1 = BETAS$GEN.S, y1 = BETAS$B.RUN.S+BETAS$se.RUN.S,
     col = "red", code = 3, angle = 90, length = 0)
-  points(B.RUN.1~GEN, BETAS.LINE, pch="1", col=rgb(0,0,1,0.25), cex=1, type="l")
-  points(B.RUN.2~GEN, BETAS.LINE, pch="2", col=rgb(0,0,1,0.25), cex=1, type="l")
-  points(B.RUN.4~GEN, BETAS.LINE, pch="4", col=rgb(0,0,1,0.25), cex=1, type="l")
-  points(B.RUN.5~GEN, BETAS.LINE, pch="5", col=rgb(0,0,1,0.25), cex=1, type="l")
-  points(B.RUN.3~GEN, BETAS.LINE, pch="3", col=rgb(1,0,0,0.25), cex=1, type="l")
-  points(B.RUN.6~GEN, BETAS.LINE, pch="6", col=rgb(1,0,0,0.25), cex=1, type="l")
-  points(B.RUN.7~GEN, BETAS.LINE, pch="7", col=rgb(1,0,0,0.25), cex=1, type="l")
-  points(B.RUN.8~GEN, BETAS.LINE, pch="8", col=rgb(1,0,0,0.25), cex=1, type="l")
+  points(B.RUN.1~GEN, BETAS.LINE, pch = "1", col = rgb(0,0,1,0.25), cex = 1, type = "l")
+  points(B.RUN.2~GEN, BETAS.LINE, pch = "2", col = rgb(0,0,1,0.25), cex = 1, type = "l")
+  points(B.RUN.4~GEN, BETAS.LINE, pch = "4", col = rgb(0,0,1,0.25), cex = 1, type = "l")
+  points(B.RUN.5~GEN, BETAS.LINE, pch = "5", col = rgb(0,0,1,0.25), cex = 1, type = "l")
+  points(B.RUN.3~GEN, BETAS.LINE, pch = "3", col = rgb(1,0,0,0.25), cex = 1, type = "l")
+  points(B.RUN.6~GEN, BETAS.LINE, pch = "6", col = rgb(1,0,0,0.25), cex = 1, type = "l")
+  points(B.RUN.7~GEN, BETAS.LINE, pch = "7", col = rgb(1,0,0,0.25), cex = 1, type = "l")
+  points(B.RUN.8~GEN, BETAS.LINE, pch = "8", col = rgb(1,0,0,0.25), cex = 1, type = "l")
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
   abline(h = 0, lty = 2)
-mtext("A", side=3, adj=0.025, line=-1.5)
+mtext("A", side = 3, adj = 0.025, line = -1.5)
 legend(x = 47, y = 14, legend = c("control", "selected"),
   pch = c(16, 17), col = c("blue", "red"), bty = "n")
 mtext("Wisconsin generations", line = 0.4, adj = 0.05, side = 3, cex = 1)
@@ -382,14 +380,14 @@ plot(B.RPM.S ~ GEN.C, BETAS, pch = 16, col = "red", cex = 1, type = "o",
   arrows(x0 = BETAS$GEN.S, y0 = BETAS$B.RPM.S-BETAS$se.RPM.S,
     x1 = BETAS$GEN.S, y1 = BETAS$B.RPM.S+BETAS$se.RPM.S,
     col = "red", code = 3, angle = 90, length = 0)
-  points(B.RPM.1~GEN, BETAS.LINE, pch="1", col=rgb(0,0,1,0.25), cex=1, type="l")
-  points(B.RPM.2~GEN, BETAS.LINE, pch="2", col=rgb(0,0,1,0.25), cex=1, type="l")
-  points(B.RPM.4~GEN, BETAS.LINE, pch="4", col=rgb(0,0,1,0.25), cex=1, type="l")
-  points(B.RPM.5~GEN, BETAS.LINE, pch="5", col=rgb(0,0,1,0.25), cex=1, type="l")
-  points(B.RPM.3~GEN, BETAS.LINE, pch="3", col=rgb(1,0,0,0.25), cex=1, type="l")
-  points(B.RPM.6~GEN, BETAS.LINE, pch="6", col=rgb(1,0,0,0.25), cex=1, type="l")
-  points(B.RPM.7~GEN, BETAS.LINE, pch="7", col=rgb(1,0,0,0.25), cex=1, type="l")
-  points(B.RPM.8~GEN, BETAS.LINE, pch="8", col=rgb(1,0,0,0.25), cex=1, type="l")
+  points(B.RPM.1~GEN, BETAS.LINE, pch = "1", col = rgb(0,0,1,0.25), cex = 1, type = "l")
+  points(B.RPM.2~GEN, BETAS.LINE, pch = "2", col = rgb(0,0,1,0.25), cex = 1, type = "l")
+  points(B.RPM.4~GEN, BETAS.LINE, pch = "4", col = rgb(0,0,1,0.25), cex = 1, type = "l")
+  points(B.RPM.5~GEN, BETAS.LINE, pch = "5", col = rgb(0,0,1,0.25), cex = 1, type = "l")
+  points(B.RPM.3~GEN, BETAS.LINE, pch = "3", col = rgb(1,0,0,0.25), cex = 1, type = "l")
+  points(B.RPM.6~GEN, BETAS.LINE, pch = "6", col = rgb(1,0,0,0.25), cex = 1, type = "l")
+  points(B.RPM.7~GEN, BETAS.LINE, pch = "7", col = rgb(1,0,0,0.25), cex = 1, type = "l")
+  points(B.RPM.8~GEN, BETAS.LINE, pch = "8", col = rgb(1,0,0,0.25), cex = 1, type = "l")
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
   abline(h = 0, lty = 2)
@@ -436,14 +434,14 @@ plot(B.INT.C~GEN.C, BETAS, pch = 16, col = "white", cex = 1, type = "o",
   arrows(x0 = BETAS$GEN.S, y0 = BETAS$B.INT.S-BETAS$se.INT.S,
     x1 = BETAS$GEN.S, y1 = BETAS$B.INT.S+BETAS$se.INT.S,
     col = "red", code = 3, angle = 90, length = 0)
-  points(B.INT.1~GEN, BETAS.LINE, pch="1", col=rgb(0,0,1,0.25), cex=1, type="l")
-  points(B.INT.2~GEN, BETAS.LINE, pch="2", col=rgb(0,0,1,0.25), cex=1, type="l")
-  points(B.INT.4~GEN, BETAS.LINE, pch="4", col=rgb(0,0,1,0.25), cex=1, type="l")
-  points(B.INT.5~GEN, BETAS.LINE, pch="5", col=rgb(0,0,1,0.25), cex=1, type="l")
-  points(B.INT.3~GEN, BETAS.LINE, pch="3", col=rgb(1,0,0,0.25), cex=1, type="l")
-  points(B.INT.6~GEN, BETAS.LINE, pch="6", col=rgb(1,0,0,0.25), cex=1, type="l")
-  points(B.INT.7~GEN, BETAS.LINE, pch="7", col=rgb(1,0,0,0.25), cex=1, type="l")
-  points(B.INT.8~GEN, BETAS.LINE, pch="8", col=rgb(1,0,0,0.25), cex=1, type="l")
+  points(B.INT.1~GEN, BETAS.LINE, pch = "1", col = rgb(0,0,1,0.25), cex = 1, type = "l")
+  points(B.INT.2~GEN, BETAS.LINE, pch = "2", col = rgb(0,0,1,0.25), cex = 1, type = "l")
+  points(B.INT.4~GEN, BETAS.LINE, pch = "4", col = rgb(0,0,1,0.25), cex = 1, type = "l")
+  points(B.INT.5~GEN, BETAS.LINE, pch = "5", col = rgb(0,0,1,0.25), cex = 1, type = "l")
+  points(B.INT.3~GEN, BETAS.LINE, pch = "3", col = rgb(1,0,0,0.25), cex = 1, type = "l")
+  points(B.INT.6~GEN, BETAS.LINE, pch = "6", col = rgb(1,0,0,0.25), cex = 1, type = "l")
+  points(B.INT.7~GEN, BETAS.LINE, pch = "7", col = rgb(1,0,0,0.25), cex = 1, type = "l")
+  points(B.INT.8~GEN, BETAS.LINE, pch = "8", col = rgb(1,0,0,0.25), cex = 1, type = "l")
   abline(h = 0, lty = 2)
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
@@ -453,6 +451,15 @@ mtext(side = 2, expression(italic(beta)[duration]), las = 3, line = 3)
 #
 mtext("Generation", side = 1, line = 2.5, cex = 1)
 mtext("Running duration (sd units)", side = 1, line = 2.5, cex = 1, adj = 2)
+
+
+
+
+
+
+
+
+
 
 
 
@@ -471,139 +478,366 @@ rm(list=ls())  # delete all objects, to start fresh in new section below
 #.################ section #2 - make figure 2 responses to selection ###############
 #.################ section #2 - make figure 2 responses to selection ###############
 dat 	   <- read.table("QG-mouse-trade-off_data.txt", header = TRUE)
-dat$n<-1
-MEANS       <-aggregate(RPM56~GEN+line,dat,FUN=mean)
-MEANS$SD.RPM<-aggregate(RPM56~GEN+line,dat,FUN=sd)[3]
-MEANS$n     <-aggregate(n~GEN+line,dat,FUN=sum)$n
-MEANS$SE.RPM<-MEANS$SD.RPM/sqrt(MEANS$n)
-MEANS$INT   <-aggregate(INT56~GEN+line,dat,FUN=mean)$INT
-MEANS$SD.INT<-aggregate(INT56~GEN+line,dat,FUN=sd)[3]
-MEANS$n     <-aggregate(n~GEN+line,dat,FUN=sum)$n
-MEANS$SE.INT<-MEANS$SD.INT/sqrt(MEANS$n)
-colnames(MEANS)<-c("GEN","LINE","RPM","SD.RPM","N","SE.RPM","INT","SD.INT","SE.INT")
-head(MEANS)
-#MEANS<-MEANS[-which(MEANS$GEN=="-1"),]
-MEANS$linetype<-"S"
-MEANS$linetype[which(MEANS$LINE=="1")]<-"C"
-MEANS$linetype[which(MEANS$LINE=="2")]<-"C"
-MEANS$linetype[which(MEANS$LINE=="4")]<-"C"
-MEANS$linetype[which(MEANS$LINE=="5")]<-"C"
-#
-MEANS       <-aggregate(RPM56~GEN+line,dat,FUN=mean)
-MEANS$SD.RPM<-aggregate(RPM56~GEN+line,dat,FUN=sd)[3]
-MEANS$n     <-aggregate(n~GEN+line,dat,FUN=sum)$n
-MEANS$SE.RPM<-MEANS$SD.RPM/sqrt(MEANS$n)
-MEANS$INT   <-aggregate(INT56~GEN+line,dat,FUN=mean)$INT56
-MEANS$SD.INT <-aggregate(INT56~GEN+line,dat,FUN=sd)[3]
-MEANS$n      <-aggregate(n~GEN+line,dat,FUN=sum)$n
-MEANS$SE.INT<-MEANS$SD.INT/sqrt(MEANS$n)
-#
-MEANS$RUN     <-aggregate(RUN56~GEN+line,dat,FUN=mean)$RUN56
-MEANS$SD.RUN56<-aggregate(RUN56~GEN+line,dat,FUN=sd)[3]
-MEANS$n       <-aggregate(n~GEN+line,dat,FUN=sum)$n
-MEANS$SE.RUN56<-MEANS$SD.RUN56/sqrt(MEANS$n)
-colnames(MEANS)<-c("GEN","LINE","RPM","SD.RPM","N","SE.RPM","INT","SD.INT","SE.INT","RUN","SD.RUN","SE.RUN")
-head(MEANS)
-#MEANS<-MEANS[-which(MEANS$GEN=="-1"),]
-MEANS$linetype<-"S"
-MEANS$linetype[which(MEANS$LINE=="1")]<-"C"
-MEANS$linetype[which(MEANS$LINE=="2")]<-"C"
-MEANS$linetype[which(MEANS$LINE=="4")]<-"C"
-MEANS$linetype[which(MEANS$LINE=="5")]<-"C"
-#
-#add RATIO
-MEANS.C       <-aggregate(RPM56~GEN,subset(dat,linetype==0),FUN=mean)
-MEANS.C$INT56 <-aggregate(INT56~GEN,subset(dat,linetype==0),FUN=mean)$INT56
-MEANS.C$RUN56 <-aggregate(RUN56~GEN,subset(dat,linetype==0),FUN=mean)$RUN56
-MEANS.S       <-aggregate(RPM56~GEN,subset(dat,linetype==1),FUN=mean)
-MEANS.S$INT56 <-aggregate(INT56~GEN,subset(dat,linetype==1),FUN=mean)$INT56
-MEANS.S$RUN56 <-aggregate(RUN56~GEN,subset(dat,linetype==1),FUN=mean)$RUN56
-RATIOS<-data.frame(GEN=MEANS$GEN[1:71], RPM=MEANS.S$RPM56/MEANS.C$RPM56,INT=MEANS.S$INT56/MEANS.C$INT56,RUN=MEANS.S$RUN56/MEANS.C$RUN56)
+library(visreg)
+library(splines)
+##################################
+dat$n <- 1
+MEANS        <- aggregate(RPM56 ~ GEN + line, data = dat, FUN = mean)
+MEANS$SD.RPM <- aggregate(RPM56 ~ GEN + line, data = dat, FUN = sd)[3]
+MEANS$N      <- aggregate(n ~ GEN + line, data = dat, FUN = sum)$n
+MEANS$SE.RPM <- MEANS$SD.RPM / sqrt(MEANS$N)
+MEANS$INT    <- aggregate(INT56 ~ GEN + line, data = dat, FUN = mean)$INT
+MEANS$SD.INT <- aggregate(INT56 ~ GEN + line, data = dat, FUN = sd)[3]
+MEANS$SE.INT <- MEANS$SD.INT / sqrt(MEANS$N)
+MEANS$RUN    <- aggregate(RUN56 ~ GEN + line, data = dat, FUN = mean)$RUN56
+MEANS$SD.RUN <- aggregate(RUN56 ~ GEN + line, data = dat, FUN = sd)[3]
+MEANS$SE.RUN <- MEANS$SD.RUN / sqrt(MEANS$N)
+  names(MEANS)[c(2:3)] <- c("LINE", "RPM")
 
-dev.new(width=9,height=6, units = "cm")
-par(mfrow=c(3,1),las=1, mar=c(2,3,0,0), oma=c(2,4,2.5,5))
-  plot(RUN~GEN, subset(MEANS, LINE=="1"), pch=16,lty=1,col="blue",type="l",ylim=c(6,15000),xlim=c(0,78), xaxt="n")
-points(RUN~GEN, subset(MEANS, LINE=="2"), pch=16,lty=1,col="blue",type="l")
-points(RUN~GEN, subset(MEANS, LINE=="4"), pch=16,lty=1,col="blue",type="l")
-points(RUN~GEN, subset(MEANS, LINE=="5"), pch=16,lty=1,col="blue",type="l")
-points(RUN~GEN, subset(MEANS, LINE=="3"), pch=17,lty=1,col="red",type="l")
-points(RUN~GEN, subset(MEANS, LINE=="6"), pch=17,lty=1,col="red",type="l")
-points(RUN~GEN, subset(MEANS, LINE=="7"), pch=17,lty=1,col="red",type="l")
-points(RUN~GEN, subset(MEANS, LINE=="8"), pch=17,lty=1,col="red",type="l")
-  mtext("Wisconsin generations", line = 0.75, adj = 0.12, side = 3, cex = 1)
-  mtext("Riverside generations", line =  0.75, adj = 0.80, side = 3, cex = 1)
-legend(-4,14000,c("Control lines","Selected lines","ratio"), cex=1,lty=c(1,1,1),lwd=c(1,1,2), col=c("blue","red","black"),bty="n")
+MEANS$linetype <- "S"  #<-- Selected Lines
+MEANS$linetype[which(MEANS$LINE == "1")] <- "C"  #<-- Control line
+MEANS$linetype[which(MEANS$LINE == "2")] <- "C"  #<-- Control line
+MEANS$linetype[which(MEANS$LINE == "4")] <- "C"  #<-- Control line
+MEANS$linetype[which(MEANS$LINE == "5")] <- "C"  #<-- Control line
+
+
+# add RATIO
+MEANS.C       <- aggregate(RPM56 ~ GEN,
+			data = subset(dat, linetype == 0), FUN = mean)
+MEANS.C$INT56 <- aggregate(INT56 ~ GEN,
+			data = subset(dat, linetype == 0), FUN = mean)$INT56
+MEANS.C$RUN56 <- aggregate(RUN56 ~ GEN,
+			data = subset(dat, linetype == 0), FUN = mean)$RUN56
+MEANS.S       <- aggregate(RPM56 ~ GEN,
+			data = subset(dat, linetype == 1), FUN = mean)
+MEANS.S$INT56 <- aggregate(INT56 ~ GEN,
+			data = subset(dat, linetype == 1), FUN = mean)$INT56
+MEANS.S$RUN56 <- aggregate(RUN56 ~ GEN,
+			data = subset(dat, linetype == 1), FUN = mean)$RUN56
+RATIOS <- data.frame(GEN = MEANS$GEN[1:71],
+  RPM = MEANS.S$RPM56 /MEANS.C$RPM56,
+  INT = MEANS.S$INT56 / MEANS.C$INT56,
+  RUN = MEANS.S$RUN56 / MEANS.C$RUN56)
+
+
+
+
+#.################ section #2D - selection GAIN vs differential ###############
+#.################ section #2D - selection GAIN vs differential ###############
+#.################ section #2D - selection GAIN vs differential ###############
+#.################ section #2D - selection GAIN vs differential ###############
+#.################ section #2D - selection GAIN vs differential ###############
+#.################ section #2D - selection GAIN vs differential ###############
+#.################ section #2D - selection GAIN vs differential ###############
+dat <- dat[order(dat$GEN), ]
+DAT <- dat[which(dat$GEN < 78), ]
+DAT <- DAT[which(dat$GEN > -1), ]
+DAT$BRED <- 0  #<-- column to indicate individuals chosen as breeders
+DAT$BRED[which(DAT$pups > 0)] <- 1  #<-- assign 1 for breeders
+DATb <- DAT[which(DAT$BRED > 0), ]  #<-- object which contains only BREEDERS
+SEL   <- aggregate(RUN56 ~ GEN + line, data = DAT, FUN = mean) #RUN56 average per generation
+colnames(SEL) <- c("GEN", "LINE", "Xp")  #(Xp) = mean population
+SEL$SD <- aggregate(RUN56 ~ GEN + line, data = DAT, FUN = sd)$RUN56
+SEL$Xb <- aggregate(RUN56 ~ GEN + line, data = DATb, FUN = mean)$RUN56 #(Xb) = mean breeders
+SEL$S.abs <- SEL$Xb - SEL$Xp # RUN56 absolute selection differential
+
+CONTROL <- aggregate(RUN56 ~ GEN + linetype, data = DAT, FUN = mean)
+CONTROL <- subset(CONTROL, linetype == 0)
+
+SEL <- merge(SEL, CONTROL, by = "GEN")
+  names(SEL) <- c("GEN", "LINE", "Xp", "SD", "Xb", "S.abs", "Xp.C")
+SEL$S.std <- SEL$S.abs / SEL$SD
+SEL.3 <- subset(SEL, LINE == 3)
+SEL.6 <- subset(SEL, LINE == 6)
+SEL.7 <- subset(SEL, LINE == 7)
+SEL.8 <- subset(SEL, LINE == 8)
+
+# split by CONTROL vs SELECTED lines
+## Selective gain in the S line
+SEL.3$GAIN <- with(SEL.3, Xp - Xp.C)
+SEL.6$GAIN <- with(SEL.6, Xp - Xp.C)
+SEL.7$GAIN <- with(SEL.7, Xp - Xp.C)
+SEL.8$GAIN <- with(SEL.8, Xp - Xp.C)
+## cummulative selection differential
+SEL.3$S.cum <- with(SEL.3, cumsum(S.std) - S.std)
+SEL.6$S.cum <- with(SEL.6, cumsum(S.std) - S.std)
+SEL.7$S.cum <- with(SEL.7, cumsum(S.std) - S.std)
+SEL.8$S.cum <- with(SEL.8, cumsum(S.std) - S.std)
+
+SEL.3$GAIN.std <- SEL.3$GAIN / 2050
+SEL.6$GAIN.std <- SEL.6$GAIN / 2050
+SEL.7$GAIN.std <- SEL.7$GAIN / 2050
+SEL.8$GAIN.std <- SEL.8$GAIN / 2050
+
+
+DF <- 6
+spline_model.3 <- lm(GAIN.std ~ ns(S.cum, df = DF), data = SEL.3)
+spline_model.6 <- lm(GAIN.std ~ ns(S.cum, df = DF), data = SEL.6)
+spline_model.7 <- lm(GAIN.std ~ ns(S.cum, df = DF), data = SEL.7)
+spline_model.8 <- lm(GAIN.std ~ ns(S.cum, df = DF), data = SEL.8)
+
+#estimate realized heritability in UCR era
+SEL.3$ERA <- 16
+SEL.6$ERA <- 16
+SEL.7$ERA <- 16
+SEL.8$ERA <- 16
+SEL.3$ERA[which(SEL.3$GEN > 31)] <- 17
+SEL.6$ERA[which(SEL.6$GEN > 31)] <- 17
+SEL.7$ERA[which(SEL.7$GEN > 31)] <- 17
+SEL.8$ERA[which(SEL.8$GEN > 31)] <- 17
+
+(lm.3 <- summary(lm(GAIN.std ~ S.cum, data = subset(SEL.3, ERA == 17))))
+(lm.6 <- summary(lm(GAIN.std ~ S.cum, data = subset(SEL.6, ERA == 17))))
+(lm.7 <- summary(lm(GAIN.std ~ S.cum, data = subset(SEL.7, ERA == 17))))
+(lm.8 <- summary(lm(GAIN.std ~ S.cum, data = subset(SEL.8, ERA == 17))))
+
+# adjusting for the within-family selection index, using the following formula:
+# h2 = h2R(1-t)/1-r)
+# where h2 is the overall heritability expected from mass selection
+# or a randomly mating population, h2, is the realized heritability obtained for this particular
+# index, r is the coefficient of relationship of full sibs (0.5)
+# and t is the intraclass correlation of full sibs for nesting scores
+IC <- 0.246 #as in Careau et al. (2013; Evolution)
+(h2w.3 <- lm.3$coefficients[2, 1] * (1-0.5) / (1-IC))
+(h2w.6 <- lm.6$coefficients[2, 1] * (1-0.5) / (1-IC))
+(h2w.7 <- lm.7$coefficients[2, 1] * (1-0.5) / (1-IC))
+(h2w.8 <- lm.8$coefficients[2, 1] * (1-0.5) / (1-IC))
+mean(h2w.3, h2w.6, h2w.7, h2w.8)                 # = average h2w
+sd(c(h2w.3, h2w.6, h2w.7, h2w.8)) / sqrt(4)        # = se for h2w with N = 4
+
+LIMITS <- data.frame(line = c(3, 6, 7, 8),
+  limit = c(17.78, 16.39, 19.60, 25.25),
+  CI = c(3.55, 1.92, 2.54, 3.57))
+LIMITS$lcl <- LIMITS$limit - LIMITS$CI
+LIMITS$ucl <- LIMITS$limit + LIMITS$CI
+
+
+
+
+YLIM <- c(-0.7, 5.15)
+# make Figure 2
+dev.new(width = 8, height = 4, units = "cm")
+par(mfrow = c(6, 3), las = 1, oma = c(3, 5, 1, 0), mar = c(0, 0, 1, 1))
+layout(matrix(c(1,2,3,
+                1,2,3,
+                4,2,3,
+                4,5,6,
+                7,5,6,
+                7,5,6), 6, 3, byrow = TRUE))
+# Distance
+plot(RUN ~ GEN, data = subset(MEANS, LINE == "1"),
+  pch = 16, lty = 1, col = "blue", type = "l",
+  xlim = c(0, 78), xaxt = "n", ylim = c(6, 15000))
+  points(RUN ~ GEN, data = subset(MEANS, LINE == "2"),
+    pch = 16, lty = 1, col = "blue", type = "l")
+  points(RUN ~ GEN, data = subset(MEANS, LINE == "4"),
+    pch = 16, lty = 1, col = "blue", type = "l")
+  points(RUN ~ GEN, data = subset(MEANS, LINE == "5"),
+    pch = 16, lty = 1, col = "blue", type = "l")
+  points(RUN ~ GEN, data = subset(MEANS, LINE == "3"),
+    pch = 17, lty = 1, col = "red", type = "l")
+  points(RUN ~ GEN, data = subset(MEANS, LINE == "6"),
+    pch = 17, lty = 1, col = "red", type = "l")
+  points(RUN ~ GEN, data = subset(MEANS, LINE == "7"),
+    pch = 17, lty = 1, col = "red", type = "l")
+  points(RUN ~ GEN, data = subset(MEANS, LINE == "8"),
+    pch = 17, lty = 1, col = "red", type = "l")
+legend(-4, 3000, "Control lines",
+  cex = 1, lty = 1, lwd = 1, col = "blue", bty = "n")
+legend(35, 3000, "Selected lines",
+  cex = 1, lty = 1, lwd = 1, col = "red", bty = "n")
+
+  rect(xleft = 31.1, ybottom = min(MEANS$RUN),
+    xright = 35.9, ytop = max(MEANS$RUN), col = "white", border = "white")
+  rect(xleft = 51.1, ybottom = min(MEANS$RUN),
+    xright = 52.9, ytop = max(MEANS$RUN), col = "white", border = "white")
+  rect(xleft = 62.1, ybottom = min(MEANS$RUN),
+    xright = 64.9, ytop = max(MEANS$RUN), col = "white", border = "white")
+  rect(xleft = 66.1, ybottom = min(MEANS$RUN),
+    xright = 67.9, ytop = max(MEANS$RUN), col = "white", border = "white")
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj = -0.8)
+#  mtext("Distance run", side = 2, las = 3, line = 5)
+  mtext("revs/day", side = 2, las = 3, line = 3.5)
+  mtext("A", side = 3, adj = 0.015, line = -1.5)
+  mtext("Wisconsin", line = 0.4, adj = 0.1, side = 3, cex = 1)
+  mtext("Riverside", line = 0.4, adj = 0.85, side = 3, cex = 1)
+
+# Selection gain (2 lines, see below for other 2)
+par(mar = c(1, 3, 1, 1))
+visreg(spline_model.3, ylab = "", xlab = "",
+  points = list(cex = 1, pch = 16, col = rgb(0,0,0,0)),
+  line = list(col = rgb(1,0,0,0.5)),
+  xlim = c(0, 50), ylim = YLIM)
+  arrows(x0 = LIMITS$ucl[1], y0 = -0.5, x1 = LIMITS$lcl[1], y1 = -0.5,
+    code = 3, length = 0, col = 16)
+  points(LIMITS$limit[1], y = -0.5, pch = 15, col = 16)
+  points(GAIN.std ~ S.cum, data = SEL.3, pch = SEL.3$ERA, col = SEL.3$ERA)
+  #text(35,1,expression(paste(italic(b)," = 0.072±0.027**")))
+  text(35, 1, "slope = 0.072\u00B10.027**")
+  mtext("line S3", side = 1, cex = 0.75, line = -1, adj = 0.95)
+  mtext("D", side = 3, adj = 0.025, line = -1.5)
+  legend(-1,4.5, c("UCR","WIS"), col = c(17, 16), pch = c(17, 16), bty = "n")
+     clip(x1 = SEL.3$S.cum[which(SEL.3$GEN == 36)],
+       x2 = SEL.3$S.cum[which(SEL.3$GEN == 77)], y1 = 0, y2 = 10)
+  abline(lm(GAIN.std ~ S.cum, data = subset(SEL.3, ERA == 17)), lwd = 2)
+visreg(spline_model.6, ylab = "", xlab = "",
+  points = list(cex = 1, pch = 16, col = rgb(0,0,0,0)),
+  line = list(col = rgb(1,0,0,0.5)),
+  xlim = c(0, 50),ylim = YLIM)
+  arrows(x0 = LIMITS$ucl[2], y0 = -0.5, x1 = LIMITS$lcl[2], y1 = -0.5,
+    code = 3, length = 0, col = 16)
+  points(LIMITS$limit[2], y = -0.5, pch = 15,col = 16)
+  points(GAIN.std ~ S.cum, data = SEL.6, pch = SEL.6$ERA, col = SEL.6$ERA)
+  #text(35,1,expression(paste(italic(b)," = 0.037±0.017*")))
+  text(35, 1, "slope = 0.037\u00B10.017*")
+  mtext("line S6", side = 1, cex = 0.75, line = -1, adj = 0.95)
+  mtext("E", side = 3, adj = 0.025, line = -1.5)
+     clip(x1 = SEL.6$S.cum[which(SEL.6$GEN == 36)],
+       x2 = SEL.6$S.cum[which(SEL.6$GEN == 77)], y1 = 0, y2 = 10)
+  abline(lm(GAIN.std ~ S.cum, data = subset(SEL.6, ERA == 17)), lwd = 2)
 #
-par(new=T)
-  plot(RUN~GEN, RATIOS,axes=F,type="l",lwd=2); axis(side = 4); mtext("Ratio", side = 4, line = 3,las=3)
+
+
+# Speed
+par(mar = c(0,0,2,1))
+plot(RPM ~ GEN, data = subset(MEANS, LINE == "1"),
+  pch = 16, lty = 1, col = "blue", type = "l",
+  xlim = c(0, 78), xaxt = "n", ylim = c(0, 30))
+  points(RPM ~ GEN, data = subset(MEANS, LINE == "2"),
+    pch = 16, lty = 1, col = "blue", type = "l")
+  points(RPM ~ GEN, data = subset(MEANS, LINE == "4"),
+    pch = 16, lty = 1, col = "blue", type = "l")
+  points(RPM ~ GEN, data = subset(MEANS, LINE == "5"),
+    pch = 16, lty = 1, col = "blue", type = "l")
+  points(RPM ~ GEN, data = subset(MEANS, LINE == "3"),
+    pch = 17, lty = 1, col = "red", type = "l")
+  points(RPM ~ GEN, data = subset(MEANS, LINE == "6"),
+    pch = 17, lty = 1, col = "red", type = "l")
+  points(RPM ~ GEN, data = subset(MEANS, LINE == "7"),
+    pch = 17, lty = 1, col = "red", type = "l")
+  points(RPM ~ GEN, data = subset(MEANS, LINE == "8"),
+    pch = 17, lty = 1, col = "red", type = "l")
+
+  rect(xleft = 31.1, ybottom = min(MEANS$RPM),
+    xright = 35.9, ytop = max(MEANS$RPM), col = "white", border = "white")
+  rect(xleft = 51.1, ybottom = min(MEANS$RPM),
+    xright = 52.9, ytop = max(MEANS$RPM), col = "white", border = "white")
+  rect(xleft = 62.1, ybottom = min(MEANS$RPM),
+    xright = 64.9, ytop = max(MEANS$RPM), col = "white", border = "white")
+  rect(xleft = 66.1, ybottom = min(MEANS$RPM),
+    xright = 67.9, ytop = max(MEANS$RPM), col = "white", border = "white")
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj = -0.8)
+#  mtext("Running speed", side = 2,las = 3, line = 5)
+  mtext("revs/min", side = 2, las = 3, line = 3.5)
+  mtext("B", side = 3, adj = 0.015, line = -1.5)
+
+# Selection gain (2 lines, see above for other 2)
+par(mar = c(1,3,1,1))
+visreg(spline_model.7, ylab = "", xlab = "",
+  points = list(cex = 1, pch = 16, col = rgb(0,0,0,0)),
+  line = list(col = rgb(1,0,0,0.5)),
+  xlim = c(0,50), ylim = YLIM)
+  arrows(x0 = LIMITS$ucl[3], y0 = -0.5, x1 = LIMITS$lcl[3], y1 = -0.5,
+    code = 3, length = 0, col = 16)
+  points(LIMITS$limit[3], y = -0.5, pch = 15, col = 16)
+  points(GAIN.std ~ S.cum, data = SEL.7, pch = SEL.7$ERA, col = SEL.7$ERA)
+  #text(35,1,expression(paste(italic(b)," = 0.041±0.019*")))
+  text(36,1,"slope = 0.041\u00B10.019*")
+  mtext("line S7", side = 1, cex = 0.75, line = -1, adj = 0.95)
+  mtext("F", side = 3, adj = 0.025, line = -1.5)
+     clip(x1 = SEL.7$S.cum[which(SEL.7$GEN==36)],
+       x2 = SEL.7$S.cum[which(SEL.7$GEN==77)], y1 = 0, y2 = 10)
+  abline(lm(GAIN.std ~ S.cum, data = subset(SEL.7, ERA == 17)), lwd = 2)
+
+mtext("Selective gain (revs/day; sd units)",
+    side = 2, line = 2, adj = -0.5, las = 3)
+
+visreg(spline_model.8, ylab = "", xlab = "",
+  points=list(cex = 1, pch = 16, col = rgb(0,0,0,0)),
+  line = list(col = rgb(1,0,0,0.5)),
+  xlim = c(0, 50), ylim = YLIM)
+  arrows(x0 = LIMITS$ucl[4], y0 = -0.5, x1 = LIMITS$lcl[4], y1 = -0.5,
+    code = 3,length = 0, col = 16)
+  points(LIMITS$limit[4], y = -0.5, pch = 15, col = 16)
+  points(GAIN.std ~ S.cum, data = SEL.8, pch = SEL.8$ERA, col = SEL.8$ERA)
+  #text(35,1,expression(paste(italic(b)," = 0.066±0.018**")))
+  text(36, 1, "slope = 0.066\u00B10.018**")
+  mtext("line S8", side = 1, cex = 0.75, line = -1, adj = 0.95)
+  mtext("G", side = 3, adj = 0.025, line = -1.5)
+     clip(x1 = SEL.8$S.cum[which(SEL.8$GEN == 36)],
+       x2 = SEL.8$S.cum[which(SEL.8$GEN == 77)], y1 = 0, y2 = 10)
+  abline(lm(GAIN.std ~ S.cum, data = subset(SEL.8, ERA == 17)), lwd = 2)
+
+mtext("Cummulative differential (sd units)", side = 1, line = 2.5, adj = 2.5)
 #
-rect(xleft=31.1,ybottom=min(RATIOS$RUN),xright=35.9,ytop=max(RATIOS$RUN), col = "white", border = "white")
-rect(xleft=51.1,ybottom=min(RATIOS$RUN),xright=52.9,ytop=max(RATIOS$RUN), col = "white", border = "white")
-rect(xleft=62.1,ybottom=min(RATIOS$RUN),xright=64.9,ytop=max(RATIOS$RUN), col = "white", border = "white")
-rect(xleft=66.1,ybottom=min(RATIOS$RUN),xright=67.9,ytop=max(RATIOS$RUN), col = "white", border = "white")
-axis(1,at=0:78, labels=F)
-axis(1, at = seq(0, 78, 6),padj=-0.8)
-mtext("Distance run",side=2,las=3,line=5)
-mtext("(revs/day)",side=2,las=3,line=3.5)
-mtext("A",side=3,adj=0.015,line=-1.5)
+# Duration
+par(mar = c(0,0,2,1))
+plot(INT ~ GEN, data = subset(MEANS, LINE == "1"),
+  pch = 16, lty = 1, col = "blue", type = "l",
+  xlim = c(0, 78), xaxt = "n", ylim = c(0, 650))
+  points(INT ~ GEN, data = subset(MEANS, LINE == "2"),
+    pch = 16, lty = 1, col = "blue", type = "l")
+  points(INT ~ GEN, data = subset(MEANS, LINE == "4"),
+    pch = 16, lty = 1, col = "blue", type = "l")
+  points(INT ~ GEN, data = subset(MEANS, LINE == "5"),
+    pch = 16, lty = 1, col = "blue", type = "l")
+  points(INT ~ GEN, data = subset(MEANS, LINE == "3"),
+    pch = 17, lty = 1, col = "red", type = "l")
+  points(INT ~ GEN, data = subset(MEANS, LINE == "6"),
+    pch = 17, lty = 1, col = "red", type = "l")
+  points(INT ~ GEN, data = subset(MEANS, LINE == "7"),
+    pch = 17, lty = 1, col = "red", type = "l")
+  points(INT ~ GEN, data = subset(MEANS, LINE == "8"),
+    pch = 17, lty = 1, col = "red", type = "l")
+
+  rect(xleft = 31.1, ybottom = min(MEANS$INT),
+    xright = 35.9, ytop = max(MEANS$INT), col = "white", border = "white")
+  rect(xleft = 51.1, ybottom = min(MEANS$INT),
+    xright = 52.9, ytop = max(MEANS$INT), col = "white", border = "white")
+  rect(xleft = 62.1, ybottom = min(MEANS$INT),
+    xright = 64.9, ytop = max(MEANS$INT), col = "white", border = "white")
+  rect(xleft = 66.1, ybottom = min(MEANS$INT),
+    xright = 67.9, ytop = max(MEANS$INT), col = "white", border = "white")
+  mtext("C", side = 3, adj = 0.015, line = -1.5)
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj = -0.8)
+#  mtext("Running duration", side = 2, las = 3, line = 5)
+  mtext("min/day", side = 2, las = 3, line = 3.5)
+
+mtext("Generation", side = 1,  line = 1.5)
 #
-  plot(RPM~GEN, subset(MEANS, LINE=="1"), pch=16,lty=1,col="blue",type="l",ylim=c(0,30),xlim=c(0,78), xaxt="n")
-points(RPM~GEN, subset(MEANS, LINE=="2"), pch=16,lty=1,col="blue",type="l")
-points(RPM~GEN, subset(MEANS, LINE=="4"), pch=16,lty=1,col="blue",type="l")
-points(RPM~GEN, subset(MEANS, LINE=="5"), pch=16,lty=1,col="blue",type="l")
-points(RPM~GEN, subset(MEANS, LINE=="3"), pch=17,lty=1,col="red",type="l")
-points(RPM~GEN, subset(MEANS, LINE=="6"), pch=17,lty=1,col="red",type="l")
-points(RPM~GEN, subset(MEANS, LINE=="7"), pch=17,lty=1,col="red",type="l")
-points(RPM~GEN, subset(MEANS, LINE=="8"), pch=17,lty=1,col="red",type="l")
-#
-par(new=T)
-plot(RPM~GEN, RATIOS,axes=F,type="l",lwd=2); axis(side = 4); mtext("Ratio", side = 4, line = 3,las=3)
-#
-rect(xleft=31.1,ybottom=min(RATIOS$RPM),xright=35.9,ytop=max(RATIOS$RPM), col = "white", border = "white")
-rect(xleft=51.1,ybottom=min(RATIOS$RPM),xright=52.9,ytop=max(RATIOS$RPM), col = "white", border = "white")
-rect(xleft=62.1,ybottom=min(RATIOS$RPM),xright=64.9,ytop=max(RATIOS$RPM), col = "white", border = "white")
-rect(xleft=66.1,ybottom=min(RATIOS$RPM),xright=67.9,ytop=max(RATIOS$RPM), col = "white", border = "white")
-axis(1,at=0:78, labels=F)
-axis(1, at = seq(0, 78, 6),padj=-0.8)
-mtext("Running speed",side=2,las=3,line=5)
-mtext("(revs/min)",side=2,las=3,line=3.5)
-mtext("B",side=3,adj=0.015,line=-1.5)
-#
-  plot(INT~GEN, subset(MEANS, LINE=="1"), pch=16,lty=1,col="blue",type="l", ylim=c(0,650),xlim=c(0,78),xaxt="n")
-points(INT~GEN, subset(MEANS, LINE=="2"), pch=16,lty=1,col="blue",type="l")
-points(INT~GEN, subset(MEANS, LINE=="4"), pch=16,lty=1,col="blue",type="l")
-points(INT~GEN, subset(MEANS, LINE=="5"), pch=16,lty=1,col="blue",type="l")
-points(INT~GEN, subset(MEANS, LINE=="3"), pch=17,lty=1,col="red",type="l")
-points(INT~GEN, subset(MEANS, LINE=="6"), pch=17,lty=1,col="red",type="l")
-points(INT~GEN, subset(MEANS, LINE=="7"), pch=17,lty=1,col="red",type="l")
-points(INT~GEN, subset(MEANS, LINE=="8"), pch=17,lty=1,col="red",type="l")
-#
-par(new=T)
-plot(INT~GEN, RATIOS,axes=F,type="l",lwd=2) ; axis(side = 4); mtext("Ratio", side = 4, line = 3,las=3)
-#
-rect(xleft=31.1,ybottom=min(RATIOS$INT),xright=35.9,ytop=max(RATIOS$INT), col = "white", border = "white")
-rect(xleft=51.1,ybottom=min(RATIOS$INT),xright=52.9,ytop=max(RATIOS$INT), col = "white", border = "white")
-rect(xleft=62.1,ybottom=min(RATIOS$INT),xright=64.9,ytop=max(RATIOS$INT), col = "white", border = "white")
-rect(xleft=66.1,ybottom=min(RATIOS$INT),xright=67.9,ytop=max(RATIOS$INT), col = "white", border = "white")
-mtext("C",side=3,adj=0.015,line=-1.5)
-axis(1,at=0:78, labels=F)
-axis(1, at = seq(0, 78, 6),padj=-0.8)
-mtext("Running duration",side=2,las=3,line=5)
-mtext("(min/day)",side=2,las=3,line=3.5)
-#
-#legend("bottomleft",c("Control lines","Selected lines"), cex=1,lty=c(1,1), col=c("blue","red"),bty="n")
-mtext("Generation", side=1,  line=2.5)
-#
+
+
+
+
+
+
+
 
 #calculate average S/C ratios after generation 25
-mean(RATIOS$RUN[which(RATIOS$GEN>24)])
-mean(RATIOS$RPM[which(RATIOS$GEN>24)])
-mean(RATIOS$INT[which(RATIOS$GEN>24)])
+mean(RATIOS$RUN[which(RATIOS$GEN > 24)])
+mean(RATIOS$RPM[which(RATIOS$GEN > 24)])
+mean(RATIOS$INT[which(RATIOS$GEN > 24)])
 
 #calculate average S/C ratios for UCR gens
-mean(RATIOS$RUN[which(RATIOS$GEN>30)])
-mean(RATIOS$RPM[which(RATIOS$GEN>30)])
-mean(RATIOS$INT[which(RATIOS$GEN>30)])
+mean(RATIOS$RUN[which(RATIOS$GEN > 30)])
+mean(RATIOS$RPM[which(RATIOS$GEN > 30)])
+mean(RATIOS$INT[which(RATIOS$GEN > 30)])
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 rm(list=ls())  # delete all objects, to start fresh in new section below
 #.############# section #3A - make A-inverse to run animal models#################
@@ -871,8 +1105,8 @@ LINES<-c(1,2,4,5)
       ## First check, then drop 0.0s
       nott <- seq(length(traits))[-t] #<--
       stopifnot(all(tmpDatfx[c(sapply(nott, FUN = function(x){
-            seq(traitZrowInd[1,x], traitZrowInd[2,x], by=1)})), ] == 0.0))
-      datfx[ncomp, , ] <- tmpDatfx[seq(traitZrowInd[1,t], traitZrowInd[2,t], by=1), ]
+            seq(traitZrowInd[1,x], traitZrowInd[2,x], by = 1)})), ] == 0.0))
+      datfx[ncomp, , ] <- tmpDatfx[seq(traitZrowInd[1,t], traitZrowInd[2,t], by = 1), ]
         dimnames(datfx)[[1L]][ncomp] <- paste(tname, gfacNm, sep = ".")
       ncomp <- ncomp + 1
     }  # end for t
@@ -982,8 +1216,8 @@ LINES <- c(3,6,7,8)
       ## First check, then drop 0.0s
       nott <- seq(length(traits))[-t] #<--
       stopifnot(all(tmpDatfx[c(sapply(nott, FUN = function(x){
-            seq(traitZrowInd[1,x], traitZrowInd[2,x], by=1)})), ] == 0.0))
-      datfx[ncomp, , ] <- tmpDatfx[seq(traitZrowInd[1,t], traitZrowInd[2,t], by=1), ]
+            seq(traitZrowInd[1,x], traitZrowInd[2,x], by = 1)})), ] == 0.0))
+      datfx[ncomp, , ] <- tmpDatfx[seq(traitZrowInd[1,t], traitZrowInd[2,t], by = 1), ]
         dimnames(datfx)[[1L]][ncomp] <- paste(tname, gfacNm, sep = ".")
       ncomp <- ncomp + 1
     }  # end for t
@@ -1154,7 +1388,7 @@ BLUPS.C$name<-NULL
 BLUPS.C.wide<-data.frame(reshape(BLUPS.C, v.names = c("BLUP","lower","upper"), idvar = "animal",timevar = "TRAIT", direction = "wide"))
 nrow(BLUPS.C)
 nrow(BLUPS.C.wide)
-DATA.C<-merge(C0datf,BLUPS.C.wide,by="animal",all.x = T)
+DATA.C<-merge(C0datf,BLUPS.C.wide,by = "animal",all.x = T)
 #
 MODE.S<-posterior.mode(SOL.S)
 CI.S<-data.frame(HPDinterval(SOL.S))
@@ -1173,7 +1407,7 @@ BLUPS.S$name<-NULL
 BLUPS.S.wide<-data.frame(reshape(BLUPS.S, v.names = c("BLUP","lower","upper"), idvar = "animal",timevar = "TRAIT", direction = "wide"))
 nrow(BLUPS.S)
 nrow(BLUPS.S.wide)
-DATA.S<-merge(HR1datf,BLUPS.S.wide,by="animal",all.x = T)
+DATA.S<-merge(HR1datf,BLUPS.S.wide,by = "animal",all.x = T)
 head(DATA.S)
 DATA<-rbind(DATA.C,DATA.S)
 DATA<-droplevels(DATA)
@@ -1185,65 +1419,65 @@ LINE.S<-aggregate(cbind(BLUP.RPM,BLUP.INT)~GEN+line,data=DATA.S,FUN=mean)
 
 #make figure 3 BREEDING VALUES and rA
 dev.new(width=9,height=6, units = "cm")
-par(mfrow=c(2,2),las=1, oma=c(4,4,1,1),mar=c(1,1,1,1))
+par(mfrow=c(2,2),las = 1, oma=c(4,4,1,1),mar=c(1,1,1,1))
 layout(matrix(c(1,2,3,3), 2, 2, byrow = TRUE))
 layout.show(3)
 #
-  plot(BLUP.RPM~GEN,subset(LINE.C,line==1),type="l", col="blue",ylim=c(-0.1,0.6),ylab="",xlab="n",xaxt="n")
-points(BLUP.RPM~GEN,subset(LINE.C,line==2),type="l", col="blue")
-points(BLUP.RPM~GEN,subset(LINE.C,line==4),type="l", col="blue")
-points(BLUP.RPM~GEN,subset(LINE.C,line==5),type="l", col="blue")
-points(BLUP.RPM~GEN,subset(LINE.S,line==3),type="l", col="red")
-points(BLUP.RPM~GEN,subset(LINE.S,line==6),type="l", col="red")
-points(BLUP.RPM~GEN,subset(LINE.S,line==7),type="l", col="red")
-points(BLUP.RPM~GEN,subset(LINE.S,line==8),type="l", col="red")
-abline(h=0,lty=3)
-mtext("Genetic merit (breeding values)",side=2,las=3, line=3)
-mtext("A running speed",side=3,adj=0.015,line=-1.5)
-axis(1,at=0:78, labels=F)
-axis(1, at = seq(0, 78, 6),padj=-0.8)
+  plot(BLUP.RPM ~ GEN,subset(LINE.C,line = =1), type = "l", col = "blue",ylim = c(-0.1,0.6),ylab = "",xlab = "n",xaxt="n")
+points(BLUP.RPM ~ GEN,subset(LINE.C,line = =2), type = "l", col = "blue")
+points(BLUP.RPM ~ GEN,subset(LINE.C,line = =4), type = "l", col = "blue")
+points(BLUP.RPM ~ GEN,subset(LINE.C,line = =5), type = "l", col = "blue")
+points(BLUP.RPM ~ GEN,subset(LINE.S,line = =3), type = "l", col = "red")
+points(BLUP.RPM ~ GEN,subset(LINE.S,line = =6), type = "l", col = "red")
+points(BLUP.RPM ~ GEN,subset(LINE.S,line = =7), type = "l", col = "red")
+points(BLUP.RPM ~ GEN,subset(LINE.S,line = =8), type = "l", col = "red")
+abline(h=0, lty = 3)
+mtext("Genetic merit (breeding values)",side = 2,las = 3, line = 3)
+mtext("A running speed",side = 3,adj = 0.015,line = -1.5)
+axis(1, at = 0:78, labels = FALSE)
+axis(1, at = seq(0, 78, 6),padj = -0.8)
 #BLUPs INT trajectories over generations
-  plot(BLUP.INT~GEN,subset(LINE.C,line==1),type="l", col="blue",ylim=c(-0.1,0.6),ylab="",xlab="",yaxt="n",xaxt="n")
-points(BLUP.INT~GEN,subset(LINE.C,line==2),type="l", col="blue")
-points(BLUP.INT~GEN,subset(LINE.C,line==4),type="l", col="blue")
-points(BLUP.INT~GEN,subset(LINE.C,line==5),type="l", col="blue")
-points(BLUP.INT~GEN,subset(LINE.S,line==3),type="l", col="red")
-points(BLUP.INT~GEN,subset(LINE.S,line==6),type="l", col="red")
-points(BLUP.INT~GEN,subset(LINE.S,line==7),type="l", col="red")
-points(BLUP.INT~GEN,subset(LINE.S,line==8),type="l", col="red")
-abline(h=0,lty=3)
+  plot(BLUP.INT ~ GEN,subset(LINE.C,line = =1), type = "l", col = "blue",ylim = c(-0.1,0.6),ylab = "",xlab = "",yaxt="n",xaxt="n")
+points(BLUP.INT ~ GEN,subset(LINE.C,line = =2), type = "l", col = "blue")
+points(BLUP.INT ~ GEN,subset(LINE.C,line = =4), type = "l", col = "blue")
+points(BLUP.INT ~ GEN,subset(LINE.C,line = =5), type = "l", col = "blue")
+points(BLUP.INT ~ GEN,subset(LINE.S,line = =3), type = "l", col = "red")
+points(BLUP.INT ~ GEN,subset(LINE.S,line = =6), type = "l", col = "red")
+points(BLUP.INT ~ GEN,subset(LINE.S,line = =7), type = "l", col = "red")
+points(BLUP.INT ~ GEN,subset(LINE.S,line = =8), type = "l", col = "red")
+abline(h=0, lty = 3)
 axis(2,labels=F)
-mtext("B running duration",side=3,adj=0.015,line=-1.5)
-axis(1,at=0:78, labels=F)
-axis(1, at = seq(0, 78, 6),padj=-0.8)
+mtext("B running duration",side = 3,adj = 0.015,line = -1.5)
+axis(1, at = 0:78, labels = FALSE)
+axis(1, at = seq(0, 78, 6),padj = -0.8)
 #
-  plot(r~GEN, Ra.C, col="blue",pch=16, cex=1,type="o", ylim=c(-0.35,1),xlim=c(1,77),xlab="",xaxt="n",ylab="")
-points(r~GEN, Ra.S, col="red" ,pch=17, cex=1,type="o")
-arrows(x0=Ra.C$GEN,y0=Ra.C$lower,x1=Ra.C$GEN,y1=Ra.C$upper,col="black",code=3,angle=90,length=0)
-arrows(x0=Ra.S$GEN,y0=Ra.S$lower,x1=Ra.S$GEN,y1=Ra.S$upper,col="black" ,code=3,angle=90,length=0)
-points(r~GEN, Ra.1, col=rgb(0,0,1,0.75), cex=1,type="l")
-points(r~GEN, Ra.2, col=rgb(0,0,1,0.75), cex=1,type="l")
-points(r~GEN, Ra.3, col=rgb(1,0,0,0.75), cex=1,type="l")
-points(r~GEN, Ra.4, col=rgb(0,0,1,0.75), cex=1,type="l")
-points(r~GEN, Ra.5, col=rgb(0,0,1,0.75), cex=1,type="l")
-points(r~GEN, Ra.6, col=rgb(1,0,0,0.75), cex=1,type="l")
-points(r~GEN, Ra.7, col=rgb(1,0,0,0.75), cex=1,type="l")
-points(r~GEN, Ra.8, col=rgb(1,0,0,0.75), cex=1,type="l")
-points(r~GEN, Ra.C, col="black" ,pch=16, cex=1,type="o")
-points(r~GEN, Ra.S, col="black" ,pch=17, cex=1,type="o")
-axis(1,at=0:78, labels=F)
-axis(1, at = seq(0, 78, 6),padj=-0.8)
-abline(h=0, lty=2)
-mtext(expression(paste(italic(r)[A]," (±se)")), side=2, line=2.5, las=3,cex=2)
-mtext("Generation",side=1, line=2.5,cex=1.5)
+  plot(r~GEN, Ra.C, col = "blue",pch = 16, cex = 1, type="o", ylim = c(-0.35,1),xlim = c(1,77),xlab = "",xaxt="n",ylab = "")
+points(r~GEN, Ra.S, col = "red" ,pch = 17, cex = 1, type="o")
+arrows(x0=Ra.C$GEN,y0=Ra.C$lower,x1=Ra.C$GEN,y1=Ra.C$upper, col = "black",code = 3,angle=90,length = 0)
+arrows(x0=Ra.S$GEN,y0=Ra.S$lower,x1=Ra.S$GEN,y1=Ra.S$upper, col = "black" ,code = 3,angle=90,length = 0)
+points(r~GEN, Ra.1, col = rgb(0,0,1,0.75), cex = 1, type = "l")
+points(r~GEN, Ra.2, col = rgb(0,0,1,0.75), cex = 1, type = "l")
+points(r~GEN, Ra.3, col = rgb(1,0,0,0.75), cex = 1, type = "l")
+points(r~GEN, Ra.4, col = rgb(0,0,1,0.75), cex = 1, type = "l")
+points(r~GEN, Ra.5, col = rgb(0,0,1,0.75), cex = 1, type = "l")
+points(r~GEN, Ra.6, col = rgb(1,0,0,0.75), cex = 1, type = "l")
+points(r~GEN, Ra.7, col = rgb(1,0,0,0.75), cex = 1, type = "l")
+points(r~GEN, Ra.8, col = rgb(1,0,0,0.75), cex = 1, type = "l")
+points(r~GEN, Ra.C, col = "black" ,pch = 16, cex = 1, type="o")
+points(r~GEN, Ra.S, col = "black" ,pch = 17, cex = 1, type="o")
+axis(1, at = 0:78, labels = FALSE)
+axis(1, at = seq(0, 78, 6),padj = -0.8)
+abline(h=0, lty = 2)
+mtext(expression(paste(italic(r)[A]," (±se)")), side = 2, line = 2.5, las = 3,cex = 2)
+mtext("Generation",side = 1, line = 2.5,cex = 1.5)
 #
-#mtext("Wisconsin generations", line=0.5, adj=0.13, side=3, cex=1)
-#mtext("Riverside generations", line=0.5, adj=0.75, side=3, cex=1)
-legend(0,1.1, c("control (average)","selected (average)"),          pch=c(16,17), col=c("black","black"),bty="n")
-legend(60,1.1, c("replicate control lines","replicate selected lines"),lty=1, col=c(rgb(0,0,1,0.75),rgb(1,0,0,0.75)),bty="n")
-arrows(26,1,26,0.9,length=0.1,lwd=3)
-arrows(60,1,60,0.9,length=0.1,lwd=3)
-mtext("C",side=3,adj=0.015,line=-1.5)
+#mtext("Wisconsin generations", line = 0.5, adj = 0.13, side = 3, cex = 1)
+#mtext("Riverside generations", line = 0.5, adj = 0.75, side = 3, cex = 1)
+legend(0,1.1, c("control (average)","selected (average)"),          pch = c(16,17), col = c("black","black"),bty = "n")
+legend(60,1.1, c("replicate control lines","replicate selected lines"), lty = 1, col = c(rgb(0,0,1,0.75),rgb(1,0,0,0.75)),bty = "n")
+arrows(26,1,26,0.9,length = 0.1,lwd=3)
+arrows(60,1,60,0.9,length = 0.1,lwd=3)
+mtext("C",side = 3,adj = 0.015,line = -1.5)
 
 #.########################### section #4 emergence of a trade-off ##################################
 #.########################### section #4 emergence of a trade-off ##################################
@@ -1256,58 +1490,58 @@ mtext("C",side=3,adj=0.015,line=-1.5)
 #.########################### section #4 emergence of a trade-off ##################################
 #to make figure 4, you need objects DATA.C and DATA.S produced in section 3D above
 dev.new(width=9,height=5, units = "cm")
-par(mfrow=c(2,4),las=1, oma=c(5,5,0,0),mar=c(1,1,2,2))
+par(mfrow=c(2,4),las = 1, oma=c(5,5,0,0),mar=c(1,1,2,2))
 layout(matrix(c(1,1,2,3,1,1,4,5), 2, 4, byrow = TRUE))
 layout.show(5)
 #
-  plot(BLUP.RPM~BLUP.INT,DATA,col="white",ylab="",xlab="",cex.lab=2)
-points(BLUP.RPM~BLUP.INT,DATA.C,col=rgb(0,0,1,0.1),pch=16,cex=1.5)
-points(BLUP.RPM~BLUP.INT,DATA.S,col=rgb(1,0,0,0.1),pch=17,cex=1.5)
+  plot(BLUP.RPM~BLUP.INT,DATA, col = "white",ylab = "",xlab = "",cex.lab=2)
+points(BLUP.RPM~BLUP.INT,DATA.C, col = rgb(0,0,1,0.1),pch = 16,cex = 1.5)
+points(BLUP.RPM~BLUP.INT,DATA.S, col = rgb(1,0,0,0.1),pch = 17,cex = 1.5)
 #add trajectories
-points(BLUP.RPM~BLUP.INT,subset(LINE.C,line==1),type="l",lwd=2, col="grey")
-points(BLUP.RPM~BLUP.INT,subset(LINE.C,line==2),type="l",lwd=2, col="grey")
-points(BLUP.RPM~BLUP.INT,subset(LINE.C,line==4),type="l",lwd=2, col="grey")
-points(BLUP.RPM~BLUP.INT,subset(LINE.C,line==5),type="l",lwd=2, col="grey")
-points(BLUP.RPM~BLUP.INT,subset(LINE.S,line==3),type="l",lwd=2)
-points(BLUP.RPM~BLUP.INT,subset(LINE.S,line==6),type="l",lwd=2)
-points(BLUP.RPM~BLUP.INT,subset(LINE.S,line==7),type="l",lwd=2)
-points(BLUP.RPM~BLUP.INT,subset(LINE.S,line==8),type="l",lwd=2)
+points(BLUP.RPM~BLUP.INT,subset(LINE.C,line = =1), type = "l",lwd=2, col = "grey")
+points(BLUP.RPM~BLUP.INT,subset(LINE.C,line = =2), type = "l",lwd=2, col = "grey")
+points(BLUP.RPM~BLUP.INT,subset(LINE.C,line = =4), type = "l",lwd=2, col = "grey")
+points(BLUP.RPM~BLUP.INT,subset(LINE.C,line = =5), type = "l",lwd=2, col = "grey")
+points(BLUP.RPM~BLUP.INT,subset(LINE.S,line = =3), type = "l",lwd=2)
+points(BLUP.RPM~BLUP.INT,subset(LINE.S,line = =6), type = "l",lwd=2)
+points(BLUP.RPM~BLUP.INT,subset(LINE.S,line = =7), type = "l",lwd=2)
+points(BLUP.RPM~BLUP.INT,subset(LINE.S,line = =8), type = "l",lwd=2)
 #
 #add ellipses as specific points in time
 library(heplots)
-covEllipses(DATA[which(DATA$GEN==15&DATA$line==3),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="S3",cex=1.2)
-covEllipses(DATA[which(DATA$GEN==15&DATA$line==6),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="S6",cex=1.2)
-covEllipses(DATA[which(DATA$GEN==15&DATA$line==7),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="S7",cex=1.2)
-covEllipses(DATA[which(DATA$GEN==15&DATA$line==8),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="S8",cex=1.2)
+covEllipses(DATA[which(DATA$GEN==15&DATA$line = =3),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S3",cex = 1.2)
+covEllipses(DATA[which(DATA$GEN==15&DATA$line = =6),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S6",cex = 1.2)
+covEllipses(DATA[which(DATA$GEN==15&DATA$line = =7),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S7",cex = 1.2)
+covEllipses(DATA[which(DATA$GEN==15&DATA$line = =8),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S8",cex = 1.2)
 #
-covEllipses(DATA[which(DATA$GEN==40&DATA$line==3),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="S3",cex=1.2)
-covEllipses(DATA[which(DATA$GEN==40&DATA$line==6),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="S6",cex=1.2)
-covEllipses(DATA[which(DATA$GEN==40&DATA$line==7),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="S7",cex=1.2)
-covEllipses(DATA[which(DATA$GEN==40&DATA$line==8),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="S8",cex=1.2)
+covEllipses(DATA[which(DATA$GEN==40&DATA$line = =3),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S3",cex = 1.2)
+covEllipses(DATA[which(DATA$GEN==40&DATA$line = =6),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S6",cex = 1.2)
+covEllipses(DATA[which(DATA$GEN==40&DATA$line = =7),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S7",cex = 1.2)
+covEllipses(DATA[which(DATA$GEN==40&DATA$line = =8),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S8",cex = 1.2)
 #
-covEllipses(DATA[which(DATA$GEN==78&DATA$line==1),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="C1",cex=1.2)
-covEllipses(DATA[which(DATA$GEN==78&DATA$line==2),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="C2",cex=1.2)
-covEllipses(DATA[which(DATA$GEN==78&DATA$line==4),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="C4",cex=1.2)
-covEllipses(DATA[which(DATA$GEN==78&DATA$line==5),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="C5",cex=1.2)
+covEllipses(DATA[which(DATA$GEN==78&DATA$line = =1),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="C1",cex = 1.2)
+covEllipses(DATA[which(DATA$GEN==78&DATA$line = =2),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="C2",cex = 1.2)
+covEllipses(DATA[which(DATA$GEN==78&DATA$line = =4),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="C4",cex = 1.2)
+covEllipses(DATA[which(DATA$GEN==78&DATA$line = =5),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="C5",cex = 1.2)
 #
-covEllipses(DATA[which(DATA$GEN==78&DATA$line==3),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="S3",cex=1.2)
-covEllipses(DATA[which(DATA$GEN==78&DATA$line==6),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="S6",cex=1.2)
-covEllipses(DATA[which(DATA$GEN==78&DATA$line==7),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="S7",cex=1.2)
-covEllipses(DATA[which(DATA$GEN==78&DATA$line==8),c("BLUP.INT","BLUP.RPM")],add=T,col="white",center=F,center.pch="",labels="S8",cex=1.2)
+covEllipses(DATA[which(DATA$GEN==78&DATA$line = =3),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S3",cex = 1.2)
+covEllipses(DATA[which(DATA$GEN==78&DATA$line = =6),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S6",cex = 1.2)
+covEllipses(DATA[which(DATA$GEN==78&DATA$line = =7),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S7",cex = 1.2)
+covEllipses(DATA[which(DATA$GEN==78&DATA$line = =8),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S8",cex = 1.2)
 #
 legend( x="bottomright",
         legend=c("Control mice","Control G trajectories","Selected mice","Selected G trajectories"),
-        col=c("blue","grey","red","black"), lwd=2, lty=c(NA,1,NA,1),
-        pch=c(16,NA,17,NA), merge=T, bty="n")
+        col = c("blue","grey","red","black"), lwd=2, lty = c(NA,1,NA,1),
+        pch = c(16,NA,17,NA), merge=T, bty = "n")
 text(-0.05,0.35,"generation 15")
-arrows(-0.05,0.33,0.025,0.31,length=0.1)
+arrows(-0.05,0.33,0.025,0.31,length = 0.1)
 text(0.24,0.25,"generation 40")
-arrows(0.24,0.26,0.215,0.32,length=0.1)
+arrows(0.24,0.26,0.215,0.32,length = 0.1)
 text(0.085,0.625,"generation 78")
-arrows(0.1,0.61,0.13,0.59,length=0.1)
-mtext("Genetic merit for running speed",   side=2,line=2,outer=T,las=3,cex=1.5)
-mtext("Genetic merit for running duration",side=1,line=3,outer=T,las=1,cex=1.5)
-mtext("A) 78 generations",side=3,adj=0.015,line=-1.5)
+arrows(0.1,0.61,0.13,0.59,length = 0.1)
+mtext("Genetic merit for running speed",   side = 2,line = 2,outer=T,las = 3,cex = 1.5)
+mtext("Genetic merit for running duration",side = 1,line = 3,outer=T,las = 1,cex = 1.5)
+mtext("A) 78 generations",side = 3,adj = 0.015,line = -1.5)
 
 #show breeding values for 4 generation
 LAST.1<-subset(DATA.S,GEN==1)
@@ -1323,31 +1557,31 @@ xlim.2<-c(min(LAST.2$lower.INT),max(LAST.2$upper.INT))
 xlim.3<-c(min(LAST.3$lower.INT),max(LAST.3$upper.INT))
 xlim.4<-c(min(LAST.4$lower.INT),max(LAST.4$upper.INT))
 #
-  plot(BLUP.RPM~BLUP.INT,LAST.1,ylim=ylim.1,xlim=xlim.1,ylab="",xlab="")
- arrows(LAST.1$BLUP.INT, LAST.1$lower.RPM,LAST.1$BLUP.INT, LAST.1$upper.RPM,col=rgb(0,0,0,0.05),code=3,angle=90,length=0)
- arrows(LAST.1$lower.INT,LAST.1$BLUP.RPM, LAST.1$upper.INT,LAST.1$BLUP.RPM, col=rgb(0,0,0,0.05),code=3,angle=90,length=0)
-points(BLUP.RPM~BLUP.INT,LAST.1,col=line,pch=16,cex=1.5)
-mtext("B) generation 1",side=3,adj=0.015,line=-1.5, cex=0.8)
+  plot(BLUP.RPM~BLUP.INT,LAST.1,ylim = ylim.1,xlim = xlim.1,ylab = "",xlab = "")
+ arrows(LAST.1$BLUP.INT, LAST.1$lower.RPM,LAST.1$BLUP.INT, LAST.1$upper.RPM, col = rgb(0,0,0,0.05),code = 3,angle=90,length = 0)
+ arrows(LAST.1$lower.INT,LAST.1$BLUP.RPM, LAST.1$upper.INT,LAST.1$BLUP.RPM, col = rgb(0,0,0,0.05),code = 3,angle=90,length = 0)
+points(BLUP.RPM~BLUP.INT,LAST.1, col = line,pch = 16,cex = 1.5)
+mtext("B) generation 1",side = 3,adj = 0.015,line = -1.5, cex = 0.8)
 #
-  plot(BLUP.RPM~BLUP.INT,LAST.2,ylim=ylim.2,xlim=xlim.2,ylab="",xlab="")
- arrows(LAST.2$BLUP.INT, LAST.2$lower.RPM,LAST.2$BLUP.INT, LAST.2$upper.RPM,col=rgb(0,0,0,0.05),code=3,angle=90,length=0)
- arrows(LAST.2$lower.INT,LAST.2$BLUP.RPM, LAST.2$upper.INT,LAST.2$BLUP.RPM, col=rgb(0,0,0,0.05),code=3,angle=90,length=0)
-points(BLUP.RPM~BLUP.INT,LAST.2,col=line,pch=16,cex=1.5)
-mtext("C) generation 15",side=3,adj=0.015,line=-1.5, cex=0.8)
+  plot(BLUP.RPM~BLUP.INT,LAST.2,ylim = ylim.2,xlim = xlim.2,ylab = "",xlab = "")
+ arrows(LAST.2$BLUP.INT, LAST.2$lower.RPM,LAST.2$BLUP.INT, LAST.2$upper.RPM, col = rgb(0,0,0,0.05),code = 3,angle=90,length = 0)
+ arrows(LAST.2$lower.INT,LAST.2$BLUP.RPM, LAST.2$upper.INT,LAST.2$BLUP.RPM, col = rgb(0,0,0,0.05),code = 3,angle=90,length = 0)
+points(BLUP.RPM~BLUP.INT,LAST.2, col = line,pch = 16,cex = 1.5)
+mtext("C) generation 15",side = 3,adj = 0.015,line = -1.5, cex = 0.8)
 #
-  plot(BLUP.RPM~BLUP.INT,LAST.3,ylim=ylim.3,xlim=xlim.3,ylab="",xlab="")
- arrows(LAST.3$BLUP.INT, LAST.3$lower.RPM,LAST.3$BLUP.INT, LAST.3$upper.RPM,col=rgb(0,0,0,0.05),code=3,angle=90,length=0)
- arrows(LAST.3$lower.INT,LAST.3$BLUP.RPM, LAST.3$upper.INT,LAST.3$BLUP.RPM, col=rgb(0,0,0,0.05),code=3,angle=90,length=0)
-points(BLUP.RPM~BLUP.INT,LAST.3,col=line,pch=16,cex=1.5)
-mtext("D) generation 40",side=3,adj=0.015,line=-1.5, cex=0.8)
+  plot(BLUP.RPM~BLUP.INT,LAST.3,ylim = ylim.3,xlim = xlim.3,ylab = "",xlab = "")
+ arrows(LAST.3$BLUP.INT, LAST.3$lower.RPM,LAST.3$BLUP.INT, LAST.3$upper.RPM, col = rgb(0,0,0,0.05),code = 3,angle=90,length = 0)
+ arrows(LAST.3$lower.INT,LAST.3$BLUP.RPM, LAST.3$upper.INT,LAST.3$BLUP.RPM, col = rgb(0,0,0,0.05),code = 3,angle=90,length = 0)
+points(BLUP.RPM~BLUP.INT,LAST.3, col = line,pch = 16,cex = 1.5)
+mtext("D) generation 40",side = 3,adj = 0.015,line = -1.5, cex = 0.8)
 #
-  plot(BLUP.RPM~BLUP.INT,LAST.4,ylim=ylim.4,xlim=xlim.4,ylab="",xlab="")
- arrows(LAST.4$BLUP.INT, LAST.4$lower.RPM,LAST.4$BLUP.INT, LAST.4$upper.RPM,col=rgb(0,0,0,0.05),code=3,angle=90,length=0)
- arrows(LAST.4$lower.INT,LAST.4$BLUP.RPM, LAST.4$upper.INT,LAST.4$BLUP.RPM, col=rgb(0,0,0,0.05),code=3,angle=90,length=0)
-points(BLUP.RPM~BLUP.INT,LAST.4,col=line,pch=16,cex=1.5)
-mtext("E) generation 78",side=3,adj=0.015,line=-1.5, cex=0.8)
+  plot(BLUP.RPM~BLUP.INT,LAST.4,ylim = ylim.4,xlim = xlim.4,ylab = "",xlab = "")
+ arrows(LAST.4$BLUP.INT, LAST.4$lower.RPM,LAST.4$BLUP.INT, LAST.4$upper.RPM, col = rgb(0,0,0,0.05),code = 3,angle=90,length = 0)
+ arrows(LAST.4$lower.INT,LAST.4$BLUP.RPM, LAST.4$upper.INT,LAST.4$BLUP.RPM, col = rgb(0,0,0,0.05),code = 3,angle=90,length = 0)
+points(BLUP.RPM~BLUP.INT,LAST.4, col = line,pch = 16,cex = 1.5)
+mtext("E) generation 78",side = 3,adj = 0.015,line = -1.5, cex = 0.8)
 #
-legend( x="topright",legend=c("line S3","line S6","line S7","line S8"),col=c("black","red","blue","green"),pch=16,bty="n")
+legend( x="topright",legend=c("line S3","line S6","line S7","line S8"), col = c("black","red","blue","green"),pch = 16,bty = "n")
 
 
 cor.test(DATA$BLUP.INT[which(DATA$GEN==1&DATA$linetype==1)] ,DATA$BLUP.RPM[which(DATA$GEN==1&DATA$linetype==1)])
