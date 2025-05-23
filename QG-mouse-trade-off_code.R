@@ -37,11 +37,17 @@
 #.################ section #1 - make figure 1 adaptive landscapes ###############
 #.################ section #1 - make figure 1 adaptive landscapes ###############
 #.################ section #1 - make figure 1 adaptive landscapes ###############
-dat 	   <- read.table("QG-mouse-trade-off_data.txt", header = TRUE)
+library(fields)  #<-- needed for thin plate splines `Tps()`
+
+dat       <- read.table("QG-mouse-trade-off_data.txt", header = TRUE)
+plot(RUN56l~RPM56l,dat,col=as.numeric(dat$linetype+1))
+plot(RUN56l~INT56l,dat,col=as.numeric(dat$linetype+1))
+plot(RPM56l~INT56l,dat,col=as.numeric(dat$linetype+1))
+plot(RPM56~INT56,dat, col=as.numeric(dat$linetype+1))
 
 #show missing data for generations:
-  plot(RPM56l~GEN,subset(dat,linetype==1), col=rgb(1,0,0,0.05),pch=16)
-points(RPM56l~GEN,subset(dat,linetype==0), col=rgb(0,0,1,0.05),pch=16)
+  plot(RPM56~GEN,subset(dat,linetype==1), col=rgb(1,0,0,0.05),pch=16)
+points(RPM56~GEN,subset(dat,linetype==0), col=rgb(0,0,1,0.05),pch=16)
 abline(v=32);abline(v=33);abline(v=34);abline(v=35);abline(v=52);abline(v=63);abline(v=64);abline(v=67)
 GEN.list<-c(0:31,37:51,53:62,65,66,68:77)#list of GENs without running gdata
 
@@ -52,8 +58,10 @@ DATA.S.WIS<-subset(dat,linetype=="1" & UNI=="WIS")
 DATA.C.WIS$relFIT<-DATA.C.WIS$pups/mean(DATA.C.WIS$pups)
 DATA.S.WIS$relFIT<-DATA.S.WIS$pups/mean(DATA.S.WIS$pups)
 #fit linear model
-SEL.C.WIS<-lm(relFIT~RPM56l+INT56l+GEN+WHLSTAGE+sex+Fcoeff+line,DATA.C.WIS)
-SEL.S.WIS<-lm(relFIT~RPM56l+INT56l+GEN+WHLSTAGE+sex+Fcoeff+line,DATA.S.WIS)
+SEL.C.WIS<-lm(relFIT~scale(RPM56)+scale(INT56)+GEN+WHLSTAGE+sex+Fcoeff+line,DATA.C.WIS)
+SEL.S.WIS<-lm(relFIT~scale(RPM56)+scale(INT56)+GEN+WHLSTAGE+sex+Fcoeff+line,DATA.S.WIS)
+RUN.S    <-lm(relFIT~scale(RUN56)+             GEN+WHLSTAGE+sex+Fcoeff+line,DATA.S.WIS)
+
 #extract betas OVERALL
 BETA.RPM.C.WIS<-summary(SEL.C.WIS)$coefficients[2,1:2]
 BETA.INT.C.WIS<-summary(SEL.C.WIS)$coefficients[3,1:2]
@@ -66,8 +74,8 @@ DATA.S.UCR<-subset(dat,linetype=="1" & UNI=="UCR")
 DATA.C.UCR$relFIT<-DATA.C.UCR$pups/mean(DATA.C.UCR$pups)
 DATA.S.UCR$relFIT<-DATA.S.UCR$pups/mean(DATA.S.UCR$pups)
 #fit linear model
-SEL.C.UCR<-lm(relFIT~RPM56l+INT56l+GEN+WHLSTAGE+sex+Fcoeff+line,DATA.C.UCR)
-SEL.S.UCR<-lm(relFIT~RPM56l+INT56l+GEN+WHLSTAGE+sex+Fcoeff+line,DATA.S.UCR)
+SEL.C.UCR<-lm(relFIT~scale(RPM56)+scale(INT56)+GEN+WHLSTAGE+sex+Fcoeff+line,DATA.C.UCR)
+SEL.S.UCR<-lm(relFIT~scale(RPM56)+scale(INT56)+GEN+WHLSTAGE+sex+Fcoeff+line,DATA.S.UCR)
 #extract betas OVERALL
 BETA.RPM.C.UCR<-summary(SEL.C.UCR)$coefficients[2,1:2]
 BETA.INT.C.UCR<-summary(SEL.C.UCR)$coefficients[3,1:2]
@@ -80,7 +88,9 @@ summary(DATA.C)
 BETAS<-data.frame(BLOCK=NA,GEN=0:77,
 B.RPM.C=0,se.RPM.C=0,B.INT.C=0,se.INT.C=0,
 B.RPM.S=0,se.RPM.S=0,B.INT.S=0,se.INT.S=0,
-B.RUN.C=0,se.RUN.C=0,B.RUN.S=0,se.RUN.S=0)
+B.RUN.C=0,se.RUN.C=0,B.RUN.S=0,se.RUN.S=0,
+ X.RUN.S=0, X.RPM.S=0, X.INT.S=0,
+sd.RUN.S=0,sd.RPM.S=0,sd.INT.S=0)
 #
 for(i in GEN.list) {
 #estimate gradients for the first block
@@ -90,10 +100,10 @@ BLOCK.S<-subset(dat,GEN==i & linetype=="1")
 BLOCK.C$relFIT<-BLOCK.C$pups/mean(BLOCK.C$pups)
 BLOCK.S$relFIT<-BLOCK.S$pups/mean(BLOCK.S$pups)
 #fit linear model
-SEL.C<-lm(relFIT~RPM56l+INT56l+WHLSTAGE+sex+line,BLOCK.C)
-SEL.S<-lm(relFIT~RPM56l+INT56l+WHLSTAGE+sex+line,BLOCK.S)
-RUN.C<-lm(relFIT~RUN56l+WHLSTAGE+sex+line,BLOCK.C)
-RUN.S<-lm(relFIT~RUN56l+WHLSTAGE+sex+line,BLOCK.S)
+SEL.C<-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+line,BLOCK.C)
+SEL.S<-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+line,BLOCK.S)
+RUN.C<-lm(relFIT~scale(RUN56)+WHLSTAGE+sex+line,BLOCK.C)
+RUN.S<-lm(relFIT~scale(RUN56)+WHLSTAGE+sex+line,BLOCK.S)
 #extract betas
 BETAS[which(BETAS$GEN==i),3:4] <-summary(SEL.C)$coefficients[2,1:2]
 BETAS[which(BETAS$GEN==i),5:6] <-summary(SEL.C)$coefficients[3,1:2]
@@ -101,8 +111,19 @@ BETAS[which(BETAS$GEN==i),7:8] <-summary(SEL.S)$coefficients[2,1:2]
 BETAS[which(BETAS$GEN==i),9:10]<-summary(SEL.S)$coefficients[3,1:2]
 BETAS[which(BETAS$GEN==i),11:12]<-summary(RUN.C)$coefficients[2,1:2]
 BETAS[which(BETAS$GEN==i),13:14]<-summary(RUN.S)$coefficients[2,1:2]
-}
 #
+BETAS$X.RUN.S[which(BETAS$GEN==i)]<-mean(BLOCK.S$RUN56)
+BETAS$X.RPM.S[which(BETAS$GEN==i)]<-mean(BLOCK.S$RPM56)
+BETAS$X.INT.S[which(BETAS$GEN==i)]<-mean(BLOCK.S$INT56)
+BETAS$sd.RUN.S[which(BETAS$GEN==i)]<-sd(BLOCK.S$RUN56)
+BETAS$sd.RPM.S[which(BETAS$GEN==i)]<-sd(BLOCK.S$RPM56)
+BETAS$sd.INT.S[which(BETAS$GEN==i)]<-sd(BLOCK.S$INT56)
+}
+#mean-strandardisez gradients?
+BETAS$Bu.RUN<-(BETAS$B.RUN.S/BETAS$sd.RUN.S)*BETAS$sd.RUN.S
+BETAS$Bu.INT<-(BETAS$B.INT.S/BETAS$sd.INT.S)*BETAS$sd.INT.S
+BETAS$Bu.RPM<-(BETAS$B.RPM.S/BETAS$sd.RPM.S)*BETAS$sd.RPM.S
+
 #selection gradients throughout the experiment
 BETAS$n<-1
 BETAS[!BETAS$GEN%in%GEN.list,3:11]<-NA
@@ -129,6 +150,17 @@ BETA.RPM.C.UCR<-cbind(mean(BETAS.UCR$B.RPM.C,na.rm=T),sd(BETAS.UCR$B.RPM.C,na.rm
 BETA.INT.C.UCR<-cbind(mean(BETAS.UCR$B.INT.C,na.rm=T),sd(BETAS.UCR$B.INT.C,na.rm=T)/sqrt(sum(BETAS.UCR$n,na.rm=T)))
 BETA.RPM.S.UCR<-cbind(mean(BETAS.UCR$B.RPM.S,na.rm=T),sd(BETAS.UCR$B.RPM.S,na.rm=T)/sqrt(sum(BETAS.UCR$n,na.rm=T)))
 BETA.INT.S.UCR<-cbind(mean(BETAS.UCR$B.INT.S,na.rm=T),sd(BETAS.UCR$B.INT.S,na.rm=T)/sqrt(sum(BETAS.UCR$n,na.rm=T)))
+
+#numbers provided in the main text
+#"with a noticeable reduction in the average standardized selection gradients (se) in the Riverside generations
+BETA.RUN.S.UCR
+BETA.RPM.S.UCR
+BETA.INT.S.UCR
+#compared to Wisconsin generations"
+BETA.RUN.S.WIS
+BETA.RPM.S.WIS
+BETA.INT.S.WIS
+
 #
 ############ estimate BETAS in each generation for each LINE ###################
 BETAS.LINE<-data.frame(BLOCK=NA,
@@ -161,22 +193,22 @@ BLOCK.6$relFIT<-BLOCK.6$pups/mean(BLOCK.6$pups)
 BLOCK.7$relFIT<-BLOCK.7$pups/mean(BLOCK.7$pups)
 BLOCK.8$relFIT<-BLOCK.8$pups/mean(BLOCK.8$pups)
 #fit linear model
-SEL.1<-lm(relFIT~RPM56l+INT56l+WHLSTAGE+sex+Fcoeff,BLOCK.1)
-SEL.2<-lm(relFIT~RPM56l+INT56l+WHLSTAGE+sex+Fcoeff,BLOCK.2)
-SEL.3<-lm(relFIT~RPM56l+INT56l+WHLSTAGE+sex+Fcoeff,BLOCK.3)
-SEL.4<-lm(relFIT~RPM56l+INT56l+WHLSTAGE+sex+Fcoeff,BLOCK.4)
-SEL.5<-lm(relFIT~RPM56l+INT56l+WHLSTAGE+sex+Fcoeff,BLOCK.5)
-SEL.6<-lm(relFIT~RPM56l+INT56l+WHLSTAGE+sex+Fcoeff,BLOCK.6)
-SEL.7<-lm(relFIT~RPM56l+INT56l+WHLSTAGE+sex+Fcoeff,BLOCK.7)
-SEL.8<-lm(relFIT~RPM56l+INT56l+WHLSTAGE+sex+Fcoeff,BLOCK.8)
-SEL.1.RUN<-lm(relFIT~RUN56l+WHLSTAGE+sex+Fcoeff,BLOCK.1)
-SEL.2.RUN<-lm(relFIT~RUN56l+WHLSTAGE+sex+Fcoeff,BLOCK.2)
-SEL.3.RUN<-lm(relFIT~RUN56l+WHLSTAGE+sex+Fcoeff,BLOCK.3)
-SEL.4.RUN<-lm(relFIT~RUN56l+WHLSTAGE+sex+Fcoeff,BLOCK.4)
-SEL.5.RUN<-lm(relFIT~RUN56l+WHLSTAGE+sex+Fcoeff,BLOCK.5)
-SEL.6.RUN<-lm(relFIT~RUN56l+WHLSTAGE+sex+Fcoeff,BLOCK.6)
-SEL.7.RUN<-lm(relFIT~RUN56l+WHLSTAGE+sex+Fcoeff,BLOCK.7)
-SEL.8.RUN<-lm(relFIT~RUN56l+WHLSTAGE+sex+Fcoeff,BLOCK.8)
+SEL.1    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.1)
+SEL.2    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.2)
+SEL.3    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.3)
+SEL.4    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.4)
+SEL.5    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.5)
+SEL.6    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.6)
+SEL.7    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.7)
+SEL.8    <-lm(relFIT~scale(RPM56)+scale(INT56)+WHLSTAGE+sex+Fcoeff,BLOCK.8)
+SEL.1.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.1)
+SEL.2.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.2)
+SEL.3.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.3)
+SEL.4.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.4)
+SEL.5.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.5)
+SEL.6.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.6)
+SEL.7.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.7)
+SEL.8.RUN<-lm(relFIT~scale(RUN56l)              +WHLSTAGE+sex+Fcoeff,BLOCK.8)
 #extract BETAS.line
 BETAS.LINE[which(BETAS.LINE$GEN==i), 3:4 ] <-summary(SEL.1)$coefficients[2,1:2]
 BETAS.LINE[which(BETAS.LINE$GEN==i), 5:6 ] <-summary(SEL.1)$coefficients[3,1:2]
@@ -194,7 +226,7 @@ BETAS.LINE[which(BETAS.LINE$GEN==i),39:40] <-summary(SEL.7)$coefficients[2,1:2]
 BETAS.LINE[which(BETAS.LINE$GEN==i),41:42] <-summary(SEL.7)$coefficients[3,1:2]
 BETAS.LINE[which(BETAS.LINE$GEN==i),45:46] <-summary(SEL.8)$coefficients[2,1:2]
 BETAS.LINE[which(BETAS.LINE$GEN==i),47:48] <-summary(SEL.8)$coefficients[3,1:2]
-BETAS.LINE[which(BETAS.LINE$GEN==i),7:8] <-summary(SEL.1.RUN)$coefficients[2,1:2]
+BETAS.LINE[which(BETAS.LINE$GEN==i),7:8]   <-summary(SEL.1.RUN)$coefficients[2,1:2]
 BETAS.LINE[which(BETAS.LINE$GEN==i),13:14] <-summary(SEL.2.RUN)$coefficients[2,1:2]
 BETAS.LINE[which(BETAS.LINE$GEN==i),19:20] <-summary(SEL.3.RUN)$coefficients[2,1:2]
 BETAS.LINE[which(BETAS.LINE$GEN==i),25:26] <-summary(SEL.4.RUN)$coefficients[2,1:2]
@@ -234,39 +266,78 @@ BETA.INT.7<-cbind(mean(BETAS.LINE$B.INT.7,na.rm=T),sd(BETAS.LINE$B.INT.7,na.rm=T
 BETA.RPM.8<-cbind(mean(BETAS.LINE$B.RPM.8,na.rm=T),sd(BETAS.LINE$B.RPM.8,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
 BETA.INT.8<-cbind(mean(BETAS.LINE$B.INT.8,na.rm=T),sd(BETAS.LINE$B.INT.8,na.rm=T)/sqrt(sum(BETAS.LINE$n,na.rm=T)))
 
-# use thin-plate splines to display the adaptive landscape
-library(fields)
-LINE.3<-subset(dat,line==3)
-LINE.6<-subset(dat,line==6)
-LINE.7<-subset(dat,line==7)
-LINE.8<-subset(dat,line==8)
+# use thin-plate splines to display the fitness surfaces
+LINE.3<-subset(dat,line==3 &GEN<78)
+LINE.6<-subset(dat,line==6 &GEN<78)
+LINE.7<-subset(dat,line==7 &GEN<78)
+LINE.8<-subset(dat,line==8 &GEN<78)
 LINE.3$relFIT<-LINE.3$pups/mean(LINE.3$pups)
 LINE.6$relFIT<-LINE.6$pups/mean(LINE.6$pups)
 LINE.7$relFIT<-LINE.7$pups/mean(LINE.7$pups)
 LINE.8$relFIT<-LINE.8$pups/mean(LINE.8$pups)
+LINE.3$RPM56z<-NA
+LINE.6$RPM56z<-NA
+LINE.7$RPM56z<-NA
+LINE.8$RPM56z<-NA
+LINE.3$INT56z<-NA
+LINE.6$INT56z<-NA
+LINE.7$INT56z<-NA
+LINE.8$INT56z<-NA
+LINE.3$relFIT<-NA
+LINE.6$relFIT<-NA
+LINE.7$relFIT<-NA
+LINE.8$relFIT<-NA
+#
+for(i in GEN.list) {
+      LINE.3$RPM56z[which(LINE.3$GEN==i)]<-scale(LINE.3$RPM56[which(LINE.3$GEN==i)])
+      LINE.6$RPM56z[which(LINE.6$GEN==i)]<-scale(LINE.6$RPM56[which(LINE.6$GEN==i)])
+      LINE.7$RPM56z[which(LINE.7$GEN==i)]<-scale(LINE.7$RPM56[which(LINE.7$GEN==i)])
+      LINE.8$RPM56z[which(LINE.8$GEN==i)]<-scale(LINE.8$RPM56[which(LINE.8$GEN==i)])
+      LINE.3$INT56z[which(LINE.3$GEN==i)]<-scale(LINE.3$INT56[which(LINE.3$GEN==i)])
+      LINE.6$INT56z[which(LINE.6$GEN==i)]<-scale(LINE.6$INT56[which(LINE.6$GEN==i)])
+      LINE.7$INT56z[which(LINE.7$GEN==i)]<-scale(LINE.7$INT56[which(LINE.7$GEN==i)])
+      LINE.8$INT56z[which(LINE.8$GEN==i)]<-scale(LINE.8$INT56[which(LINE.8$GEN==i)])
+      LINE.3$relFIT[which(LINE.3$GEN==i)]<-LINE.3$pups[which(LINE.3$GEN==i)]/mean(LINE.3$pups[which(LINE.3$GEN==i)],na.rm=T)
+      LINE.6$relFIT[which(LINE.6$GEN==i)]<-LINE.6$pups[which(LINE.6$GEN==i)]/mean(LINE.6$pups[which(LINE.6$GEN==i)],na.rm=T)
+      LINE.7$relFIT[which(LINE.7$GEN==i)]<-LINE.7$pups[which(LINE.7$GEN==i)]/mean(LINE.7$pups[which(LINE.7$GEN==i)],na.rm=T)
+      LINE.8$relFIT[which(LINE.8$GEN==i)]<-LINE.8$pups[which(LINE.8$GEN==i)]/mean(LINE.8$pups[which(LINE.8$GEN==i)],na.rm=T)
+}
 
-     TPS.3<-Tps(data.matrix(data.frame(LINE.3$INT56,LINE.3$RPM56)),LINE.3$relFIT)
-save(TPS.3,file="TPS.3.raw.RData")
-     TPS.6<-Tps(data.matrix(data.frame(LINE.6$INT56,LINE.6$RPM56)),LINE.6$relFIT)
-save(TPS.6,file="TPS.6.raw.RData")
-     TPS.7<-Tps(data.matrix(data.frame(LINE.7$INT56,LINE.7$RPM56)),LINE.7$relFIT)
-save(TPS.7,file="TPS.7.raw.RData")
-     TPS.8<-Tps(data.matrix(data.frame(LINE.8$INT56,LINE.8$RPM56)),LINE.8$relFIT)
-save(TPS.8,file="TPS.8.raw.RData")
 
-load(file="TPS.3.raw.RData")
-load(file="TPS.6.raw.RData")
-load(file="TPS.7.raw.RData")
-load(file="TPS.8.raw.RData")
+# fields::Tps()
+     TPS.3<-Tps(data.matrix(data.frame(LINE.3$INT56z,LINE.3$RPM56z)),LINE.3$relFIT)
+save(TPS.3,file="TPS.3.scale.RData")
+     TPS.6<-Tps(data.matrix(data.frame(LINE.6$INT56z,LINE.6$RPM56z)),LINE.6$relFIT)
+save(TPS.6,file="TPS.6.scale.RData")
+     TPS.7<-Tps(data.matrix(data.frame(LINE.7$INT56z,LINE.7$RPM56z)),LINE.7$relFIT)
+save(TPS.7,file="TPS.7.scale.RData")
+     TPS.8<-Tps(data.matrix(data.frame(LINE.8$INT56z,LINE.8$RPM56z)),LINE.8$relFIT)
+save(TPS.8,file="TPS.8.scale.RData")
+load(file="TPS.3.scale.RData")
+load(file="TPS.6.scale.RData")
+load(file="TPS.7.scale.RData")
+load(file="TPS.8.scale.RData")
 sp.3<-predictSurface(TPS.3)
 sp.6<-predictSurface(TPS.6)
 sp.7<-predictSurface(TPS.7)
 sp.8<-predictSurface(TPS.8)
+ZLIM<-range(c(sp.3$z,sp.6$z,sp.7$z,sp.8$z),na.rm=T)
+LIM<-range(c(scale(LINE.3$INT56),scale(LINE.6$INT56),scale(LINE.7$INT56),scale(LINE.8$INT56),scale(LINE.3$RPM56),scale(LINE.6$RPM56),scale(LINE.7$RPM56),scale(LINE.8$RPM56)),na.rm=T)*1.45
+par(mfrow=c(2,2))
+image(sp.3,col=heat.colors(n=30,rev=T),zlim=ZLIM,ylim=LIM,xlim=LIM);abline(v=0,lty=3);abline(h=0,lty=3)
+contour(sp.3, add = TRUE)
+image(sp.6,col=heat.colors(n=30,rev=T),zlim=ZLIM,ylim=LIM,xlim=LIM);abline(v=0,lty=3);abline(h=0,lty=3)
+contour(sp.6, add = TRUE)
+image(sp.7,col=heat.colors(n=30,rev=T),zlim=ZLIM,ylim=LIM,xlim=LIM);abline(v=0,lty=3);abline(h=0,lty=3)
+contour(sp.7, add = TRUE)
+image(sp.8,col=heat.colors(n=30,rev=T),zlim=ZLIM,ylim=LIM,xlim=LIM);abline(v=0,lty=3);abline(h=0,lty=3)
+contour(sp.8, add = TRUE)
+abline(v=0,lty=3);abline(h=0,lty=3)
 
 
 #make Figure 1
-dev.new(width=9,height=4, units = "cm")
-par(mfrow=c(6,5),las=1, oma=c(4,2,0.5,0), mar=c(0,2,2,2))
+dev.new(width=10,height=4, units = "cm")
+par(mfrow=c(6,5),las=1, oma=c(4,3,0.5,0), mar=c(0,2,2,2))
 layout(matrix(c(1,1,1,2,3,
                 1,1,1,2,3,
                 4,4,4,2,3,
@@ -274,91 +345,160 @@ layout(matrix(c(1,1,1,2,3,
                 7,7,7,5,6,
                 7,7,7,5,6), 6, 5, byrow = TRUE))
 #layout.show(7)
-  plot(B.RUN.S~GEN, BETAS, pch=16, col="red", cex=1,type="o", ylim=c(-6,14),xlim=c(1,77),xlab="",xaxt="n",ylab="")
-points(B.RUN.C~GEN.C, BETAS, pch=16, col="blue", cex=1,type="o")
-rect(0, BETA.RUN.S.WIS[1]-1.96*BETA.RUN.S.WIS[2],31,BETA.RUN.S.WIS[1]+1.96*BETA.RUN.S.WIS[2], col=rgb(1,0,0,0.25),border=F)
-rect(35,BETA.RUN.S.UCR[1]-1.96*BETA.RUN.S.UCR[2],78,BETA.RUN.S.UCR[1]+1.96*BETA.RUN.S.UCR[2], col=rgb(1,0,0,0.25),border=F)
-rect(0, BETA.RUN.C.WIS[1]-1.96*BETA.RUN.C.WIS[2],31,BETA.RUN.C.WIS[1]+1.96*BETA.RUN.C.WIS[2], col=rgb(0,0,1,0.25),border=F)
-rect(35,BETA.RUN.C.UCR[1]-1.96*BETA.RUN.C.UCR[2],78,BETA.RUN.C.UCR[1]+1.96*BETA.RUN.C.UCR[2], col=rgb(0,0,1,0.25),border=F)
-arrows(x0=BETAS$GEN.C,y0=BETAS$B.RUN.C-BETAS$se.RUN.C,x1=BETAS$GEN.C,y1=BETAS$B.RUN.C+BETAS$se.RUN.C,col="blue",code=3,angle=90,length=0)
-arrows(x0=BETAS$GEN.S,y0=BETAS$B.RUN.S-BETAS$se.RUN.S,x1=BETAS$GEN.S,y1=BETAS$B.RUN.S+BETAS$se.RUN.S,col="red", code=3,angle=90,length=0)
-points(B.RUN.1~GEN, BETAS.LINE, pch="1", col=rgb(0,0,1,0.25), cex=1,type="l")
-points(B.RUN.2~GEN, BETAS.LINE, pch="2", col=rgb(0,0,1,0.25), cex=1,type="l")
-points(B.RUN.4~GEN, BETAS.LINE, pch="4", col=rgb(0,0,1,0.25), cex=1,type="l")
-points(B.RUN.5~GEN, BETAS.LINE, pch="5", col=rgb(0,0,1,0.25), cex=1,type="l")
-points(B.RUN.3~GEN, BETAS.LINE, pch="3", col=rgb(1,0,0,0.25), cex=1,type="l")
-points(B.RUN.6~GEN, BETAS.LINE, pch="6", col=rgb(1,0,0,0.25), cex=1,type="l")
-points(B.RUN.7~GEN, BETAS.LINE, pch="7", col=rgb(1,0,0,0.25), cex=1,type="l")
-points(B.RUN.8~GEN, BETAS.LINE, pch="8", col=rgb(1,0,0,0.25), cex=1,type="l")
-axis(1,at=0:78, labels=F)
-axis(1, at = seq(0, 78, 6),padj=-0.8)
-abline(h=0, lty=2)
+plot(B.RUN.S ~ GEN, data = BETAS, pch = 16, col = "red", cex = 1, type="o",
+  ylim = c(-0.675, 1.5), xlim = c(1, 77), xlab = "", xaxt = "n", ylab = "")
+  points(B.RUN.C ~ GEN.C, data = BETAS,
+    pch = 16, col = "blue", cex = 1, type = "o")
+  rect(xleft = 0, ybottom = BETA.RUN.S.WIS[1]-1.96*BETA.RUN.S.WIS[2],
+    xright = 31, ytop = BETA.RUN.S.WIS[1]+1.96*BETA.RUN.S.WIS[2],
+    col = rgb(1,0,0,0.25), border = FALSE)
+  rect(xleft = 35, ybottom = BETA.RUN.S.UCR[1]-1.96*BETA.RUN.S.UCR[2],
+    xright = 78, ytop = BETA.RUN.S.UCR[1]+1.96*BETA.RUN.S.UCR[2],
+    col = rgb(1,0,0,0.25), border = FALSE)
+  rect(xleft = 0, ybottom = BETA.RUN.C.WIS[1]-1.96*BETA.RUN.C.WIS[2],
+    xright = 31, ytop = BETA.RUN.C.WIS[1]+1.96*BETA.RUN.C.WIS[2],
+    col = rgb(0,0,1,0.25), border = FALSE)
+  rect(xleft = 35, ybottom = BETA.RUN.C.UCR[1]-1.96*BETA.RUN.C.UCR[2],
+    xright = 78, ytop = BETA.RUN.C.UCR[1]+1.96*BETA.RUN.C.UCR[2],
+    col = rgb(0,0,1,0.25), border = FALSE)
+  arrows(x0 = BETAS$GEN.C, y0 = BETAS$B.RUN.C-BETAS$se.RUN.C,
+    x1 = BETAS$GEN.C, y1 = BETAS$B.RUN.C+BETAS$se.RUN.C,
+    col = "blue", code = 3, angle = 90, length = 0)
+  arrows(x0 = BETAS$GEN.S, y0 = BETAS$B.RUN.S-BETAS$se.RUN.S,
+    x1 = BETAS$GEN.S, y1 = BETAS$B.RUN.S+BETAS$se.RUN.S,
+    col = "red", code = 3, angle = 90, length = 0)
+  points(B.RUN.1~GEN, BETAS.LINE, pch="1", col=rgb(0,0,1,0.25), cex=1, type="l")
+  points(B.RUN.2~GEN, BETAS.LINE, pch="2", col=rgb(0,0,1,0.25), cex=1, type="l")
+  points(B.RUN.4~GEN, BETAS.LINE, pch="4", col=rgb(0,0,1,0.25), cex=1, type="l")
+  points(B.RUN.5~GEN, BETAS.LINE, pch="5", col=rgb(0,0,1,0.25), cex=1, type="l")
+  points(B.RUN.3~GEN, BETAS.LINE, pch="3", col=rgb(1,0,0,0.25), cex=1, type="l")
+  points(B.RUN.6~GEN, BETAS.LINE, pch="6", col=rgb(1,0,0,0.25), cex=1, type="l")
+  points(B.RUN.7~GEN, BETAS.LINE, pch="7", col=rgb(1,0,0,0.25), cex=1, type="l")
+  points(B.RUN.8~GEN, BETAS.LINE, pch="8", col=rgb(1,0,0,0.25), cex=1, type="l")
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj = -0.8)
+  abline(h = 0, lty = 2)
 mtext("A", side=3, adj=0.025, line=-1.5)
-legend(47,14, c("control","selected"),pch=c(16,17), col=c("blue","red"),bty="n")
-mtext("Wisconsin generations", line=0.4, adj=0.10, side=3, cex=1)
-mtext("Riverside generations", line=0.4, adj=0.80, side=3, cex=1)
+legend(x = 47, y = 14, legend = c("control", "selected"),
+  pch = c(16, 17), col = c("blue", "red"), bty = "n")
+mtext("Wisconsin generations", line = 0.4, adj = 0.05, side = 3, cex = 1)
+mtext("Riverside generations", line = 0.4, adj = 0.80, side = 3, cex = 1)
+mtext(side = 2, expression(italic(beta)[distance]), las = 3, line = 3)
+  
 #
-image(sp.3,col=terrain.colors(1000),zlim=c(-0,3))
-mtext("D", side=3, adj=0.025, line=-1.5)
-mtext("line S3", side=1,cex=0.75,line=-1)
-image(sp.6,col=terrain.colors(1000),zlim=c(-0,3))
-mtext("E", side=3, adj=0.025, line=-1.5)
-mtext("line S6", side=1,cex=0.75,line=-1)
+image(sp.3, col = heat.colors(n = 30, rev = TRUE),
+  zlim = ZLIM, ylim = LIM, xlim = LIM)
+  abline(v = 0, lty = 3)
+  abline(h = 0, lty = 3)
+contour(sp.3, add = TRUE)
+mtext("D", side = 3, adj = 0.025, line = -1.5)
+mtext("line S3", side = 1, cex = 0.75, line = -1, adj = 0.95)
+image(sp.6, col = heat.colors(n = 30, rev = TRUE),
+  zlim = ZLIM, ylim = LIM, xlim = LIM)
+  abline(v = 0, lty = 3)
+  abline(h = 0, lty = 3)
+contour(sp.6, add = TRUE)
+mtext("E", side = 3, adj = 0.025, line = -1.5)
+mtext("line S6", side = 1, cex = 0.75, line = -1, adj = 0.95)
+
 #
-  plot(B.RPM.S~GEN.C, BETAS, pch=16, col="red", cex=1,type="o", ylim=c(-6,14),xlim=c(1,77),xlab="",xaxt="n",ylab="")
-points(B.RPM.C~GEN.C, BETAS, pch=16, col="blue", cex=1,type="o")
-rect(0, BETA.RPM.S.WIS[1]-1.96*BETA.RPM.S.WIS[2],31,BETA.RPM.S.WIS[1]+1.96*BETA.RPM.S.WIS[2], col=rgb(1,0,0,0.25),border=F)
-rect(35,BETA.RPM.S.UCR[1]-1.96*BETA.RPM.S.UCR[2],78,BETA.RPM.S.UCR[1]+1.96*BETA.RPM.S.UCR[2], col=rgb(1,0,0,0.25),border=F)
-rect(0, BETA.RPM.C.WIS[1]-1.96*BETA.RPM.C.WIS[2],31,BETA.RPM.C.WIS[1]+1.96*BETA.RPM.C.WIS[2], col=rgb(0,0,1,0.25),border=F)
-rect(35,BETA.RPM.C.UCR[1]-1.96*BETA.RPM.C.UCR[2],78,BETA.RPM.C.UCR[1]+1.96*BETA.RPM.C.UCR[2], col=rgb(0,0,1,0.25),border=F)
-arrows(x0=BETAS$GEN.C,y0=BETAS$B.RPM.C-BETAS$se.RPM.C,x1=BETAS$GEN.C,y1=BETAS$B.RPM.C+BETAS$se.RPM.C,col="blue",code=3,angle=90,length=0)
-arrows(x0=BETAS$GEN.S,y0=BETAS$B.RPM.S-BETAS$se.RPM.S,x1=BETAS$GEN.S,y1=BETAS$B.RPM.S+BETAS$se.RPM.S,col="red", code=3,angle=90,length=0)
-points(B.RPM.1~GEN, BETAS.LINE, pch="1", col=rgb(0,0,1,0.25), cex=1,type="l")
-points(B.RPM.2~GEN, BETAS.LINE, pch="2", col=rgb(0,0,1,0.25), cex=1,type="l")
-points(B.RPM.4~GEN, BETAS.LINE, pch="4", col=rgb(0,0,1,0.25), cex=1,type="l")
-points(B.RPM.5~GEN, BETAS.LINE, pch="5", col=rgb(0,0,1,0.25), cex=1,type="l")
-points(B.RPM.3~GEN, BETAS.LINE, pch="3", col=rgb(1,0,0,0.25), cex=1,type="l")
-points(B.RPM.6~GEN, BETAS.LINE, pch="6", col=rgb(1,0,0,0.25), cex=1,type="l")
-points(B.RPM.7~GEN, BETAS.LINE, pch="7", col=rgb(1,0,0,0.25), cex=1,type="l")
-points(B.RPM.8~GEN, BETAS.LINE, pch="8", col=rgb(1,0,0,0.25), cex=1,type="l")
-axis(1,at=0:78, labels=F)
-axis(1, at = seq(0, 78, 6),padj=-0.8)
-abline(h=0, lty=2)
-mtext("B", side=3, adj=0.025, line=-1.5)
+plot(B.RPM.S ~ GEN.C, BETAS, pch = 16, col = "red", cex = 1, type = "o",
+  ylim = c(-0.675,1.5), xlim = c(1,77), xlab = "", xaxt = "n", ylab = "")
+  points(B.RPM.C ~ GEN.C, BETAS, pch = 16, col = "blue", cex = 1, type = "o")
+  rect(xleft = 0, ybottom = BETA.RPM.S.WIS[1]-1.96*BETA.RPM.S.WIS[2],
+    xright = 31, ytop = BETA.RPM.S.WIS[1]+1.96*BETA.RPM.S.WIS[2],
+    col = rgb(1,0,0,0.25), border = FALSE)
+  rect(xleft = 35, ybottom = BETA.RPM.S.UCR[1]-1.96*BETA.RPM.S.UCR[2],
+    xright = 78, ytop = BETA.RPM.S.UCR[1]+1.96*BETA.RPM.S.UCR[2],
+    col = rgb(1,0,0,0.25), border = FALSE)
+  rect(xleft = 0, ybottom = BETA.RPM.C.WIS[1]-1.96*BETA.RPM.C.WIS[2],
+    xright = 31, ytop = BETA.RPM.C.WIS[1]+1.96*BETA.RPM.C.WIS[2],
+    col = rgb(0,0,1,0.25), border = FALSE)
+  rect(xleft = 35, ybottom = BETA.RPM.C.UCR[1]-1.96*BETA.RPM.C.UCR[2],
+    xright = 78, ytop = BETA.RPM.C.UCR[1]+1.96*BETA.RPM.C.UCR[2],
+    col = rgb(0,0,1,0.25), border = FALSE)
+  arrows(x0 = BETAS$GEN.C, y0 = BETAS$B.RPM.C-BETAS$se.RPM.C,
+    x1 = BETAS$GEN.C, y1 = BETAS$B.RPM.C+BETAS$se.RPM.C,
+    col ="blue", code = 3, angle = 90, length = 0)
+  arrows(x0 = BETAS$GEN.S, y0 = BETAS$B.RPM.S-BETAS$se.RPM.S,
+    x1 = BETAS$GEN.S, y1 = BETAS$B.RPM.S+BETAS$se.RPM.S,
+    col = "red", code = 3, angle = 90, length = 0)
+  points(B.RPM.1~GEN, BETAS.LINE, pch="1", col=rgb(0,0,1,0.25), cex=1, type="l")
+  points(B.RPM.2~GEN, BETAS.LINE, pch="2", col=rgb(0,0,1,0.25), cex=1, type="l")
+  points(B.RPM.4~GEN, BETAS.LINE, pch="4", col=rgb(0,0,1,0.25), cex=1, type="l")
+  points(B.RPM.5~GEN, BETAS.LINE, pch="5", col=rgb(0,0,1,0.25), cex=1, type="l")
+  points(B.RPM.3~GEN, BETAS.LINE, pch="3", col=rgb(1,0,0,0.25), cex=1, type="l")
+  points(B.RPM.6~GEN, BETAS.LINE, pch="6", col=rgb(1,0,0,0.25), cex=1, type="l")
+  points(B.RPM.7~GEN, BETAS.LINE, pch="7", col=rgb(1,0,0,0.25), cex=1, type="l")
+  points(B.RPM.8~GEN, BETAS.LINE, pch="8", col=rgb(1,0,0,0.25), cex=1, type="l")
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj = -0.8)
+  abline(h = 0, lty = 2)
+mtext("B", side = 3, adj = 0.025, line = -1.5)
+mtext(side = 2, expression(italic(beta)[speed]), las = 3, line = 3)
+  
 #
-image(sp.7,col=terrain.colors(1000),zlim=c(-0,3))
-mtext("F", side=3, adj=0.025, line=-1.5)
-mtext("line S7", side=1,cex=0.75,line=-1)
-mtext("Running speed (revs/min)",  side=2, line=2.5,cex=1.25,adj=-0.5,las=3)
-image(sp.8,col=terrain.colors(1000),zlim=c(-0,3))
-mtext("G", side=3, adj=0.025, line=-1.5)
-mtext("line S8", side=1,cex=0.75,line=-1)
+image(sp.7, col = heat.colors(n=30,rev=T),
+  zlim = ZLIM, ylim = LIM, xlim = LIM)
+  abline(v = 0, lty = 3)
+  abline(h = 0, lty = 3)
+contour(sp.7, add = TRUE)
+mtext("F", side = 3, adj = 0.025, line = -1.5)
+mtext("line S7", side = 1, cex = 0.75, line = -1, adj = 0.95)
+mtext("Running speed (sd units)", side = 2, line = 2, cex = 1, adj = -2, las = 3)
+image(sp.8, col = heat.colors(n = 30, rev = TRUE),
+  zlim = ZLIM, ylim = LIM, xlim = LIM)
+  abline(v = 0, lty = 3)
+  abline(h = 0, lty = 3)
+contour(sp.8, add = TRUE)
+mtext("G", side = 3, adj = 0.025, line = -1.5)
+mtext("line S8", side = 1, cex = 0.75, line = -1, adj = 0.95)
+
 #
-  plot(B.INT.C~GEN.C, BETAS, pch=16, col="white", cex=1,type="o", ylim=c(-6,14),xlim=c(1,77),xlab="",xaxt="n",ylab="")
-rect(0, BETA.INT.S.WIS[1]-1.96*BETA.INT.S.WIS[2],31,BETA.INT.S.WIS[1]+1.96*BETA.INT.S.WIS[2], col=rgb(1,0,0,0.25),border=F)
-rect(35,BETA.INT.S.UCR[1]-1.96*BETA.INT.S.UCR[2],78,BETA.INT.S.UCR[1]+1.96*BETA.INT.S.UCR[2], col=rgb(1,0,0,0.25),border=F)
-rect(0, BETA.INT.C.WIS[1]-1.96*BETA.INT.C.WIS[2],31,BETA.INT.C.WIS[1]+1.96*BETA.INT.C.WIS[2], col=rgb(0,0,1,0.25),border=F)
-rect(35,BETA.INT.C.UCR[1]-1.96*BETA.INT.C.UCR[2],78,BETA.INT.C.UCR[1]+1.96*BETA.INT.C.UCR[2], col=rgb(0,0,1,0.25),border=F)
-points(B.INT.C~GEN.C, BETAS, pch=16, col="blue", cex=1,type="o")
-points(B.INT.S~GEN.S, BETAS, pch=17, col="red", cex=1,type="o")
-arrows(x0=BETAS$GEN.C,y0=BETAS$B.INT.C-BETAS$se.INT.C,x1=BETAS$GEN.C,y1=BETAS$B.INT.C+BETAS$se.INT.C,col="blue",code=3,angle=90,length=0)
-arrows(x0=BETAS$GEN.S,y0=BETAS$B.INT.S-BETAS$se.INT.S,x1=BETAS$GEN.S,y1=BETAS$B.INT.S+BETAS$se.INT.S,col="red", code=3,angle=90,length=0)
-points(B.INT.1~GEN, BETAS.LINE, pch="1", col=rgb(0,0,1,0.25), cex=1,type="l")
-points(B.INT.2~GEN, BETAS.LINE, pch="2", col=rgb(0,0,1,0.25), cex=1,type="l")
-points(B.INT.4~GEN, BETAS.LINE, pch="4", col=rgb(0,0,1,0.25), cex=1,type="l")
-points(B.INT.5~GEN, BETAS.LINE, pch="5", col=rgb(0,0,1,0.25), cex=1,type="l")
-points(B.INT.3~GEN, BETAS.LINE, pch="3", col=rgb(1,0,0,0.25), cex=1,type="l")
-points(B.INT.6~GEN, BETAS.LINE, pch="6", col=rgb(1,0,0,0.25), cex=1,type="l")
-points(B.INT.7~GEN, BETAS.LINE, pch="7", col=rgb(1,0,0,0.25), cex=1,type="l")
-points(B.INT.8~GEN, BETAS.LINE, pch="8", col=rgb(1,0,0,0.25), cex=1,type="l")
-abline(h=0, lty=2)
-axis(1,at=0:78, labels=F)
-axis(1, at = seq(0, 78, 6),padj=-0.8)
-mtext("C", side=3, adj=0.025, line=-1.5)
+plot(B.INT.C~GEN.C, BETAS, pch = 16, col = "white", cex = 1, type = "o",
+  ylim = c(-1, 1.5), xlim = c(1, 77), xlab = "", xaxt = "n", ylab = "")
+  rect(xleft = 0, ybottom = BETA.INT.S.WIS[1]-1.96*BETA.INT.S.WIS[2],
+    xright = 31, ytop = BETA.INT.S.WIS[1]+1.96*BETA.INT.S.WIS[2], 
+    col = rgb(1,0,0,0.25), border = FALSE)
+  rect(xleft = 35, ybottom = BETA.INT.S.UCR[1]-1.96*BETA.INT.S.UCR[2],
+    xright = 78, ytop = BETA.INT.S.UCR[1]+1.96*BETA.INT.S.UCR[2], 
+    col = rgb(1,0,0,0.25), border = FALSE)
+  rect(xleft = 0, ybottom = BETA.INT.C.WIS[1]-1.96*BETA.INT.C.WIS[2],
+    xright = 31, ytop = BETA.INT.C.WIS[1]+1.96*BETA.INT.C.WIS[2], 
+    col = rgb(0,0,1,0.25), border = FALSE)
+  rect(xleft = 35, ybottom = BETA.INT.C.UCR[1]-1.96*BETA.INT.C.UCR[2],
+    xright = 78, ytop = BETA.INT.C.UCR[1]+1.96*BETA.INT.C.UCR[2], 
+    col = rgb(0,0,1,0.25), border = FALSE)
+  points(B.INT.C~GEN.C, BETAS, pch = 16, col = "blue", cex = 1, type = "o")
+  points(B.INT.S~GEN.S, BETAS, pch = 17, col = "red", cex = 1, type = "o")
+  arrows(x0 = BETAS$GEN.C, y0 = BETAS$B.INT.C-BETAS$se.INT.C,
+    x1=BETAS$GEN.C, y1 = BETAS$B.INT.C+BETAS$se.INT.C,
+    col = "blue", code = 3, angle = 90, length = 0)
+  arrows(x0 = BETAS$GEN.S, y0 = BETAS$B.INT.S-BETAS$se.INT.S,
+    x1 = BETAS$GEN.S, y1 = BETAS$B.INT.S+BETAS$se.INT.S,
+    col = "red", code = 3, angle = 90, length = 0)
+  points(B.INT.1~GEN, BETAS.LINE, pch="1", col=rgb(0,0,1,0.25), cex=1, type="l")
+  points(B.INT.2~GEN, BETAS.LINE, pch="2", col=rgb(0,0,1,0.25), cex=1, type="l")
+  points(B.INT.4~GEN, BETAS.LINE, pch="4", col=rgb(0,0,1,0.25), cex=1, type="l")
+  points(B.INT.5~GEN, BETAS.LINE, pch="5", col=rgb(0,0,1,0.25), cex=1, type="l")
+  points(B.INT.3~GEN, BETAS.LINE, pch="3", col=rgb(1,0,0,0.25), cex=1, type="l")
+  points(B.INT.6~GEN, BETAS.LINE, pch="6", col=rgb(1,0,0,0.25), cex=1, type="l")
+  points(B.INT.7~GEN, BETAS.LINE, pch="7", col=rgb(1,0,0,0.25), cex=1, type="l")
+  points(B.INT.8~GEN, BETAS.LINE, pch="8", col=rgb(1,0,0,0.25), cex=1, type="l")
+  abline(h = 0, lty = 2)
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj = -0.8)
+mtext("C", side = 3, adj = 0.025, line = -1.5)
+mtext(side = 2, expression(italic(beta)[duration]), las = 3, line = 3)
+
 #
-mtext("Generation",side=1, line=2.5,cex=1.25)
-mtext("Selection gradients (±se)",side=2, line=0.5,cex=1.25,outer=T,las=3)
-mtext("Running duration (min/day)",side=1, line=2.5,cex=1.25,adj=2.5)
+mtext("Generation", side = 1, line = 2.5, cex = 1)
+mtext("Running duration (sd units)", side = 1, line = 2.5, cex = 1, adj = 2)
+
+
+
+
+
 
 rm(list=ls())  # delete all objects, to start fresh in new section below
 #.################ section #2 - make figure 2 responses to selection ###############
