@@ -828,54 +828,48 @@ rm(list=ls())  # delete all objects, to start fresh in new section below
 #.############# section #3A - make A-inverse to run animal models#################
 library(MCMCglmm)
 library(nadiv)
-PED_pruned <-read.table("QG-mouse-trade-off_pedigree.txt", header = TRUE)
+PED_pruned <- read.table("QG-mouse-trade-off_pedigree.txt", header = TRUE)
 dat 	   <- read.table("QG-mouse-trade-off_data.txt", header = TRUE)
 
-#CONTROL MICE
-BLOCK<-subset(dat,GEN >= -1 & linetype=="0")
-BLOCK$animal  <-factor(BLOCK$animal)
-BLOCK$line    <-factor(BLOCK$line)
-BLOCK$damid   <-factor(BLOCK$damid)
-BLOCK$GENfac  <-factor(BLOCK$GEN)
-PED.tmp.2  <-subset(PED_pruned, GEN > -2)
-PED.tmp.1 <-prepPed(PED.tmp.2)
-PED      <-prunePed(PED.tmp.1, unique(BLOCK$animal))
-AINVout <- inverseA(PED[, c("animal", "dam", "sire")])
-fout <- AINVout$inbreeding
-AINV <- AINVout$Ainv
-stopifnot(all(abs(fout[match(BLOCK$animal, PED$animal)] - BLOCK$Fcoeff) < 1e-6))
-C0Ainv <- AINV
-C0datf <- BLOCK
-C0ped <- PED
-rm(list=c("AINV","AINVout","PED","PED.tmp.1","PED.tmp.2","BLOCK","fout"))
-
-#SELECTED MICE
-BLOCK<-subset(dat,GEN >= -1 & linetype=="1")
-BLOCK$animal <-factor(BLOCK$animal)
-BLOCK$line   <-factor(BLOCK$line)
-BLOCK$damid  <-factor(BLOCK$damid)
-BLOCK$GENfac <-factor(BLOCK$GEN)
-PED.tmp.2  <-subset(PED_pruned, GEN > -2)
-PED.tmp.1 <-prepPed(PED.tmp.2)
-PED      <-prunePed(PED.tmp.1, unique(BLOCK$animal))
-AINVout <- inverseA(PED[, c("animal", "dam", "sire")])
-fout <- AINVout$inbreeding
-AINV <- AINVout$Ainv
-stopifnot(all(abs(fout[match(BLOCK$animal, PED$animal)] - BLOCK$Fcoeff) < 1e-6))
-HR1Ainv <- AINV
-HR1datf <- BLOCK
-HR1ped <- PED
-rm(list=c("AINV","AINVout","PED","PED.tmp.1","PED.tmp.2","BLOCK","fout","PED_pruned"))
+# prepare objects separately for Control and Selected mice 
+## (data are going into separate models)
+for(ltype in c("0", "1")){
+  BLOCK <- subset(dat, GEN >= -1 & linetype == ltype)
+  BLOCK$animal  <- factor(BLOCK$animal)
+  BLOCK$line    <- factor(BLOCK$line)
+  BLOCK$damid   <- factor(BLOCK$damid)
+  BLOCK$GENfac  <- factor(BLOCK$GEN)
+  PED.tmp.2  <- subset(PED_pruned, GEN > -2)
+  PED.tmp.1 <- prepPed(PED.tmp.2)
+  PED      <- prunePed(PED.tmp.1, unique(BLOCK$animal))
+  AINVout <- inverseA(PED[, c("animal", "dam", "sire")])
+  fout <- AINVout$inbreeding
+  AINV <- AINVout$Ainv
+  stopifnot(all(abs(fout[match(BLOCK$animal, PED$animal)] - BLOCK$Fcoeff) < 1e-6))
+  # CONTROL MICE
+  if(ltype == "0"){
+    C0Ainv <- AINV
+    C0datf <- BLOCK
+    C0ped <- PED
+  }
+  # SELECTED MICE
+  if(ltype == "1"){
+    HR1Ainv <- AINV
+    HR1datf <- BLOCK
+    HR1ped <- PED
+  }
+}  #<-- end for ltype  
 
 nrow(HR1datf)
 nrow(C0datf)
-nrow(HR1datf)+nrow(C0datf)
+nrow(HR1datf) + nrow(C0datf)
+
+# save as RData for section below
+save(HR1datf, C0datf,HR1Ainv, C0Ainv, file = "QG-mouse-trade-off.RData")
 
 
-#save as RData for section below
-save(HR1datf, C0datf,HR1Ainv, C0Ainv, file="QG-mouse-trade-off.RData")
+
 rm(list=ls())  # delete all objects, to start fresh in section below
-
 #.##################### section #3B - run MCMCglmm models ############################
 #.##################### section #3B - run MCMCglmm models ############################
 #.##################### section #3B - run MCMCglmm models ############################
