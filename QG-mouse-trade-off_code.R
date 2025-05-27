@@ -545,7 +545,8 @@ CONTROL <- aggregate(RUN56 ~ GEN + linetype, data = DAT, FUN = mean)
 CONTROL <- subset(CONTROL, linetype == 0)
 
 SEL <- merge(SEL, CONTROL, by = "GEN")
-  names(SEL) <- c("GEN", "LINE", "Xp", "SD", "Xb", "S.abs", "Xp.C")
+SEL$linetype <- NULL
+  names(SEL)[match("RUN56", names(SEL))] <- "Xp.C"
 SEL$S.std <- SEL$S.abs / SEL$SD
 SEL.3 <- subset(SEL, LINE == 3)
 SEL.6 <- subset(SEL, LINE == 6)
@@ -576,11 +577,8 @@ spline_model.6 <- lm(GAIN.std ~ ns(S.cum, df = DF), data = SEL.6)
 spline_model.7 <- lm(GAIN.std ~ ns(S.cum, df = DF), data = SEL.7)
 spline_model.8 <- lm(GAIN.std ~ ns(S.cum, df = DF), data = SEL.8)
 
-#estimate realized heritability in UCR era
-SEL.3$ERA <- 16
-SEL.6$ERA <- 16
-SEL.7$ERA <- 16
-SEL.8$ERA <- 16
+# estimate realized heritability in UCR era
+SEL.3$ERA <- SEL.6$ERA <- SEL.7$ERA <- SEL.8$ERA <- 16
 SEL.3$ERA[which(SEL.3$GEN > 31)] <- 17
 SEL.6$ERA[which(SEL.6$GEN > 31)] <- 17
 SEL.7$ERA[which(SEL.7$GEN > 31)] <- 17
@@ -628,20 +626,14 @@ layout(matrix(c(1,2,3,
 plot(RUN ~ GEN, data = subset(MEANS, LINE == "1"),
   pch = 16, lty = 1, col = "blue", type = "l",
   xlim = c(0, 78), xaxt = "n", ylim = c(6, 15000))
-  points(RUN ~ GEN, data = subset(MEANS, LINE == "2"),
-    pch = 16, lty = 1, col = "blue", type = "l")
-  points(RUN ~ GEN, data = subset(MEANS, LINE == "4"),
-    pch = 16, lty = 1, col = "blue", type = "l")
-  points(RUN ~ GEN, data = subset(MEANS, LINE == "5"),
-    pch = 16, lty = 1, col = "blue", type = "l")
-  points(RUN ~ GEN, data = subset(MEANS, LINE == "3"),
-    pch = 17, lty = 1, col = "red", type = "l")
-  points(RUN ~ GEN, data = subset(MEANS, LINE == "6"),
-    pch = 17, lty = 1, col = "red", type = "l")
-  points(RUN ~ GEN, data = subset(MEANS, LINE == "7"),
-    pch = 17, lty = 1, col = "red", type = "l")
-  points(RUN ~ GEN, data = subset(MEANS, LINE == "8"),
-    pch = 17, lty = 1, col = "red", type = "l")
+  # draw lines for control lines
+  for(l in c("2", "4", "5")){
+    lines(RUN ~ GEN, data = subset(MEANS, LINE == l), lty = 1, col = "blue")
+  }
+  # draw lines for selected lines  
+  for(l in c("3", "6", "7", "8")){
+    lines(RUN ~ GEN, data = subset(MEANS, LINE == l), lty = 1, col = "red")
+  }
 legend(-4, 3000, "Control lines",
   cex = 1, lty = 1, lwd = 1, col = "blue", bty = "n")
 legend(35, 3000, "Selected lines",
@@ -657,7 +649,6 @@ legend(35, 3000, "Selected lines",
     xright = 67.9, ytop = max(MEANS$RUN), col = "white", border = "white")
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
-#  mtext("Distance run", side = 2, las = 3, line = 5)
   mtext("revs/day", side = 2, las = 3, line = 3.5)
   mtext("A", side = 3, adj = 0.015, line = -1.5)
   mtext("Wisconsin", line = 0.4, adj = 0.1, side = 3, cex = 1)
@@ -673,7 +664,6 @@ visreg(spline_model.3, ylab = "", xlab = "",
     code = 3, length = 0, col = 16)
   points(LIMITS$limit[1], y = -0.5, pch = 15, col = 16)
   points(GAIN.std ~ S.cum, data = SEL.3, pch = SEL.3$ERA, col = SEL.3$ERA)
-  #text(35,1,expression(paste(italic(b)," = 0.072±0.027**")))
   text(35, 1, "slope = 0.072\u00B10.027**")
   mtext("line S3", side = 1, cex = 0.75, line = -1, adj = 0.95)
   mtext("D", side = 3, adj = 0.025, line = -1.5)
@@ -689,7 +679,6 @@ visreg(spline_model.6, ylab = "", xlab = "",
     code = 3, length = 0, col = 16)
   points(LIMITS$limit[2], y = -0.5, pch = 15,col = 16)
   points(GAIN.std ~ S.cum, data = SEL.6, pch = SEL.6$ERA, col = SEL.6$ERA)
-  #text(35,1,expression(paste(italic(b)," = 0.037±0.017*")))
   text(35, 1, "slope = 0.037\u00B10.017*")
   mtext("line S6", side = 1, cex = 0.75, line = -1, adj = 0.95)
   mtext("E", side = 3, adj = 0.025, line = -1.5)
@@ -704,20 +693,14 @@ par(mar = c(0,0,2,1))
 plot(RPM ~ GEN, data = subset(MEANS, LINE == "1"),
   pch = 16, lty = 1, col = "blue", type = "l",
   xlim = c(0, 78), xaxt = "n", ylim = c(0, 30))
-  points(RPM ~ GEN, data = subset(MEANS, LINE == "2"),
-    pch = 16, lty = 1, col = "blue", type = "l")
-  points(RPM ~ GEN, data = subset(MEANS, LINE == "4"),
-    pch = 16, lty = 1, col = "blue", type = "l")
-  points(RPM ~ GEN, data = subset(MEANS, LINE == "5"),
-    pch = 16, lty = 1, col = "blue", type = "l")
-  points(RPM ~ GEN, data = subset(MEANS, LINE == "3"),
-    pch = 17, lty = 1, col = "red", type = "l")
-  points(RPM ~ GEN, data = subset(MEANS, LINE == "6"),
-    pch = 17, lty = 1, col = "red", type = "l")
-  points(RPM ~ GEN, data = subset(MEANS, LINE == "7"),
-    pch = 17, lty = 1, col = "red", type = "l")
-  points(RPM ~ GEN, data = subset(MEANS, LINE == "8"),
-    pch = 17, lty = 1, col = "red", type = "l")
+  # draw lines for control lines  
+  for(l in c("2", "4", "5")){
+    lines(RPM ~ GEN, data = subset(MEANS, LINE == l), lty = 1, col = "blue")
+  }
+  # draw lines for selected lines  
+  for(l in c("3", "6", "7", "8")){
+    lines(RPM ~ GEN, data = subset(MEANS, LINE == l), lty = 1, col = "red")
+  }
 
   rect(xleft = 31.1, ybottom = min(MEANS$RPM),
     xright = 35.9, ytop = max(MEANS$RPM), col = "white", border = "white")
@@ -729,7 +712,6 @@ plot(RPM ~ GEN, data = subset(MEANS, LINE == "1"),
     xright = 67.9, ytop = max(MEANS$RPM), col = "white", border = "white")
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
-#  mtext("Running speed", side = 2,las = 3, line = 5)
   mtext("revs/min", side = 2, las = 3, line = 3.5)
   mtext("B", side = 3, adj = 0.015, line = -1.5)
 
@@ -743,7 +725,6 @@ visreg(spline_model.7, ylab = "", xlab = "",
     code = 3, length = 0, col = 16)
   points(LIMITS$limit[3], y = -0.5, pch = 15, col = 16)
   points(GAIN.std ~ S.cum, data = SEL.7, pch = SEL.7$ERA, col = SEL.7$ERA)
-  #text(35,1,expression(paste(italic(b)," = 0.041±0.019*")))
   text(36,1,"slope = 0.041\u00B10.019*")
   mtext("line S7", side = 1, cex = 0.75, line = -1, adj = 0.95)
   mtext("F", side = 3, adj = 0.025, line = -1.5)
@@ -762,7 +743,6 @@ visreg(spline_model.8, ylab = "", xlab = "",
     code = 3,length = 0, col = 16)
   points(LIMITS$limit[4], y = -0.5, pch = 15, col = 16)
   points(GAIN.std ~ S.cum, data = SEL.8, pch = SEL.8$ERA, col = SEL.8$ERA)
-  #text(35,1,expression(paste(italic(b)," = 0.066±0.018**")))
   text(36, 1, "slope = 0.066\u00B10.018**")
   mtext("line S8", side = 1, cex = 0.75, line = -1, adj = 0.95)
   mtext("G", side = 3, adj = 0.025, line = -1.5)
@@ -777,20 +757,14 @@ par(mar = c(0,0,2,1))
 plot(INT ~ GEN, data = subset(MEANS, LINE == "1"),
   pch = 16, lty = 1, col = "blue", type = "l",
   xlim = c(0, 78), xaxt = "n", ylim = c(0, 650))
-  points(INT ~ GEN, data = subset(MEANS, LINE == "2"),
-    pch = 16, lty = 1, col = "blue", type = "l")
-  points(INT ~ GEN, data = subset(MEANS, LINE == "4"),
-    pch = 16, lty = 1, col = "blue", type = "l")
-  points(INT ~ GEN, data = subset(MEANS, LINE == "5"),
-    pch = 16, lty = 1, col = "blue", type = "l")
-  points(INT ~ GEN, data = subset(MEANS, LINE == "3"),
-    pch = 17, lty = 1, col = "red", type = "l")
-  points(INT ~ GEN, data = subset(MEANS, LINE == "6"),
-    pch = 17, lty = 1, col = "red", type = "l")
-  points(INT ~ GEN, data = subset(MEANS, LINE == "7"),
-    pch = 17, lty = 1, col = "red", type = "l")
-  points(INT ~ GEN, data = subset(MEANS, LINE == "8"),
-    pch = 17, lty = 1, col = "red", type = "l")
+  # draw lines for control lines  
+  for(l in c("2", "4", "5")){
+    lines(INT ~ GEN, data = subset(MEANS, LINE == l), lty = 1, col = "blue")
+  }
+  # draw lines for selected lines  
+  for(l in c("3", "6", "7", "8")){
+    lines(INT ~ GEN, data = subset(MEANS, LINE == l), lty = 1, col = "red")
+  }
 
   rect(xleft = 31.1, ybottom = min(MEANS$INT),
     xright = 35.9, ytop = max(MEANS$INT), col = "white", border = "white")
@@ -803,13 +777,12 @@ plot(INT ~ GEN, data = subset(MEANS, LINE == "1"),
   mtext("C", side = 3, adj = 0.015, line = -1.5)
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
-#  mtext("Running duration", side = 2, las = 3, line = 5)
   mtext("min/day", side = 2, las = 3, line = 3.5)
 
 mtext("Generation", side = 1,  line = 1.5)
 #
 
-
+# END of figure
 
 
 
@@ -825,6 +798,10 @@ mean(RATIOS$INT[which(RATIOS$GEN > 24)])
 mean(RATIOS$RUN[which(RATIOS$GEN > 30)])
 mean(RATIOS$RPM[which(RATIOS$GEN > 30)])
 mean(RATIOS$INT[which(RATIOS$GEN > 30)])
+
+
+
+
 
 
 
