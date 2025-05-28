@@ -674,7 +674,7 @@ visreg(spline_model.3, ylab = "", xlab = "",
 visreg(spline_model.6, ylab = "", xlab = "",
   points = list(cex = 1, pch = 16, col = rgb(0,0,0,0)),
   line = list(col = rgb(1,0,0,0.5)),
-  xlim = c(0, 50),ylim = YLIM)
+  xlim = c(0, 50), ylim = YLIM)
   arrows(x0 = LIMITS$ucl[2], y0 = -0.5, x1 = LIMITS$lcl[2], y1 = -0.5,
     code = 3, length = 0, col = 16)
   points(LIMITS$limit[2], y = -0.5, pch = 15,col = 16)
@@ -736,7 +736,7 @@ mtext("Selective gain (revs/day; sd units)",
     side = 2, line = 2, adj = -0.5, las = 3)
 
 visreg(spline_model.8, ylab = "", xlab = "",
-  points=list(cex = 1, pch = 16, col = rgb(0,0,0,0)),
+  points = list(cex = 1, pch = 16, col = rgb(0,0,0,0)),
   line = list(col = rgb(1,0,0,0.5)),
   xlim = c(0, 50), ylim = YLIM)
   arrows(x0 = LIMITS$ucl[4], y0 = -0.5, x1 = LIMITS$lcl[4], y1 = -0.5,
@@ -878,71 +878,67 @@ rm(list=ls())  # delete all objects, to start fresh in section below
 #.##################### section #3B - run MCMCglmm models ############################
 #.##################### section #3B - run MCMCglmm models ############################
 #.##################### section #3B - run MCMCglmm models ############################
-#load data and pedigree objects prepared in section #1
+library(MCMCglmm)
+
+#load data and pedigree objects prepared in section 3A
 load(file="QG-mouse-trade-off.RData")
 
 #get data ready for running the models
-C0datf$WSTRTymd <-as.Date(C0datf$WSTRTymd, "%Y-%m-%d")
-HR1datf$WSTRTymd<-as.Date(HR1datf$WSTRTymd, "%Y-%m-%d")
-C0datf$Mnth     <- factor(format(C0datf$WSTRTymd, "%m")) #make a month variable as factor
-HR1datf$Mnth    <- factor(format(HR1datf$WSTRTymd, "%m")) #make a month variable as factor
+C0datf$WSTRTymd <- as.Date(C0datf$WSTRTymd, "%Y-%m-%d")
+HR1datf$WSTRTymd<- as.Date(HR1datf$WSTRTymd, "%Y-%m-%d")
+C0datf$Mnth     <- factor(format(C0datf$WSTRTymd, "%m")) #month variable as factor
+HR1datf$Mnth    <- factor(format(HR1datf$WSTRTymd, "%m")) #month variable as factor
 
 
-library(MCMCglmm)
-#Priors
-#multivariate extension of parameter expanded/central-scaled F - gives FLAT prior on the correlations
+# Priors
+# multivariate extension of parameter expanded/central-scaled F
+## gives FLAT prior on the correlations
 k <- 2
 kPEflatR <- list(R = list(V = diag(k), nu = 0),
-  G = list(G1 = list(V = diag(k)*0.02, nu = k+1, alpha.mu = rep(0, k), alpha.V = diag(k)*1000),
-    G2 = list(V = diag(k)*0.02, nu = k+1, alpha.mu = rep(0, k), alpha.V = diag(k)*1000)))
+  G = list(G1 = list(V = diag(k)*0.02, nu = k+1,
+                     alpha.mu = rep(0, k), alpha.V = diag(k)*1000),
+           G2 = list(V = diag(k)*0.02, nu = k+1,
+                     alpha.mu = rep(0, k), alpha.V = diag(k)*1000)))
 
-#set number of iterations
+# set number of iterations
 nsamp <- 3000
 THIN <- 250
 BURN <- 10000
 (NITT <- BURN + nsamp*THIN)
 
-#CONTROL MICE - run bivariate model
+# CONTROL MICE - run bivariate model
 C_RPM_INT_mnth <- MCMCglmm(cbind(RPM56l, INT56l) ~ trait +
-                                                   trait:sex +
-                                                   trait:line +
-                                                   trait:GENfac +
-                                                   trait:WHLSTAGE +
-                                                   trait:Fcoeff +
-                                                   trait:Mnth,
-                 random = ~ us(trait):animal + us(trait):damid,
-                 rcov = ~ us(trait):units,
-                 data = C0datf,
-                 ginverse = list(animal = C0Ainv),
-                 prior = kPEflatR,
-                 family = rep("gaussian", 2),
-                 nitt = NITT, thin = THIN, burnin = BURN,
-                 pr = TRUE, saveX = TRUE, saveZ = TRUE)
-summary(C_RPM_INT_mnth)    #these numbers are in Table S1
+    trait:sex + trait:line + trait:GENfac + trait:WHLSTAGE + trait:Fcoeff +
+    trait:Mnth,
+  random = ~ us(trait):animal + us(trait):damid,
+  rcov = ~ us(trait):units,
+  data = C0datf,
+  ginverse = list(animal = C0Ainv),
+  prior = kPEflatR,
+  family = rep("gaussian", 2),
+  nitt = NITT, thin = THIN, burnin = BURN,
+  pr = TRUE, saveX = TRUE, saveZ = TRUE)
+summary(C_RPM_INT_mnth)    # see Table S2
 
-#SELECTED MICE  - run bivariate model
-#set number of iterations
+# SELECTED MICE  - run bivariate model
+# set number of iterations
 nsamp <- 3000
 THIN <- 500
 BURN <- 10000
 (NITT <- BURN + nsamp*THIN)
 
 HR_RPM_INT_mnth<- MCMCglmm(cbind(RPM56l, INT56l) ~ trait +
-                                                   trait:sex +
-                                                   trait:line +
-                                                   trait:GENfac +
-                                                   trait:WHLSTAGE +
-                                                   trait:Fcoeff +
-                                                   trait:Mnth,
-                 random = ~ us(trait):animal + us(trait):damid,
-                 rcov = ~ us(trait):units,
-                 data = HR1datf,
-                 ginverse = list(animal = HR1Ainv),
-                 prior = kPEflatR,
-                 family = rep("gaussian", 2),
-                 nitt = NITT, thin = THIN, burnin = BURN,
-                 pr = TRUE, saveX = TRUE, saveZ = TRUE)
-summary(HR_RPM_INT_mnth)  #these numbers are in Table S1
+    trait:sex + trait:line + trait:GENfac + trait:WHLSTAGE + trait:Fcoeff +
+    trait:Mnth,
+  random = ~ us(trait):animal + us(trait):damid,
+  rcov = ~ us(trait):units,
+  data = HR1datf,
+  ginverse = list(animal = HR1Ainv),
+  prior = kPEflatR,
+  family = rep("gaussian", 2),
+  nitt = NITT, thin = THIN, burnin = BURN,
+  pr = TRUE, saveX = TRUE, saveZ = TRUE)
+summary(HR_RPM_INT_mnth)  # see Table S2
 
 
 
@@ -951,7 +947,7 @@ summary(HR_RPM_INT_mnth)  #these numbers are in Table S1
 ## parameter expanded/central-scaled F
 univPEflatR <- list(R = list(V = diag(1), nu = 0),
   G = list(G1 = list(V = 1, nu = 1, alpha.mu = 0, alpha.V = 1000),
-    G2 = list(V = 1, nu = 1, alpha.mu = 0, alpha.V = 1000)))
+           G2 = list(V = 1, nu = 1, alpha.mu = 0, alpha.V = 1000)))
 
 
 nsamp <- 3000
@@ -982,13 +978,19 @@ HR_RUN_mnth <- MCMCglmm(RUN56l ~ 1 + sex + line + GENfac + WHLSTAGE + Fcoeff + M
   pr = TRUE, saveX = TRUE, saveZ = TRUE)
 
 
-#save models as RData
+# save models as RData
 save(C_RPM_INT_mnth, HR_RPM_INT_mnth,
-  file="QG-mouse-trade-off_bivariate_models.RData")
+  file = "QG-mouse-trade-off_bivariate_models.RData")
 save(C_RUN_mnth, HR_RUN_mnth,      
-  file="QG-mouse-trade-off_univariate_models.RData")
-rm(list=ls())  # delete all objects, to start fresh section below
+  file = "QG-mouse-trade-off_univariate_models.RData")
 
+
+
+
+
+
+
+rm(list=ls())  # delete all objects, to start fresh section below
 #.######### section #3C - breeding values and genetic correlations ################
 #.######### section #3C - breeding values and genetic correlations ################
 #.######### section #3C - breeding values and genetic correlations ################
@@ -1030,7 +1032,7 @@ genCovLine <- function(gen, indices, datArr, iline, lindices){
 #CONTROL MICE
 #CONTROL MICE
 #CONTROL MICE
-LINES<-c(1,2,4,5)
+LINES <- c(1, 2, 4, 5)
   # Setup random effects posteriors into array (datfx)
   ## Get names from Z/random effects design matrix so can split up BLUPs
   Zcnms <- C_RPM_INT_mnth$Z@Dimnames[[2L]]
@@ -1042,7 +1044,7 @@ LINES<-c(1,2,4,5)
   rfmla <- C_RPM_INT_mnth$Random$formula
     if(length(rfmla) > 1) rfmla <- rfmla[[2]]
   rtrms <- strsplit(deparse(rfmla), split = " \\+ ")[[1]]
-  rfacNms <- sapply(strsplit(rtrms, "\\:"), FUN = tail, 1)  #<-- XXX ASSUME only ever 1 ":" used
+  rfacNms <- sapply(strsplit(rtrms, "\\:"), FUN = tail, 1) #<-- XXX ASSUME only ever 1 ":" used
 
 
   nffx <- C_RPM_INT_mnth$Fixed$nfl  #<-- number of fixed effects (first n solutions in `Sol`)
@@ -1245,11 +1247,18 @@ for(l in 1:length(LINES)){
 postRa <- list(rA = postCovLines[[1L]] /sqrt(postVarLines[["RPM56l.animal"]] * postVarLines[["INT56l.animal"]]))
 POST.S.LINES <- c(postVarLines, postCovLines, postRa)
 
-save("POST.C.LINES", "POST.S.LINES", file = "QG-mouse-trade-off_covar_POST.LINES.RData")
-rm(list=ls())  # delete all objects, to start fresh ion section below
+save("POST.C.LINES", "POST.S.LINES",
+  file = "QG-mouse-trade-off_covar_POST.LINES.RData")
 
 
 
+
+
+
+
+
+
+rm(list=ls())  # delete all objects, to start fresh section below
 #.######### section #3D - make Figure 3 breeding values and genetic correlations ################
 #.######### section #3D - make Figure 3 breeding values and genetic correlations ################
 #.######### section #3D - make Figure 3 breeding values and genetic correlations ################
@@ -1261,194 +1270,215 @@ rm(list=ls())  # delete all objects, to start fresh ion section below
 
 library(MCMCglmm)
 
-GEN.lst <- c(0:31, 36:51, 53:62, 65, 66, 68:78)#<-- GENs with data
-#load(file = "covar_POST.LINES.RData")
+load(file = "QG-mouse-trade-off.RData")
+load(file = "QG-mouse-trade-off_bivariate_models.RData")
 load(file = "QG-mouse-trade-off_covar_POST.LINES.RData")
 
-rA.C.LINES<-POST.C.LINES$rA
-rA.S.LINES<-POST.S.LINES$rA
-rA.LINE.1<-rA.C.LINES[,,1]
-rA.LINE.2<-rA.C.LINES[,,2]
-rA.LINE.4<-rA.C.LINES[,,3]
-rA.LINE.5<-rA.C.LINES[,,4]
-rA.LINE.3<-rA.S.LINES[,,1]
-rA.LINE.6<-rA.S.LINES[,,2]
-rA.LINE.7<-rA.S.LINES[,,3]
-rA.LINE.8<-rA.S.LINES[,,4]
-#
-Ra.1<-data.frame (GEN=GEN.lst,r=NA)
-Ra.2<-data.frame (GEN=GEN.lst,r=NA)
-Ra.3<-data.frame (GEN=GEN.lst,r=NA)
-Ra.4<-data.frame (GEN=GEN.lst,r=NA)
-Ra.5<-data.frame (GEN=GEN.lst,r=NA)
-Ra.6<-data.frame (GEN=GEN.lst,r=NA)
-Ra.7<-data.frame (GEN=GEN.lst,r=NA)
-Ra.8<-data.frame (GEN=GEN.lst,r=NA)
-#
-Ra.1$r<-posterior.mode(as.mcmc(rA.LINE.1))
-Ra.2$r<-posterior.mode(as.mcmc(rA.LINE.2))
-Ra.3$r<-posterior.mode(as.mcmc(rA.LINE.3))
-Ra.4$r<-posterior.mode(as.mcmc(rA.LINE.4))
-Ra.5$r<-posterior.mode(as.mcmc(rA.LINE.5))
-Ra.6$r<-posterior.mode(as.mcmc(rA.LINE.6))
-Ra.7$r<-posterior.mode(as.mcmc(rA.LINE.7))
-Ra.8$r<-posterior.mode(as.mcmc(rA.LINE.8))
 
-Ra.C<-data.frame (GEN=GEN.lst,r=NA, lower=NA,upper=NA)
-Ra.S<-data.frame (GEN=GEN.lst,r=NA, lower=NA,upper=NA)
-acrossLinePost.C <- as.mcmc(apply(POST.C.LINES$rA, MARGIN = 2,FUN = function(v){ c(v)}))
-acrossLinePost.S <- as.mcmc(apply(POST.S.LINES$rA, MARGIN = 2,FUN = function(v){ c(v)}))
-Ra.C$r<-posterior.mode(acrossLinePost.C)
-Ra.S$r<-posterior.mode(acrossLinePost.S)
-Ra.C[,3:4]<-HPDinterval(acrossLinePost.C)
-Ra.S[,3:4]<-HPDinterval(acrossLinePost.S)
-new_rows<- data.frame(GEN=c(32,33,34,35,52,63,64,67), r=NA,lower=NA,upper=NA)
-Ra.C<-rbind(Ra.C,new_rows)
-Ra.S<-rbind(Ra.S,new_rows)
-Ra.C$GEN<-Ra.C$GEN-0.1
-Ra.S$GEN<-Ra.S$GEN+0.1
+
+GEN.lst <- c(0:31, 36:51, 53:62, 65, 66, 68:78)  #<-- GENs with data
+ # (GEN.lst should match column names of arrays in POST.C.LINES or POST.S.LINES)
+
 #
-Ra.C<-Ra.C[order(Ra.C$GEN),]
-Ra.S<-Ra.S[order(Ra.S$GEN),]
+Ra <- vector("list", length = 8)
+for(l in 1:8){
+  # Control lines
+  if(l < 5){
+    Ra[[l]] <- data.frame(GEN = GEN.lst,
+      r = posterior.mode(mcmc(POST.C.LINES$rA[, , l])))
+  }
+  if(l >= 5){
+    Ra[[l]] <- data.frame(GEN = GEN.lst,
+      r = posterior.mode(mcmc(POST.S.LINES$rA[, , l - 4])))
+  }
+}  #<-- end for l   
+
+
+acrossLinePost.C <- as.mcmc(apply(POST.C.LINES$rA, MARGIN = 2,
+                                  FUN = function(v){ c(v)}))
+acrossLinePost.S <- as.mcmc(apply(POST.S.LINES$rA, MARGIN = 2,
+                                  FUN = function(v){ c(v)}))
+Ra.C <- data.frame(GEN=GEN.lst, r = posterior.mode(acrossLinePost.C))
+  Ra.C[, c("lower", "upper")] <- HPDinterval(acrossLinePost.C)
+Ra.S <- data.frame(GEN=GEN.lst, r = posterior.mode(acrossLinePost.S))
+  Ra.S[, c("lower", "upper")] <- HPDinterval(acrossLinePost.S)
+# Fill in missing generations with blank info  
+new_rows <- data.frame(GEN = c(32,33,34,35,52,63,64,67),
+  r = NA, lower = NA, upper = NA)
+Ra.C <- rbind(Ra.C, new_rows)
+Ra.S <- rbind(Ra.S, new_rows)
+Ra.C$GEN <- Ra.C$GEN-0.1
+Ra.S$GEN <- Ra.S$GEN+0.1
 #
-new_rows<- data.frame(GEN=c(32,33,34,35,52,63,64,67),r=NA)
-Ra.1<-rbind(Ra.1,new_rows)
-Ra.2<-rbind(Ra.2,new_rows)
-Ra.3<-rbind(Ra.3,new_rows)
-Ra.4<-rbind(Ra.4,new_rows)
-Ra.5<-rbind(Ra.5,new_rows)
-Ra.6<-rbind(Ra.6,new_rows)
-Ra.7<-rbind(Ra.7,new_rows)
-Ra.8<-rbind(Ra.8,new_rows)
+Ra.C <- Ra.C[order(Ra.C$GEN), ]
+Ra.S <- Ra.S[order(Ra.S$GEN), ]
 #
-Ra.1<-Ra.1[order(Ra.1$GEN),]
-Ra.2<-Ra.2[order(Ra.2$GEN),]
-Ra.3<-Ra.3[order(Ra.3$GEN),]
-Ra.4<-Ra.4[order(Ra.4$GEN),]
-Ra.5<-Ra.5[order(Ra.5$GEN),]
-Ra.6<-Ra.6[order(Ra.6$GEN),]
-Ra.7<-Ra.7[order(Ra.7$GEN),]
-Ra.8<-Ra.8[order(Ra.8$GEN),]
+for(l in 1:8){
+  Ra[[l]] <- rbind(Ra[[l]], new_rows[, c("GEN", "r")])
+  Ra[[l]] <- Ra[[l]][order(Ra[[l]][, "GEN"]),]
+}
+
+
+
+
+
+
 
 # get breeding values for running speed and distance
-load(file="QG-mouse-trade-off.RData")
 nrow(C0datf)     #N = 10,878
 nrow(HR1datf)    #N = 25,124
 
-load(file="QG-mouse-trade-off_bivariate_models.RData")
-# Speed and Duration models
-#extract breeding values
-SOL.C<-C_RPM_INT_mnth$Sol
-SOL.S<-HR_RPM_INT_mnth$Sol
-colnames(SOL.S)
-#
-MODE.C<-posterior.mode(SOL.C)
-CI.C<-data.frame(HPDinterval(SOL.C))
-TEMP.C<-data.frame(names(MODE.C),MODE.C,CI.C)
-BLUPS.C <- TEMP.C[grep("animal", TEMP.C$names.MODE.C.), ]
+# Speed and Duration models: extract breeding values
+
+# Control breeding value summary and processing
+breedvalCnms <- with(C_RPM_INT_mnth, grep("animal", colnames(Sol)))
+#XXX NOTE: posterior.mode and HPDinterval functions can take several seconds
+## AND require a decent amount of RAM
+MODE.C <- with(C_RPM_INT_mnth, posterior.mode(Sol[, breedvalCnms]))
+BLUPS.C <- data.frame(name = names(MODE.C), BLUP = MODE.C)
+  BLUPS.C[, c("lower", "upper")] <- with(C_RPM_INT_mnth,
+                                         HPDinterval(Sol[, breedvalCnms]))
+  nrow(BLUPS.C)
+  head(BLUPS.C)
+BLUPS.C$TRAIT <- substr(BLUPS.C$name, 6, 8)
+BLUPS.C$animal <- sapply(strsplit(as.character(BLUPS.C$name), ".animal."),
+  FUN = "[", i = 2)
+rownames(BLUPS.C) <- NULL
+BLUPS.C$name <- NULL
+
+BLUPS.C.wide <- data.frame(reshape(BLUPS.C, v.names = c("BLUP","lower","upper"),
+  idvar = "animal",  timevar = "TRAIT", direction = "wide"))
 nrow(BLUPS.C)
-colnames(BLUPS.C)<-c("name","BLUP","lower","upper")
-head(BLUPS.C,25)
-BLUPS.C$TRAIT<-substr(BLUPS.C$name,6,8)
-x<-strsplit(as.character(BLUPS.C$name),".animal.")
-x2<-data.frame(Reduce(rbind, x))
-BLUPS.C$animal<-x2$X2
-head(BLUPS.C)
-rownames(BLUPS.C)<-NULL
-BLUPS.C$name<-NULL
-BLUPS.C.wide<-data.frame(reshape(BLUPS.C, v.names = c("BLUP","lower","upper"), idvar = "animal",timevar = "TRAIT", direction = "wide"))
-nrow(BLUPS.C)
-nrow(BLUPS.C.wide)
-DATA.C<-merge(C0datf,BLUPS.C.wide,by = "animal",all.x = T)
-#
-MODE.S<-posterior.mode(SOL.S)
-CI.S<-data.frame(HPDinterval(SOL.S))
-TEMP.S<-data.frame(names(MODE.S),MODE.S,CI.S)
-BLUPS.S <- TEMP.S[grep("animal", TEMP.S$names.MODE.S.), ]
+nrow(BLUPS.C.wide); nrow(BLUPS.C.wide)*2
+DATA.C <- merge(C0datf, BLUPS.C.wide, by = "animal", all.x = TRUE)
+
+# free up some memory
+rm(list = c("breedvalCnms", "MODE.C"))
+
+
+# Selected breeding value summary and processing
+breedvalSnms <- with(HR_RPM_INT_mnth, grep("animal", colnames(Sol)))
+#XXX NOTE: posterior.mode and HPDinterval functions can take several seconds
+## AND require a decent amount of RAM (more so for Selected)
+MODE.S <- with(HR_RPM_INT_mnth, posterior.mode(Sol[, breedvalSnms]))
+BLUPS.S <- data.frame(name = names(MODE.S), BLUP = MODE.S)
+  BLUPS.S[, c("lower", "upper")] <- with(HR_RPM_INT_mnth,
+                                          HPDinterval(Sol[, breedvalSnms]))
+  nrow(BLUPS.S)
+  head(BLUPS.S)
+BLUPS.S$TRAIT <- substr(BLUPS.S$name, 6, 8)
+BLUPS.S$animal <- sapply(strsplit(as.character(BLUPS.S$name), ".animal."),
+  FUN = "[", i = 2)
+rownames(BLUPS.S) <- NULL
+BLUPS.S$name <- NULL
+
+BLUPS.S.wide <- data.frame(reshape(BLUPS.S, v.names = c("BLUP","lower","upper"),
+  idvar = "animal", timevar = "TRAIT", direction = "wide"))
 nrow(BLUPS.S)
-colnames(BLUPS.S)<-c("name","BLUP","lower","upper")
-head(BLUPS.S,25)
-BLUPS.S$TRAIT<-substr(BLUPS.S$name,6,8)
-x<-strsplit(as.character(BLUPS.S$name),".animal.")
-x2<-data.frame(Reduce(rbind, x))
-BLUPS.S$animal<-x2$X2
-head(BLUPS.S)
-rownames(BLUPS.S)<-NULL
-BLUPS.S$name<-NULL
-BLUPS.S.wide<-data.frame(reshape(BLUPS.S, v.names = c("BLUP","lower","upper"), idvar = "animal",timevar = "TRAIT", direction = "wide"))
-nrow(BLUPS.S)
-nrow(BLUPS.S.wide)
-DATA.S<-merge(HR1datf,BLUPS.S.wide,by = "animal",all.x = T)
-head(DATA.S)
-DATA<-rbind(DATA.C,DATA.S)
-DATA<-droplevels(DATA)
+nrow(BLUPS.S.wide); nrow(BLUPS.S.wide)*2
+DATA.S <- merge(HR1datf, BLUPS.S.wide, by = "animal", all.x = TRUE)
+
+# free up some memory
+rm(list = c("breedvalSnms", "MODE.S"))
+
+
+DATA <- rbind(DATA.C,DATA.S)
+DATA <- droplevels(DATA)
 summary(DATA)
+
+
 #BLUPs RPM trajectories over generations
-LINE.C<-aggregate(cbind(BLUP.RPM,BLUP.INT)~GEN+line,data=DATA.C,FUN=mean)
-LINE.S<-aggregate(cbind(BLUP.RPM,BLUP.INT)~GEN+line,data=DATA.S,FUN=mean)
+LINE.C <- aggregate(cbind(BLUP.RPM, BLUP.INT) ~ GEN + line,
+  data = DATA.C, FUN = mean)
+LINE.S <- aggregate(cbind(BLUP.RPM, BLUP.INT) ~ GEN + line,
+  data = DATA.S, FUN = mean)
 
 
-#make figure 3 BREEDING VALUES and rA
-dev.new(width=9,height=6, units = "cm")
-par(mfrow=c(2,2),las = 1, oma=c(4,4,1,1),mar=c(1,1,1,1))
-layout(matrix(c(1,2,3,3), 2, 2, byrow = TRUE))
+# save data objects needed for plots since above can be computationally intensive
+save("DATA", "DATA.C", "DATA.S", "LINE.C", "LINE.S", "Ra", "Ra.C", "Ra.S", 
+  file = "QG-mouse-trade-off_BVs.RData")
+
+
+
+
+################################################################
+# if starting new session or importing objects from just above
+load(file = "QG-mouse-trade-off_BVs.RData")
+################################################################
+
+
+
+
+
+# make figure 3 BREEDING VALUES and rA
+dev.new(width = 9, height = 6, units = "cm")
+par(mfrow = c(2, 2), las = 1, oma = c(4, 4, 1, 1), mar = c(1, 1, 1, 1))
+layout(matrix(c(1, 2, 3, 3), 2, 2, byrow = TRUE))
 layout.show(3)
-#
-  plot(BLUP.RPM ~ GEN,subset(LINE.C,line = =1), type = "l", col = "blue",ylim = c(-0.1,0.6),ylab = "",xlab = "n",xaxt="n")
-points(BLUP.RPM ~ GEN,subset(LINE.C,line = =2), type = "l", col = "blue")
-points(BLUP.RPM ~ GEN,subset(LINE.C,line = =4), type = "l", col = "blue")
-points(BLUP.RPM ~ GEN,subset(LINE.C,line = =5), type = "l", col = "blue")
-points(BLUP.RPM ~ GEN,subset(LINE.S,line = =3), type = "l", col = "red")
-points(BLUP.RPM ~ GEN,subset(LINE.S,line = =6), type = "l", col = "red")
-points(BLUP.RPM ~ GEN,subset(LINE.S,line = =7), type = "l", col = "red")
-points(BLUP.RPM ~ GEN,subset(LINE.S,line = =8), type = "l", col = "red")
-abline(h=0, lty = 3)
-mtext("Genetic merit (breeding values)",side = 2,las = 3, line = 3)
-mtext("A running speed",side = 3,adj = 0.015,line = -1.5)
-axis(1, at = 0:78, labels = FALSE)
-axis(1, at = seq(0, 78, 6),padj = -0.8)
-#BLUPs INT trajectories over generations
-  plot(BLUP.INT ~ GEN,subset(LINE.C,line = =1), type = "l", col = "blue",ylim = c(-0.1,0.6),ylab = "",xlab = "",yaxt="n",xaxt="n")
-points(BLUP.INT ~ GEN,subset(LINE.C,line = =2), type = "l", col = "blue")
-points(BLUP.INT ~ GEN,subset(LINE.C,line = =4), type = "l", col = "blue")
-points(BLUP.INT ~ GEN,subset(LINE.C,line = =5), type = "l", col = "blue")
-points(BLUP.INT ~ GEN,subset(LINE.S,line = =3), type = "l", col = "red")
-points(BLUP.INT ~ GEN,subset(LINE.S,line = =6), type = "l", col = "red")
-points(BLUP.INT ~ GEN,subset(LINE.S,line = =7), type = "l", col = "red")
-points(BLUP.INT ~ GEN,subset(LINE.S,line = =8), type = "l", col = "red")
-abline(h=0, lty = 3)
-axis(2,labels=F)
-mtext("B running duration",side = 3,adj = 0.015,line = -1.5)
-axis(1, at = 0:78, labels = FALSE)
-axis(1, at = seq(0, 78, 6),padj = -0.8)
-#
-  plot(r~GEN, Ra.C, col = "blue",pch = 16, cex = 1, type="o", ylim = c(-0.35,1),xlim = c(1,77),xlab = "",xaxt="n",ylab = "")
-points(r~GEN, Ra.S, col = "red" ,pch = 17, cex = 1, type="o")
-arrows(x0=Ra.C$GEN,y0=Ra.C$lower,x1=Ra.C$GEN,y1=Ra.C$upper, col = "black",code = 3,angle=90,length = 0)
-arrows(x0=Ra.S$GEN,y0=Ra.S$lower,x1=Ra.S$GEN,y1=Ra.S$upper, col = "black" ,code = 3,angle=90,length = 0)
-points(r~GEN, Ra.1, col = rgb(0,0,1,0.75), cex = 1, type = "l")
-points(r~GEN, Ra.2, col = rgb(0,0,1,0.75), cex = 1, type = "l")
-points(r~GEN, Ra.3, col = rgb(1,0,0,0.75), cex = 1, type = "l")
-points(r~GEN, Ra.4, col = rgb(0,0,1,0.75), cex = 1, type = "l")
-points(r~GEN, Ra.5, col = rgb(0,0,1,0.75), cex = 1, type = "l")
-points(r~GEN, Ra.6, col = rgb(1,0,0,0.75), cex = 1, type = "l")
-points(r~GEN, Ra.7, col = rgb(1,0,0,0.75), cex = 1, type = "l")
-points(r~GEN, Ra.8, col = rgb(1,0,0,0.75), cex = 1, type = "l")
-points(r~GEN, Ra.C, col = "black" ,pch = 16, cex = 1, type="o")
-points(r~GEN, Ra.S, col = "black" ,pch = 17, cex = 1, type="o")
-axis(1, at = 0:78, labels = FALSE)
-axis(1, at = seq(0, 78, 6),padj = -0.8)
-abline(h=0, lty = 2)
-mtext(expression(paste(italic(r)[A]," (±se)")), side = 2, line = 2.5, las = 3,cex = 2)
-mtext("Generation",side = 1, line = 2.5,cex = 1.5)
-#
-#mtext("Wisconsin generations", line = 0.5, adj = 0.13, side = 3, cex = 1)
-#mtext("Riverside generations", line = 0.5, adj = 0.75, side = 3, cex = 1)
-legend(0,1.1, c("control (average)","selected (average)"),          pch = c(16,17), col = c("black","black"),bty = "n")
-legend(60,1.1, c("replicate control lines","replicate selected lines"), lty = 1, col = c(rgb(0,0,1,0.75),rgb(1,0,0,0.75)),bty = "n")
-arrows(26,1,26,0.9,length = 0.1,lwd=3)
-arrows(60,1,60,0.9,length = 0.1,lwd=3)
-mtext("C",side = 3,adj = 0.015,line = -1.5)
+# BLUPs RPM trajectories over generations
+plot(BLUP.RPM ~ GEN, data = subset(LINE.C, line == 1),
+  type = "l", col = "blue",
+  xlab = "n", xaxt = "n", ylab = "", ylim = c(-0.1, 0.6))
+  for(l in c(2, 4, 5)){
+    lines(BLUP.RPM ~ GEN, data = subset(LINE.C, line == l), col = "blue")
+  }
+  for(l in c(3, 6, 7, 8)){
+    lines(BLUP.RPM ~ GEN, data = subset(LINE.S, line == l), col = "red")
+  }
+  abline(h = 0, lty = 3)
+  arrows(x0 = 26, y0 = 0.2, x1 = 26, y1 = 0.3, length = 0.1, lwd = 2)
+  arrows(x0 = 60, y0 = 0.35, x1 = 60, y1 = 0.45, length = 0.1, lwd = 2)
+  mtext("Genetic merit (breeding values)", side = 2, las = 3, line = 3)
+  mtext("A running speed", side = 3, adj = 0.015, line = -1.5)
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj = -0.8)
+  
+# BLUPs INT trajectories over generations
+  plot(BLUP.INT ~ GEN, data = subset(LINE.C, line == 1),
+    type = "l", col = "blue",
+    xlab = "" , xaxt = "n", ylab = "", yaxt = "n", ylim = c(-0.1, 0.6))
+  for(l in c(2, 4, 5)){
+    lines(BLUP.INT ~ GEN, data = subset(LINE.C, line == l), col = "blue")
+  }
+  for(l in c(3, 6, 7, 8)){
+    lines(BLUP.INT ~ GEN, data = subset(LINE.S, line == l), col = "red")
+  }
+  abline(h = 0, lty = 3)
+  axis(2, labels = FALSE)
+  mtext("B running duration", side = 3, adj = 0.015, line = -1.5)
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj = -0.8)
+  
+# cross-trait correlation between RPM and INT over generations
+plot(r ~ GEN, data = Ra.C,
+  col = "blue", pch = 16, cex = 1, type = "o",
+  xlab = "", xaxt = "n", xlim = c(1, 77), ylab = "", ylim = c(-0.35, 1))
+  points(r ~ GEN, data = Ra.S, col = "red" , pch = 17, cex = 1, type = "o")
+  arrows(x0 = Ra.C$GEN, y0 = Ra.C$lower, x1 = Ra.C$GEN, y1 = Ra.C$upper,
+    col = "black", code = 3, angle = 90, length = 0)
+  arrows(x0 = Ra.S$GEN, y0 = Ra.S$lower, x1 = Ra.S$GEN, y1 = Ra.S$upper,
+    col = "black", code = 3, angle = 90, length = 0)
+  for(l in c(1, 2, 4, 5)){
+    lines(r~GEN, data = Ra[[l]], col = rgb(0, 0, 1, 0.9))
+  }
+  for(l in c(3, 6, 7, 8)){
+    lines(r ~ GEN, data = Ra[[l]], col = rgb(1, 0, 0, 0.9))
+  }
+  points(r ~ GEN, data = Ra.C, col = "black", pch = 16, cex = 1, type = "o")
+  points(r ~ GEN, data = Ra.S, col = "black", pch = 17, cex = 1, type = "o")
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj = -0.8)
+  abline(h = 0, lty = 2)
+  mtext(expression(paste(italic(r)[A]," (±se)")), side = 2, line = 2.5, las = 3,cex = 2)
+  mtext("Generation", side = 1, line = 2.5, cex = 1.5)
+
+legend(0, 1.1, legend = c("control (average)", "selected (average)"),
+  pch = c(16, 17), col = c("black", "black"), bty = "n")
+legend(60,1.1, legend = c("replicate control lines", "replicate selected lines"),
+  lty = 1, col = c(rgb(0,0,1,0.9),rgb(1,0,0,0.9)), bty = "n")
+arrows(26, 1, 26, 0.9, length = 0.1, lwd=3)
+arrows(60, 1, 60, 0.9, length = 0.1, lwd=3)
+mtext("C", side = 3, adj = 0.015, line = -1.5)
 
 #.########################### section #4 emergence of a trade-off ##################################
 #.########################### section #4 emergence of a trade-off ##################################
