@@ -1395,7 +1395,8 @@ LINE.S <- aggregate(cbind(BLUP.RPM, BLUP.INT) ~ GEN + line,
 
 
 # save data objects needed for plots since above can be computationally intensive
-save("DATA", "DATA.C", "DATA.S", "LINE.C", "LINE.S", "Ra", "Ra.C", "Ra.S", 
+save("acrossLinePost.C", "acrossLinePost.S",
+    "DATA", "DATA.C", "DATA.S", "LINE.C", "LINE.S", "Ra", "Ra.C", "Ra.S", 
   file = "QG-mouse-trade-off_BVs.RData")
 
 
@@ -1476,10 +1477,14 @@ legend(0, 1.1, legend = c("control (average)", "selected (average)"),
   pch = c(16, 17), col = c("black", "black"), bty = "n")
 legend(60,1.1, legend = c("replicate control lines", "replicate selected lines"),
   lty = 1, col = c(rgb(0,0,1,0.9),rgb(1,0,0,0.9)), bty = "n")
-arrows(26, 1, 26, 0.9, length = 0.1, lwd=3)
-arrows(60, 1, 60, 0.9, length = 0.1, lwd=3)
+arrows(x0 = 26, y0 = 1, x1 = 26, y1 = 0.9, length = 0.1, lwd = 3)
+arrows(x0 = 60, y0 = 1, x1 = 60, y1 = 0.9, length = 0.1, lwd = 3)
 mtext("C", side = 3, adj = 0.015, line = -1.5)
 
+
+
+
+rm(list = ls())
 #.########################### section #4 emergence of a trade-off ##################################
 #.########################### section #4 emergence of a trade-off ##################################
 #.########################### section #4 emergence of a trade-off ##################################
@@ -1489,47 +1494,30 @@ mtext("C", side = 3, adj = 0.015, line = -1.5)
 #.########################### section #4 emergence of a trade-off ##################################
 #.########################### section #4 emergence of a trade-off ##################################
 #.########################### section #4 emergence of a trade-off ##################################
+library(MCMCglmm)
+load(file = "QG-mouse-trade-off_BVs.RData")
+
+
 #to make figure 4, you need objects DATA.C and DATA.S produced in section 3D above
 dev.new(width=9,height=5, units = "cm")
-par(mfrow=c(2,4),las = 1, oma=c(5,5,0,0),mar=c(1,1,2,2))
+par(mfrow=c(2,4),las=1, oma=c(5,5,0,0),mar=c(1,1,2,2))
 layout(matrix(c(1,1,2,3,1,1,4,5), 2, 4, byrow = TRUE))
 layout.show(5)
 #
-  plot(BLUP.RPM~BLUP.INT,DATA, col = "white",ylab = "",xlab = "",cex.lab=2)
-points(BLUP.RPM~BLUP.INT,DATA.C, col = rgb(0,0,1,0.1),pch = 16,cex = 1.5)
-points(BLUP.RPM~BLUP.INT,DATA.S, col = rgb(1,0,0,0.1),pch = 17,cex = 1.5)
+  plot(BLUP.RPM~BLUP.INT,DATA,col="white",ylab="",xlab="",cex.lab=2)
+points(BLUP.RPM~BLUP.INT,DATA.C,col=rgb(0,0,1,0.1),pch=16,cex=1.5)
+points(BLUP.RPM~BLUP.INT,DATA.S,col=rgb(1,0,0,0.1),pch=17,cex=1.5)
 #add trajectories
-points(BLUP.RPM~BLUP.INT,subset(LINE.C,line = =1), type = "l",lwd=2, col = "grey")
-points(BLUP.RPM~BLUP.INT,subset(LINE.C,line = =2), type = "l",lwd=2, col = "grey")
-points(BLUP.RPM~BLUP.INT,subset(LINE.C,line = =4), type = "l",lwd=2, col = "grey")
-points(BLUP.RPM~BLUP.INT,subset(LINE.C,line = =5), type = "l",lwd=2, col = "grey")
-points(BLUP.RPM~BLUP.INT,subset(LINE.S,line = =3), type = "l",lwd=2)
-points(BLUP.RPM~BLUP.INT,subset(LINE.S,line = =6), type = "l",lwd=2)
-points(BLUP.RPM~BLUP.INT,subset(LINE.S,line = =7), type = "l",lwd=2)
-points(BLUP.RPM~BLUP.INT,subset(LINE.S,line = =8), type = "l",lwd=2)
+points(BLUP.RPM~BLUP.INT,subset(LINE.C,line==1),type="l",lwd=2, col="grey")
+points(BLUP.RPM~BLUP.INT,subset(LINE.C,line==2),type="l",lwd=2, col="grey")
+points(BLUP.RPM~BLUP.INT,subset(LINE.C,line==4),type="l",lwd=2, col="grey")
+points(BLUP.RPM~BLUP.INT,subset(LINE.C,line==5),type="l",lwd=2, col="grey")
+points(BLUP.RPM~BLUP.INT,subset(LINE.S,line==3),type="l",lwd=2)
+points(BLUP.RPM~BLUP.INT,subset(LINE.S,line==6),type="l",lwd=2)
+points(BLUP.RPM~BLUP.INT,subset(LINE.S,line==7),type="l",lwd=2)
+points(BLUP.RPM~BLUP.INT,subset(LINE.S,line==8),type="l",lwd=2)
 #
-#add ellipses as specific points in time
-library(heplots)
-covEllipses(DATA[which(DATA$GEN==15&DATA$line = =3),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S3",cex = 1.2)
-covEllipses(DATA[which(DATA$GEN==15&DATA$line = =6),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S6",cex = 1.2)
-covEllipses(DATA[which(DATA$GEN==15&DATA$line = =7),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S7",cex = 1.2)
-covEllipses(DATA[which(DATA$GEN==15&DATA$line = =8),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S8",cex = 1.2)
-#
-covEllipses(DATA[which(DATA$GEN==40&DATA$line = =3),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S3",cex = 1.2)
-covEllipses(DATA[which(DATA$GEN==40&DATA$line = =6),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S6",cex = 1.2)
-covEllipses(DATA[which(DATA$GEN==40&DATA$line = =7),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S7",cex = 1.2)
-covEllipses(DATA[which(DATA$GEN==40&DATA$line = =8),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S8",cex = 1.2)
-#
-covEllipses(DATA[which(DATA$GEN==78&DATA$line = =1),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="C1",cex = 1.2)
-covEllipses(DATA[which(DATA$GEN==78&DATA$line = =2),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="C2",cex = 1.2)
-covEllipses(DATA[which(DATA$GEN==78&DATA$line = =4),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="C4",cex = 1.2)
-covEllipses(DATA[which(DATA$GEN==78&DATA$line = =5),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="C5",cex = 1.2)
-#
-covEllipses(DATA[which(DATA$GEN==78&DATA$line = =3),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S3",cex = 1.2)
-covEllipses(DATA[which(DATA$GEN==78&DATA$line = =6),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S6",cex = 1.2)
-covEllipses(DATA[which(DATA$GEN==78&DATA$line = =7),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S7",cex = 1.2)
-covEllipses(DATA[which(DATA$GEN==78&DATA$line = =8),c("BLUP.INT","BLUP.RPM")],add=T, col = "white",center=F,center.pch = "",labels="S8",cex = 1.2)
-#
+
 legend( x="bottomright",
         legend=c("Control mice","Control G trajectories","Selected mice","Selected G trajectories"),
         col = c("blue","grey","red","black"), lwd=2, lty = c(NA,1,NA,1),
