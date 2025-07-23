@@ -1270,6 +1270,9 @@ rm(list=ls())  # delete all objects, to start fresh section below
 
 library(MCMCglmm)
 
+
+#XXX CAN SKIP next section and use previously made object: 
+## "QG-mouse-trade-off_BVs.RData"
 load(file = "QG-mouse-trade-off.RData")
 load(file = "QG-mouse-trade-off_bivariate_models.RData")
 load(file = "QG-mouse-trade-off_covar_POST.LINES.RData")
@@ -1402,6 +1405,9 @@ save("acrossLinePost.C", "acrossLinePost.S",
 
 
 
+
+
+
 ################################################################
 # if starting new session or importing objects from just above
 load(file = "QG-mouse-trade-off_BVs.RData")
@@ -1480,6 +1486,10 @@ legend(60,1.1, legend = c("replicate control lines", "replicate selected lines")
 arrows(x0 = 26, y0 = 1, x1 = 26, y1 = 0.9, length = 0.1, lwd = 3)
 arrows(x0 = 60, y0 = 1, x1 = 60, y1 = 0.9, length = 0.1, lwd = 3)
 mtext("C", side = 3, adj = 0.015, line = -1.5)
+
+
+
+
 
 
 
