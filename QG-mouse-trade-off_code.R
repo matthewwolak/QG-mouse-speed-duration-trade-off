@@ -1283,6 +1283,7 @@ GEN.lst <- c(0:31, 36:51, 53:62, 65, 66, 68:78)  #<-- GENs with data
  # (GEN.lst should match column names of arrays in POST.C.LINES or POST.S.LINES)
 
 Ra <- vector("list", length = 8)
+  names(Ra) <- c(dimnames(POST.C.LINES$rA)[[3]], dimnames(POST.S.LINES$rA)[[3]])
 for(l in 1:8){
   # Control lines
   if(l < 5){
@@ -1422,15 +1423,15 @@ dev.new(width = 9, height = 6, units = "cm")
 par(mfrow = c(2, 2), las = 1, oma = c(4, 4, 1, 1), mar = c(1, 1, 1, 1))
 layout(matrix(c(1, 2, 3, 3), 2, 2, byrow = TRUE))
 layout.show(3)
-# BLUPs RPM trajectories over generations
-plot(BLUP.RPM ~ GEN, data = subset(LINE.C, line == 1),
+# panel A: BLUPs RPM trajectories over generations
+plot(BLUP.RPM ~ GEN, data = subset(LINE.C, line == "1"),
   type = "l", col = "blue",
   xlab = "n", xaxt = "n", ylab = "", ylim = c(-0.1, 0.6))
-  # plot lines for mean of posterior modes for each generation and line
-  for(l in c(2, 4, 5)){
+  # plot lines for generation mean of posterior modes for each line
+  for(l in c("2", "4", "5")){
     lines(BLUP.RPM ~ GEN, data = subset(LINE.C, line == l), col = "blue")
   }
-  for(l in c(3, 6, 7, 8)){
+  for(l in c("3", "6", "7", "8")){
     lines(BLUP.RPM ~ GEN, data = subset(LINE.S, line == l), col = "red")
   }
   abline(h = 0, lty = 3)
@@ -1441,15 +1442,15 @@ plot(BLUP.RPM ~ GEN, data = subset(LINE.C, line == 1),
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
   
-# BLUPs INT trajectories over generations
-  plot(BLUP.INT ~ GEN, data = subset(LINE.C, line == 1),
+# panel B: BLUPs INT trajectories over generations
+  plot(BLUP.INT ~ GEN, data = subset(LINE.C, line == "1"),
     type = "l", col = "blue",
     xlab = "" , xaxt = "n", ylab = "", yaxt = "n", ylim = c(-0.1, 0.6))
-  # plot lines for mean of posterior modes for each generation and line
-  for(l in c(2, 4, 5)){
+  # plot lines for generation mean of posterior modes for each line
+  for(l in c("2", "4", "5")){
     lines(BLUP.INT ~ GEN, data = subset(LINE.C, line == l), col = "blue")
   }
-  for(l in c(3, 6, 7, 8)){
+  for(l in c("3", "6", "7", "8")){
     lines(BLUP.INT ~ GEN, data = subset(LINE.S, line == l), col = "red")
   }
   abline(h = 0, lty = 3)
@@ -1458,7 +1459,7 @@ plot(BLUP.RPM ~ GEN, data = subset(LINE.C, line == 1),
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
   
-# cross-trait correlation between RPM and INT over generations
+# panel B: cross-trait correlation between RPM and INT over generations
 plot(r ~ GEN, data = Ra.C,
   type = "n",
   xlab = "", xaxt = "n", xlim = c(1, 77), ylab = "", ylim = c(-0.35, 1))
@@ -1468,10 +1469,10 @@ plot(r ~ GEN, data = Ra.C,
   arrows(x0 = Ra.S$GEN, y0 = Ra.S$lower, x1 = Ra.S$GEN, y1 = Ra.S$upper,
     col = "black", code = 3, angle = 90, length = 0)
   # posterior mode for each line and generation
-  for(l in c(1, 2, 4, 5)){
+  for(l in c("1", "2", "4", "5")){
     lines(r~GEN, data = Ra[[l]], col = rgb(0, 0, 1, 0.9))
   }
-  for(l in c(3, 6, 7, 8)){
+  for(l in c("3", "6", "7", "8")){
     lines(r ~ GEN, data = Ra[[l]], col = rgb(1, 0, 0, 0.9))
   }
   # posterior modes across lines
@@ -1486,8 +1487,9 @@ plot(r ~ GEN, data = Ra.C,
 
 legend(0, 1.1, legend = c("control (average)", "selected (average)"),
   pch = c(16, 17), col = c("black", "black"), bty = "n")
-legend(60,1.1, legend = c("replicate control lines", "replicate selected lines"),
-  lty = 1, col = c(rgb(0,0,1,0.9),rgb(1,0,0,0.9)), bty = "n")
+legend(60, 1.1,
+  legend = c("replicate control lines", "replicate selected lines"),
+  lty = 1, col = c(rgb(0, 0, 1, 0.9), rgb(1, 0, 0, 0.9)), bty = "n")
 arrows(x0 = 26, y0 = 1, x1 = 26, y1 = 0.9, length = 0.1, lwd = 3)
 arrows(x0 = 60, y0 = 1, x1 = 60, y1 = 0.9, length = 0.1, lwd = 3)
 mtext("C", side = 3, adj = 0.015, line = -1.5)
@@ -1509,7 +1511,6 @@ rm(list = ls())
 #.########################### section #4 emergence of a trade-off ##################################
 #.########################### section #4 emergence of a trade-off ##################################
 #.########################### section #4 emergence of a trade-off ##################################
-library(MCMCglmm)
 
 #to make figure 4, you need objects DATA.C and DATA.S produced in section 3D above (contained in "QG-mouse-trade-off_BVs.RData" produced in section 3D)
 load(file = "QG-mouse-trade-off_BVs.RData")
@@ -1518,34 +1519,33 @@ load(file = "QG-mouse-trade-off_BVs.RData")
 
 dev.new(width = 9, height = 5, units = "cm")
 par(mfrow = c(2,4), las = 1, oma = c(5, 5, 0, 0), mar = c(1, 1, 2, 2))
-layout(matrix(c(1, 1, 2, 3, 1, 1, 4, 5), 2, 4, byrow = TRUE))
-#layout.show(5)
-#
-plot(BLUP.RPM ~ BLUP.INT, data = DATA,col="white",ylab="",xlab="",cex.lab=2)
-points(BLUP.RPM ~ BLUP.INT, data = DATA.C,
-  col = rgb(0, 0, 1, 0.1), pch = 16, cex = 1.5)
-points(BLUP.RPM ~BLUP.INT, data = DATA.S,
-  col = rgb(1, 0, 0, 0.1), pch = 17, cex = 1.5)
-# add trajectories
-for(l in c(1, 2, 4, 5)){
-  points(BLUP.RPM ~ BLUP.INT, subset(LINE.C, line == l),
-    type = "l", lwd = 2, col = "grey")
-}
-for(l in c(3, 6, 7, 8)){    
-  points(BLUP.RPM ~ BLUP.INT, subset(LINE.S, line == l), type = "l", lwd = 2)
-}
+layout(matrix(c(1, 1, 2, 3, 1, 1, 4, 5), nrow = 2, ncol = 4, byrow = TRUE))
+layout.show(5)
+# panel A: all individual posterior mode BLUPs for all GENs and LINEs
+plot(BLUP.RPM ~ BLUP.INT, data = DATA, type = "n",
+  ylab = "", xlab = "", cex.lab = 2)
+  points(BLUP.RPM ~ BLUP.INT, data = DATA.C,
+    col = rgb(0, 0, 1, 0.1), pch = 16, cex = 1.5)
+  points(BLUP.RPM ~BLUP.INT, data = DATA.S,
+    col = rgb(1, 0, 0, 0.1), pch = 17, cex = 1.5)
+  # add traces of generation mean posterior mode BLUP for each line
+  for(l in c("1", "2", "4", "5")){
+    points(BLUP.RPM ~ BLUP.INT, data = subset(LINE.C, line == l),
+      type = "l", lwd = 2, col = "grey")
+  }
+  for(l in c("3", "6", "7", "8")){    
+    points(BLUP.RPM ~ BLUP.INT, data = subset(LINE.S, line == l),
+      type = "l", lwd = 2)
+  }
 
 legend("bottomright",
-        legend=c("Control mice", "Control G trajectories",
-                 "Selected mice", "Selected G trajectories"),
+        legend = c("Control mice", "Control G trajectories",
+                   "Selected mice", "Selected G trajectories"),
         col = c("blue", "grey", "red", "black"), lwd = 2, lty = c(NA, 1, NA, 1),
         pch = c(16, NA, 17, NA), merge = TRUE, bty = "n")
-text(-0.05, 0.35, "generation 15")
-  arrows(-0.05, 0.33, 0.025, 0.31, length = 0.1)
-text(0.24, 0.25, "generation 40")
-  arrows(0.24, 0.26, 0.215, 0.32, length = 0.1)
-text(0.085, 0.625, "generation 78")
-  arrows(0.1, 0.61, 0.13, 0.59, length = 0.1)
+text(-0.05, 0.57, "gene flow events")
+arrows(-0.03, 0.55, 0.06, 0.4, length = 0.1, lwd = 2)
+arrows(-0.03, 0.55, 0.12, 0.5, length = 0.1, lwd = 2)
 mtext("Genetic merit for running speed", side = 2, line = 2, outer = TRUE,
   las = 3, cex = 1.5)
 mtext("Genetic merit for running duration", side = 1, line = 3, outer=TRUE,
@@ -1565,8 +1565,8 @@ xlim.1 <- c(min(LAST.1$lower.INT), max(LAST.1$upper.INT))
 xlim.2 <- c(min(LAST.2$lower.INT), max(LAST.2$upper.INT))
 xlim.3 <- c(min(LAST.3$lower.INT), max(LAST.3$upper.INT))
 xlim.4 <- c(min(LAST.4$lower.INT), max(LAST.4$upper.INT))
-# Gen 1
-plot(BLUP.RPM ~ BLUP.INT, data = LAST.1,
+# panel B: Gen 1
+plot(BLUP.RPM ~ BLUP.INT, data = LAST.1, type = "n",
   ylim = ylim.1, xlim = xlim.1, ylab = "", xlab = "")
   # Credible Intervals
   with(LAST.1, arrows(x0 = BLUP.INT, y0 = lower.RPM,
@@ -1576,10 +1576,14 @@ plot(BLUP.RPM ~ BLUP.INT, data = LAST.1,
     x1 = upper.INT, y1 = BLUP.RPM,
     col = rgb(0, 0, 0, 0.05), code = 3, angle = 90, length = 0))
   # posterior modes
-  points(BLUP.RPM ~ BLUP.INT, data = LAST.1, col = line, pch = 16, cex = 1.5)
+  points(BLUP.RPM ~ BLUP.INT, data = LAST.1,
+    col = as.integer(line), pch = as.integer(line), cex = 1.5)
  mtext("B) generation 1", side = 3, adj = 0.015, line = -1.5, cex = 0.8)
-# Gen 15
-  plot(BLUP.RPM ~ BLUP.INT, data = LAST.2,
+ mtext(expression(paste(italic(r)[A], "(across) = 0.43")),
+   side = 1, line = -1, adj = 0.025, cex = 0.8)
+#with(Ra.S, r[which(GEN == 1.1)])   
+# panel C: Gen 15
+  plot(BLUP.RPM ~ BLUP.INT, data = LAST.2, type = "n",
     ylim = ylim.2, xlim = xlim.2, ylab = "", xlab = "")
   # Credible Intervals
   with(LAST.2, arrows(x0 = BLUP.INT, y0 = lower.RPM,
@@ -1589,10 +1593,14 @@ plot(BLUP.RPM ~ BLUP.INT, data = LAST.1,
     x1 = upper.INT, y1 = BLUP.RPM,
     col = rgb(0, 0, 0, 0.05), code = 3, angle = 90, length = 0))
   # posterior modes
-  points(BLUP.RPM ~ BLUP.INT, data = LAST.2, col = line, pch = 16,cex = 1.5)
+  points(BLUP.RPM ~ BLUP.INT, data = LAST.2,
+    col = as.integer(line), pch = as.integer(line), cex = 1.5)
  mtext("C) generation 15", side = 3, adj = 0.015, line = -1.5, cex = 0.8)
-# Gen 40 
-  plot(BLUP.RPM ~ BLUP.INT, data = LAST.3,
+ mtext(expression(paste(italic(r)[A], "(across) = 0.11")),
+   side = 1, line = -1, adj = 0.025, cex = 0.8)
+#with(Ra.S, r[which(GEN == 15.1)])   
+# panel D: Gen 40 
+  plot(BLUP.RPM ~ BLUP.INT, data = LAST.3, type = "n",
     ylim = ylim.3, xlim = xlim.3, ylab = "", xlab = "")
   # Credible Intervals
   with(LAST.3, arrows(x0 = BLUP.INT, y0 = lower.RPM,
@@ -1602,10 +1610,15 @@ plot(BLUP.RPM ~ BLUP.INT, data = LAST.1,
     x1 = upper.INT, y1 = BLUP.RPM,
     col = rgb(0, 0, 0, 0.05), code = 3, angle = 90, length = 0))
   # posterior modes
-  points(BLUP.RPM ~ BLUP.INT, data = LAST.3, col = line, pch = 16, cex = 1.5)
-mtext("D) generation 40",side = 3,adj = 0.015,line = -1.5, cex = 0.8)
-# Gen 78
-  plot(BLUP.RPM~BLUP.INT,LAST.4,ylim = ylim.4,xlim = xlim.4,ylab = "",xlab = "")
+  points(BLUP.RPM ~ BLUP.INT, data = LAST.3,
+    col = as.integer(line), pch = as.integer(line), cex = 1.5)
+ mtext("D) generation 40",side = 3,adj = 0.015,line = -1.5, cex = 0.8)
+ mtext(expression(paste(italic(r)[A], "(across) = -0.56")),
+   side = 1, line = -1, adj = 0.025, cex = 0.8)
+#with(Ra.S, r[which(GEN == 40.1)])   
+# panel E: Gen 78
+  plot(BLUP.RPM~BLUP.INT,LAST.4, type = "n",
+    ylim = ylim.4,xlim = xlim.4,ylab = "",xlab = "")
   # Credible Intervals
   with(LAST.4, arrows(x0 = BLUP.INT, y0 = lower.RPM,
     x1 = BLUP.INT, y1 = upper.RPM,
@@ -1614,12 +1627,16 @@ mtext("D) generation 40",side = 3,adj = 0.015,line = -1.5, cex = 0.8)
     x1 = upper.INT, y1 = BLUP.RPM,
     col = rgb(0, 0, 0, 0.05), code = 3, angle = 90, length = 0))
   # posterior modes
-  points(BLUP.RPM ~ BLUP.INT, data = LAST.4, col = line, pch = 16, cex = 1.5)
-mtext("E) generation 78", side = 3, adj = 0.015, line = -1.5, cex = 0.8)
-#
+  points(BLUP.RPM ~ BLUP.INT, data = LAST.4,
+    col = as.integer(line), pch = as.integer(line), cex = 1.5)
+ mtext("E) generation 78", side = 3, adj = 0.015, line = -1.5, cex = 0.8)
+ mtext(expression(paste(italic(r)[A], "(across) = -0.75")),
+   side = 1, line = -1, adj = 0.025, cex = 0.8)
+#with(Ra.S, r[which(GEN == 78.1)])   
+# legend for the generation snapshots
 legend("topright",
-  legend=c("line S3","line S6","line S7","line S8"),
-  col = c("black", "red", "blue", "green"), pch = 16, bty = "n")
+  legend=c("line S3", "line S6", "line S7", "line S8"),
+  col = c(1, 2, 3, 4), pch = c(1, 2, 3, 4), bty = "n")
 
 
 with(DATA,
