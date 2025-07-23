@@ -1459,7 +1459,7 @@ plot(BLUP.RPM ~ GEN, data = subset(LINE.C, line == "1"),
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
   
-# panel B: cross-trait correlation between RPM and INT over generations
+# panel C: cross-trait correlation between RPM and INT over generations
 plot(r ~ GEN, data = Ra.C,
   type = "n",
   xlab = "", xaxt = "n", xlim = c(1, 77), ylab = "", ylim = c(-0.35, 1))
@@ -1579,9 +1579,11 @@ plot(BLUP.RPM ~ BLUP.INT, data = LAST.1, type = "n",
   points(BLUP.RPM ~ BLUP.INT, data = LAST.1,
     col = as.integer(line), pch = as.integer(line), cex = 1.5)
  mtext("B) generation 1", side = 3, adj = 0.015, line = -1.5, cex = 0.8)
- mtext(expression(paste(italic(r)[A], "(across) = 0.43")),
+ across_rA_1 <- with(DATA,
+   round(cor(BLUP.INT[which(GEN == 1 & linetype == 1)],
+             BLUP.RPM[which(GEN == 1 & linetype == 1)]), 2))
+ mtext(bquote(paste(italic(r)[A], "(across) =") ~ .(across_rA_1)),
    side = 1, line = -1, adj = 0.025, cex = 0.8)
-#with(Ra.S, r[which(GEN == 1.1)])   
 # panel C: Gen 15
   plot(BLUP.RPM ~ BLUP.INT, data = LAST.2, type = "n",
     ylim = ylim.2, xlim = xlim.2, ylab = "", xlab = "")
@@ -1596,9 +1598,11 @@ plot(BLUP.RPM ~ BLUP.INT, data = LAST.1, type = "n",
   points(BLUP.RPM ~ BLUP.INT, data = LAST.2,
     col = as.integer(line), pch = as.integer(line), cex = 1.5)
  mtext("C) generation 15", side = 3, adj = 0.015, line = -1.5, cex = 0.8)
- mtext(expression(paste(italic(r)[A], "(across) = 0.11")),
+ across_rA_15 <- with(DATA,
+   round(cor(BLUP.INT[which(GEN == 15 & linetype == 1)],
+             BLUP.RPM[which(GEN == 15 & linetype == 1)]), 2))
+ mtext(bquote(paste(italic(r)[A], "(across) =") ~ .(across_rA_15)),
    side = 1, line = -1, adj = 0.025, cex = 0.8)
-#with(Ra.S, r[which(GEN == 15.1)])   
 # panel D: Gen 40 
   plot(BLUP.RPM ~ BLUP.INT, data = LAST.3, type = "n",
     ylim = ylim.3, xlim = xlim.3, ylab = "", xlab = "")
@@ -1613,9 +1617,11 @@ plot(BLUP.RPM ~ BLUP.INT, data = LAST.1, type = "n",
   points(BLUP.RPM ~ BLUP.INT, data = LAST.3,
     col = as.integer(line), pch = as.integer(line), cex = 1.5)
  mtext("D) generation 40",side = 3,adj = 0.015,line = -1.5, cex = 0.8)
- mtext(expression(paste(italic(r)[A], "(across) = -0.56")),
+ across_rA_40 <- with(DATA,
+   round(cor(BLUP.INT[which(GEN == 40 & linetype == 1)],
+             BLUP.RPM[which(GEN == 40 & linetype == 1)]), 2))
+ mtext(bquote(paste(italic(r)[A], "(across) =") ~ .(across_rA_40)),
    side = 1, line = -1, adj = 0.025, cex = 0.8)
-#with(Ra.S, r[which(GEN == 40.1)])   
 # panel E: Gen 78
   plot(BLUP.RPM~BLUP.INT,LAST.4, type = "n",
     ylim = ylim.4,xlim = xlim.4,ylab = "",xlab = "")
@@ -1630,9 +1636,12 @@ plot(BLUP.RPM ~ BLUP.INT, data = LAST.1, type = "n",
   points(BLUP.RPM ~ BLUP.INT, data = LAST.4,
     col = as.integer(line), pch = as.integer(line), cex = 1.5)
  mtext("E) generation 78", side = 3, adj = 0.015, line = -1.5, cex = 0.8)
- mtext(expression(paste(italic(r)[A], "(across) = -0.75")),
+ across_rA_78 <- with(DATA,
+   round(cor(BLUP.INT[which(GEN == 78 & linetype == 1)],
+             BLUP.RPM[which(GEN == 78 & linetype == 1)]), 2))
+ mtext(bquote(paste(italic(r)[A], "(across) =") ~ .(across_rA_78)),
    side = 1, line = -1, adj = 0.025, cex = 0.8)
-#with(Ra.S, r[which(GEN == 78.1)])   
+
 # legend for the generation snapshots
 legend("topright",
   legend=c("line S3", "line S6", "line S7", "line S8"),
@@ -1651,6 +1660,158 @@ with(DATA,
 with(DATA,
   cor.test(BLUP.INT[which(GEN == 78 & linetype == 1)],
            BLUP.RPM[which(GEN == 78 & linetype == 1)]))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#.######################## Figure S4 genetic (co)variance: running speed, duration
+###############################
+#.######################## Figure S4 genetic (co)variance: running speed, duration
+###############################
+#.######################## Figure S4 genetic (co)variance: running speed, duration
+###############################
+#.######################## Figure S4 genetic (co)variance: running speed, duration
+###############################
+#.######################## Figure S4 genetic (co)variance: running speed, duration
+###############################
+#.######################## Figure S4 genetic (co)variance: running speed, duration
+###############################
+#.######################## Figure S4 genetic (co)variance: running speed, duration
+###############################
+library(MCMCglmm)
+load(file = "QG-mouse-trade-off_covar_POST.LINES.RData")
+load(file = "QG-mouse-trade-off_BVs.RData")
+
+GEN.lst <- c(0:31, 36:51, 53:62, 65, 66, 68:78)  #<-- GENs with data
+ # (GEN.lst should match column names of arrays in POST.C.LINES or POST.S.LINES)
+
+
+# create G matrix for each generation and line using
+## the posterior mode variances and covariance for each generation and line
+G <- vector("list", length = 8)
+  names(G) <- c(dimnames(POST.C.LINES$rA)[[3]], dimnames(POST.S.LINES$rA)[[3]])
+new_rows <- data.frame(GEN = c(32, 33, 34, 35, 52, 63, 64, 67),
+  Va.RPM = NA, COVl = NA, COVu = NA, Va.INT = NA)
+for(l in 1:8){
+  # Control lines
+  if(l < 5){
+    G[[l]] <- rbind(data.frame(GEN = GEN.lst,
+        Va.RPM = posterior.mode(mcmc(POST.C.LINES$"RPM56l.animal"[, , l])),
+        COVl = posterior.mode(mcmc(POST.C.LINES$"RPM56l:INT56l.animal"[, , l])),
+        COVu = posterior.mode(mcmc(POST.C.LINES$"RPM56l:INT56l.animal"[, , l])),
+        Va.INT = posterior.mode(mcmc(POST.C.LINES$"INT56l.animal"[, , l]))),
+      new_rows)
+    G[[l]] <- G[[l]][order(G[[l]][, "GEN"]), ]
+  }
+  if(l >= 5){
+    G[[l]] <- rbind(data.frame(GEN = GEN.lst,
+        Va.RPM = posterior.mode(mcmc(POST.S.LINES$"RPM56l.animal"[, , l - 4])),
+        COVl = posterior.mode(mcmc(POST.S.LINES$"RPM56l:INT56l.animal"[, , l - 4])),
+        COVu = posterior.mode(mcmc(POST.S.LINES$"RPM56l:INT56l.animal"[, , l - 4])),
+        Va.INT = posterior.mode(mcmc(POST.S.LINES$"INT56l.animal"[, , l - 4]))),
+      new_rows)
+    G[[l]] <- G[[l]][order(G[[l]][, "GEN"]), ]
+  }
+}  #<-- end for l   
+
+
+
+
+# make figure S4 genetic (co)variances
+dev.new(width = 9, height = 6, units = "cm")
+par(mfrow = c(2, 2), las = 1, oma = c(4, 4, 1, 1), mar = c(1, 1, 1, 1))
+layout(matrix(c(1, 2, 3, 3), 2, 2, byrow = TRUE))
+layout.show(3)
+# panel A: VA of RPM trajectories over generations
+plot(Va.RPM ~ GEN, data = G[["1"]],
+  type = "l", col = "blue",
+  xlab = "n", xaxt = "n", ylab = "", ylim = c(0, 0.014))
+  # plot lines for generation posterior modes for each line
+  for(l in c("2", "4", "5")){
+    lines(Va.RPM ~ GEN, data = G[[l]], col = "blue")
+  }
+  for(l in c("3", "6", "7", "8")){
+    lines(Va.RPM ~ GEN, data = G[[l]], col = "red")
+  }
+  abline(h = 0, lty = 3)
+  mtext("Genetic variance", side = 2, las = 3, line = 3)
+  mtext("A running speed", side = 3, adj = 0.015, line = -1.5)
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj = -0.8)
+  
+# panel B: VA of INT trajectories over generations
+  plot(Va.INT ~ GEN, data = G[["1"]],
+    type = "l", col = "blue",
+    xlab = "" , xaxt = "n", ylab = "", yaxt = "n", ylim = c(0, 0.14))
+  # plot lines for generation posterior modes for each line
+  for(l in c("2", "4", "5")){
+    lines(Va.INT ~ GEN, data = G[[l]], col = "blue")
+  }
+  for(l in c("3", "6", "7", "8")){
+    lines(Va.INT ~ GEN, data = G[[l]], col = "red")
+  }
+  abline(h = 0, lty = 3)
+  axis(2, labels = FALSE)
+  mtext("B running duration", side = 3, adj = 0.015, line = -1.5)
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj = -0.8)
+  
+# panel C: generation posterior mode cross-trait covariance between RPM and INT
+plot(COVl ~ GEN, data = G[["1"]],
+  type = "l", col = "blue",
+  xlab = "", xaxt = "n", ylab = "", ylim = c(-0.00025, 0.0048))
+  # plot lines for generation posterior mode for each line
+  for(l in c("1", "2", "4", "5")){
+    lines(COVl~GEN, data = G[[l]], col = "blue")
+  }
+  for(l in c("3", "6", "7", "8")){
+    lines(COVl ~ GEN, data = G[[l]], col = "red")
+  }
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj = -0.8)
+  abline(h = 0, lty = 2)
+  mtext("Genetic covariance", side = 2, line = 2.5, las = 3,cex = 2)
+  mtext("Generation", side = 1, line = 2.5, cex = 1.5)
+
+legend(60, 0.005,
+  legend = c("replicate control lines", "replicate selected lines"),
+  lty = 1, col = c(rgb(0, 0, 1, 0.75), rgb(1, 0, 0, 0.75)), bty = "n")
+arrows(x0 = 26, y0 = 0.005, x1 = 26, y1 = 0.0045, length = 0.1, lwd = 2)
+arrows(x0 = 60, y0 = 0.005, x1 = 60, y1 = 0.0045, length = 0.1, lwd = 2)
+mtext("C", side = 3, adj = 0.015, line = -1.5)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
