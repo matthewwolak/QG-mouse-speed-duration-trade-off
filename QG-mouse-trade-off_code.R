@@ -1737,7 +1737,7 @@ layout.show(3)
 # panel A: VA of RPM trajectories over generations
 plot(Va.RPM ~ GEN, data = G[["1"]],
   type = "l", col = "blue",
-  xlab = "n", xaxt = "n", ylab = "", ylim = c(0, 0.014))
+  xlab = "", xaxt = "n", ylab = "", ylim = c(0, 0.014))
   # plot lines for generation posterior modes for each line
   for(l in c("2", "4", "5")){
     lines(Va.RPM ~ GEN, data = G[[l]], col = "blue")
@@ -1746,7 +1746,9 @@ plot(Va.RPM ~ GEN, data = G[["1"]],
     lines(Va.RPM ~ GEN, data = G[[l]], col = "red")
   }
   abline(h = 0, lty = 3)
-  mtext("Genetic variance", side = 2, las = 3, line = 3)
+  arrows(x0 = 26, y0 = 0.014, x1 = 26, y1 = 0.0125, length = 0.1, lwd = 2)
+  arrows(x0 = 60, y0 = 0.008, x1 = 60, y1 = 0.0065, length = 0.1, lwd = 2)
+  mtext("Additive genetic variance", side = 2, las = 3, line = 3)
   mtext("A running speed", side = 3, adj = 0.015, line = -1.5)
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
@@ -1754,7 +1756,7 @@ plot(Va.RPM ~ GEN, data = G[["1"]],
 # panel B: VA of INT trajectories over generations
   plot(Va.INT ~ GEN, data = G[["1"]],
     type = "l", col = "blue",
-    xlab = "" , xaxt = "n", ylab = "", yaxt = "n", ylim = c(0, 0.14))
+    xlab = "" , xaxt = "n", ylab = "", yaxt = "n", ylim = c(0, 0.014))
   # plot lines for generation posterior modes for each line
   for(l in c("2", "4", "5")){
     lines(Va.INT ~ GEN, data = G[[l]], col = "blue")
@@ -1763,10 +1765,12 @@ plot(Va.RPM ~ GEN, data = G[["1"]],
     lines(Va.INT ~ GEN, data = G[[l]], col = "red")
   }
   abline(h = 0, lty = 3)
-  axis(2, labels = FALSE)
-  mtext("B running duration", side = 3, adj = 0.015, line = -1.5)
+  arrows(x0 = 26, y0 = 0.008, x1 = 26, y1 = 0.0065, length = 0.1, lwd = 2)
+  arrows(x0 = 60, y0 = 0.0035, x1 = 60, y1 = 0.002, length = 0.1, lwd = 2)
+ axis(2, labels = FALSE)
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
+  mtext("B running duration", side = 3, adj = 0.015, line = -1.5)
   
 # panel C: generation posterior mode cross-trait covariance between RPM and INT
 plot(COVl ~ GEN, data = G[["1"]],
@@ -1782,14 +1786,14 @@ plot(COVl ~ GEN, data = G[["1"]],
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
   abline(h = 0, lty = 2)
-  mtext("Genetic covariance", side = 2, line = 2.5, las = 3,cex = 2)
+  mtext("Additive genetic covariance", side = 2, las = 3, line = 3)
   mtext("Generation", side = 1, line = 2.5, cex = 1.5)
 
 legend(60, 0.005,
   legend = c("replicate control lines", "replicate selected lines"),
   lty = 1, col = c(rgb(0, 0, 1, 0.75), rgb(1, 0, 0, 0.75)), bty = "n")
 arrows(x0 = 26, y0 = 0.005, x1 = 26, y1 = 0.0045, length = 0.1, lwd = 2)
-arrows(x0 = 60, y0 = 0.005, x1 = 60, y1 = 0.0045, length = 0.1, lwd = 2)
+arrows(x0 = 60, y0 = 0.002, x1 = 60, y1 = 0.0015, length = 0.1, lwd = 2)
 mtext("C", side = 3, adj = 0.015, line = -1.5)
 
 
