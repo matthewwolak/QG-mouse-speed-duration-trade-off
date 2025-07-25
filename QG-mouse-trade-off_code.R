@@ -1470,7 +1470,7 @@ plot(r ~ GEN, data = Ra.C,
     col = "black", code = 3, angle = 90, length = 0)
   # posterior mode for each line and generation
   for(l in c("1", "2", "4", "5")){
-    lines(r~GEN, data = Ra[[l]], col = rgb(0, 0, 1, 0.9))
+    lines(r ~ GEN, data = Ra[[l]], col = rgb(0, 0, 1, 0.9))
   }
   for(l in c("3", "6", "7", "8")){
     lines(r ~ GEN, data = Ra[[l]], col = rgb(1, 0, 0, 0.9))
@@ -1700,11 +1700,35 @@ GEN.lst <- c(0:31, 36:51, 53:62, 65, 66, 68:78)  #<-- GENs with data
 
 # create G matrix for each generation and line using
 ## the posterior mode variances and covariance for each generation and line
-G <- vector("list", length = 8)
-  names(G) <- c(dimnames(POST.C.LINES$rA)[[3]], dimnames(POST.S.LINES$rA)[[3]])
-new_rows <- data.frame(GEN = c(32, 33, 34, 35, 52, 63, 64, 67),
+G <- Gstats <- vector("list", length = 8)
+  names(G) <- names(Gstats) <- c(dimnames(POST.C.LINES$rA)[[3]],
+                                 dimnames(POST.S.LINES$rA)[[3]])
+new_rowsG <- data.frame(GEN = c(32, 33, 34, 35, 52, 63, 64, 67),
   Va.RPM = NA, COVl = NA, COVu = NA, Va.INT = NA)
+new_rowsGstats <- data.frame(GEN = c(32, 33, 34, 35, 52, 63, 64, 67),
+  moGsz = NA, lciGsz = NA, uciGsz = NA,
+  moGeccntrcty = NA, lciGeccntrcty = NA, uciGeccntrcty = NA,
+  mogmaxAng = NA, lcigmaxAng = NA, ucigmaxAng = NA)
+
+# Define a function to calculate G statistics
+## Arnold 2023: explained/introduced p. 166
+Gstat_fun <- function(rw){
+          Gi <- matrix(rw, nrow = 2, ncol = 2)
+          eigGi <- eigen(Gi)
+          sum_eigvals <- sum(eigen(Gi)$values)
+          return(c(Gsz = sum_eigvals,  #<-- size (sum of: trace of G or eigenvalues)
+                   Geccntrcty = eigGi$values[1] / sum_eigvals,  #<-- eccentricity
+                   gmaxAng = atan(eigGi$vector[2, 1] /     #<-- angle of gmax from axis of first trait (e.g., x-axis)
+                             		       # next line post-multiplication:
+                   			       ## to convert radians to degrees
+                                              eigGi$vector[1, 1]) * (180 / pi)))
+       }  
+## END function definition  ##
+
+#XXX following `for` loop can take 9-10 minutes or more
+st <- Sys.time()
 for(l in 1:8){
+ cat(" ** line =", l, "**\n\t") 
   # Control lines
   if(l < 5){
     G[[l]] <- rbind(data.frame(GEN = GEN.lst,
@@ -1712,21 +1736,75 @@ for(l in 1:8){
         COVl = posterior.mode(mcmc(POST.C.LINES$"RPM56l:INT56l.animal"[, , l])),
         COVu = posterior.mode(mcmc(POST.C.LINES$"RPM56l:INT56l.animal"[, , l])),
         Va.INT = posterior.mode(mcmc(POST.C.LINES$"INT56l.animal"[, , l]))),
-      new_rows)
-    G[[l]] <- G[[l]][order(G[[l]][, "GEN"]), ]
+      new_rowsG)
+    
+    Gstats[[l]] <- rbind(data.frame(GEN = GEN.lst, 
+        moGsz = NA, lciGsz = NA, uciGsz = NA,
+        moGeccntrcty = NA, lciGeccntrcty = NA, uciGeccntrcty = NA,
+        mogmaxAng = NA, lcigmaxAng = NA, ucigmaxAng = NA),
+      new_rowsGstats)
+    for(g in 1:length(GEN.lst)){
+     if(g %in% seq(1, 71, 10)) cat("gen =", g, "\t")
+      gpostGstats <- t(apply(cbind(POST.C.LINES$"RPM56l.animal"[, g, l],
+                  POST.C.LINES$"RPM56l:INT56l.animal"[, g, l],
+                  POST.C.LINES$"RPM56l:INT56l.animal"[, g, l],
+                  POST.C.LINES$"INT56l.animal"[, g, l]),
+        MARGIN = 1, FUN = Gstat_fun))
+       Gstats[[l]][g, -1] <- rbind(posterior.mode(mcmc(gpostGstats)),
+                                   t(HPDinterval(mcmc(gpostGstats))))
+     }  #<-- end for g
   }
+  
   if(l >= 5){
     G[[l]] <- rbind(data.frame(GEN = GEN.lst,
         Va.RPM = posterior.mode(mcmc(POST.S.LINES$"RPM56l.animal"[, , l - 4])),
-        COVl = posterior.mode(mcmc(POST.S.LINES$"RPM56l:INT56l.animal"[, , l - 4])),
+        COVl = posterior.mode(mcmc(POST.S.LINES$"RPM56l:INT56l.animal"[, ,
+                                                                       l - 4])),
         COVu = posterior.mode(mcmc(POST.S.LINES$"RPM56l:INT56l.animal"[, , l - 4])),
-        Va.INT = posterior.mode(mcmc(POST.S.LINES$"INT56l.animal"[, , l - 4]))),
-      new_rows)
-    G[[l]] <- G[[l]][order(G[[l]][, "GEN"]), ]
+        Va.INT = posterior.mode(mcmc(POST.S.LINES$"INT56l.animal"[, ,
+                                                                      l - 4]))),
+      new_rowsG)
+
+    Gstats[[l]] <- rbind(data.frame(GEN = GEN.lst, 
+        moGsz = NA, lciGsz = NA, uciGsz = NA,
+        moGeccntrcty = NA, lciGeccntrcty = NA, uciGeccntrcty = NA,
+        mogmaxAng = NA, lcigmaxAng = NA, ucigmaxAng = NA),
+      new_rowsGstats)
+    for(g in 1:length(GEN.lst)){
+     if(g %in% seq(1, 71, 10)) cat("gen =", g, "\t")
+      gpostGstats <- t(apply(cbind(POST.S.LINES$"RPM56l.animal"[, g, l - 4],
+                  POST.S.LINES$"RPM56l:INT56l.animal"[, g, l - 4],
+                  POST.S.LINES$"RPM56l:INT56l.animal"[, g, l - 4],
+                  POST.S.LINES$"INT56l.animal"[, g, l - 4]),
+        MARGIN = 1, FUN = Gstat_fun))
+       Gstats[[l]][g, -1] <- rbind(posterior.mode(mcmc(gpostGstats)),
+                                   t(HPDinterval(mcmc(gpostGstats))))
+     }  #<-- end for g  
   }
+ cat("\n")  #<-- start a new line of output after all the generations
+  G[[l]] <- G[[l]][order(G[[l]][, "GEN"]), ]
+  Gstats[[l]] <- Gstats[[l]][order(Gstats[[l]][, "GEN"]), ]
+
 }  #<-- end for l   
+Sys.time() - st
+
+save("G", "Gstats",
+  file = "QG-mouse-trade-off_Gs.RData")
+  
 
 
+
+
+
+
+
+
+
+
+
+# to make figures S4 and S5, you need objects Gs produced above
+## (contained in "QG-mouse-trade-off_Gs.RData")
+load("QG-mouse-trade-off_Gs.RData")
 
 
 # make figure S4 genetic (co)variances
@@ -1804,6 +1882,90 @@ mtext("C", side = 3, adj = 0.015, line = -1.5)
 
 
 
+
+
+#######################################################
+# Figure S5: G size, eccentricity, and angle of gmax
+## plotting the posterior modes
+dev.new(width = 9, height = 6, units = "cm")
+par(mfrow = c(3, 1), las = 1, oma = c(4, 5, 1, 1), mar = c(1, 1, 1, 1))
+  # G size
+  plot(moGsz ~ GEN, data = Gstats[["1"]],
+    type = "l", col = "blue",
+    ylim = c(0.0, 0.02), ylab = "", xlab = "n" , xaxt = "n")    
+  for(l in c("2", "4", "5")){
+    with(Gstats[[l]], arrows(x0 = GEN-0.1, y0 = lciGsz, x1 = GEN-0.1, y1 = uciGsz,
+      col = "blue", code = 3, angle = 90, length = 0))
+    lines(moGsz ~ GEN, data = Gstats[[l]], col = "blue")
+  }
+  for(l in c("3", "6", "7", "8")){
+    with(Gstats[[l]], arrows(x0 = GEN+0.1, y0 = lciGsz, x1 = GEN+0.1, y1 = uciGsz,
+      col = "red", code = 3, angle = 90, length = 0))
+    lines(moGsz ~ GEN, data = Gstats[[l]], col = "red")
+  }
+  abline(h = 0, lty = 3)
+  # gene flow event arrows
+  arrows(x0 = 26, y0 = 0.019, x1 = 26, y1 = 0.017, length = 0.1, lwd = 2)
+  arrows(x0 = 60, y0 = 0.014, x1 = 60, y1 = 0.012, length = 0.1, lwd = 2)
+  mtext("Size of G", side = 2, las = 3, line = 4)
+  mtext("A", side = 3, adj = 0.015, line = -1.5)
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj = -0.8)
+
+legend(65, 0.019, c("replicate control lines", "replicate selected lines"),
+  lty = 1, col = c(rgb(0, 0, 1, 0.75), rgb(1, 0, 0, 0.75)), bty = "n")
+
+
+  # G eccentricity
+  plot(moGeccntrcty ~ GEN, data = Gstats[["1"]],
+    type = "l", col = "blue",
+    ylim = c(0.5, 1), ylab = "", xlab = "n" , xaxt = "n")
+  for(l in c("2", "4", "5")){
+    with(Gstats[[l]], arrows(x0 = GEN-0.1, y0 = lciGeccntrcty,
+        x1 = GEN-0.1, y1 = uciGeccntrcty,
+      col = "blue", code = 3, angle = 90, length = 0))
+    lines(moGeccntrcty ~ GEN, data = Gstats[[l]], col = "blue")
+  }
+  for(l in c("3", "6", "7", "8")){
+    with(Gstats[[l]], arrows(x0 = GEN+0.1, y0 = lciGeccntrcty,
+        x1 = GEN+0.1, y1 = uciGeccntrcty,
+      col = "red", code = 3, angle = 90, length = 0))
+    lines(moGeccntrcty ~ GEN, data = Gstats[[l]], col = "red")
+  }
+  abline(h = 0, lty = 3)
+  # gene flow event arrows
+  arrows(x0 = 26, y0 = 1, x1 = 26, y1 = 0.95, length = 0.1, lwd = 2)
+  arrows(x0 = 60, y0 = 1, x1 = 60, y1 = 0.95, length = 0.1, lwd = 2)
+  mtext("Eccentricity of G", side = 2, las = 3, line = 4)
+  mtext("B", side = 3, adj = 0.015, line= -1.5)
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj= -0.8)
+
+  # gmax angle
+  plot(mogmaxAng ~ GEN, data = Gstats[["1"]],
+    type = "l", col = "blue",
+    ylim = c(-10, 95), ylab = "", xlab = "n" , xaxt = "n")
+  for(l in c("2", "4", "5")){
+    with(Gstats[[l]], arrows(x0 = GEN-0.1, y0 = lcigmaxAng,
+        x1 = GEN-0.1, y1 = ucigmaxAng,
+      col = "blue", code = 3, angle = 90, length = 0))
+    lines(mogmaxAng ~ GEN, data = Gstats[[l]], col = "blue")
+  }
+  for(l in c("3", "6", "7", "8")){
+    with(Gstats[[l]], arrows(x0 = GEN+0.1, y0 = lcigmaxAng,
+        x1 = GEN+0.1, y1 = ucigmaxAng,
+      col = "red", code = 3, angle = 90, length = 0))
+    lines(mogmaxAng ~ GEN, data = Gstats[[l]], col = "red")
+  }
+  # gene flow event arrows
+  arrows(x0 = 26, y0 = 90, x1 = 26, y1 = 75, length = 0.1, lwd = 2)
+  arrows(x0 = 60, y0 = 90, x1 = 60, y1 = 75, length = 0.1, lwd = 2)
+  mtext("Angle of gmax (degrees)", side = 2, las = 3, line = 4)
+  mtext("C", side = 3, adj = 0.015, line = -1.5)
+  axis(1, at = 0:78, labels = FALSE)
+  axis(1, at = seq(0, 78, 6), padj=-0.8)
+ #
+ mtext("Generation", side = 1, line = 2.5, cex = 1.5)
 
 
 
