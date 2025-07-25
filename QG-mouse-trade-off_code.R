@@ -294,8 +294,8 @@ LIM <- range(c(scale(LINE.3[, c("INT56", "RPM56")]),
 
 # Figure 1
 dev.new(width = 10, height = 4, units = "cm")
-#pdf(file = "WOLAK_et_al_Figure 1 response to selection.pdf",
-#  width = 10, height = 4)
+#pdf(file = "WOLAK_et_al_Figure 1 Adaptive landscapes.pdf",
+  width = 10, height = 4)
 par(mfrow=c(6,5),las = 1, oma = c(4,3,0.5,0), mar = c(0,2,2,2))
 layout(matrix(c(1,1,1,2,3,
                 1,1,1,2,3,
