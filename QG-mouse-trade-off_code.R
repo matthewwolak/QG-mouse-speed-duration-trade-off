@@ -2117,13 +2117,35 @@ cbind(C.RUN,NA,S.RUN)
 ################################################################################
 
 # Collect R and package version information
+Sys.time()  #<-- print date for pasting info below
 R.version.string
 packageVersion("fields")
+packageVersion("visreg")
+packageVersion("splines")
 packageVersion("nadiv")
 packageVersion("MCMCglmm")
-packageVersion("heplots")
 packageVersion("ggplot2")
 packageVersion("gganimate")
 packageVersion("transformr")
-
+# Paste output from above
+#> Sys.time()  #<-- print date for pasting info below
+#[1] "2025-07-25 11:42:08 CDT"
+#> R.version.string
+#[1] "R version 4.5.1 (2025-06-13)"
+#> packageVersion("fields")
+#[1] ‘16.3.1’
+#> packageVersion("visreg")
+#[1] ‘2.7.0’
+#> packageVersion("splines")
+#[1] ‘4.5.1’
+#> packageVersion("nadiv")
+#[1] ‘2.18.0’
+#> packageVersion("MCMCglmm")
+#[1] ‘2.36’
+#> packageVersion("ggplot2")
+#[1] ‘3.5.2’
+#> packageVersion("gganimate")
+#[1] ‘1.0.10’
+#> packageVersion("transformr")
+#[1] ‘0.1.5’
 
