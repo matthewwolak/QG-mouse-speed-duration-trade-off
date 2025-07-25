@@ -295,7 +295,7 @@ LIM <- range(c(scale(LINE.3[, c("INT56", "RPM56")]),
 # Figure 1
 dev.new(width = 10, height = 4, units = "cm")
 #pdf(file = "WOLAK_et_al_Figure 1 response to selection.pdf",
-  width = 10, height = 4)
+#  width = 10, height = 4)
 par(mfrow=c(6,5),las = 1, oma = c(4,3,0.5,0), mar = c(0,2,2,2))
 layout(matrix(c(1,1,1,2,3,
                 1,1,1,2,3,
@@ -326,14 +326,14 @@ plot(B.RUN.S ~ GEN, data = BETAS, pch = 16, col = "red", cex = 1, type="o",
   arrows(x0 = BETAS$GEN.S, y0 = BETAS$B.RUN.S-BETAS$se.RUN.S,
     x1 = BETAS$GEN.S, y1 = BETAS$B.RUN.S+BETAS$se.RUN.S,
     col = "red", code = 3, angle = 90, length = 0)
-  points(B.RUN.1~GEN, BETAS.LINE, pch = "1", col = rgb(0,0,1,0.25), cex = 1, type = "l")
-  points(B.RUN.2~GEN, BETAS.LINE, pch = "2", col = rgb(0,0,1,0.25), cex = 1, type = "l")
-  points(B.RUN.4~GEN, BETAS.LINE, pch = "4", col = rgb(0,0,1,0.25), cex = 1, type = "l")
-  points(B.RUN.5~GEN, BETAS.LINE, pch = "5", col = rgb(0,0,1,0.25), cex = 1, type = "l")
-  points(B.RUN.3~GEN, BETAS.LINE, pch = "3", col = rgb(1,0,0,0.25), cex = 1, type = "l")
-  points(B.RUN.6~GEN, BETAS.LINE, pch = "6", col = rgb(1,0,0,0.25), cex = 1, type = "l")
-  points(B.RUN.7~GEN, BETAS.LINE, pch = "7", col = rgb(1,0,0,0.25), cex = 1, type = "l")
-  points(B.RUN.8~GEN, BETAS.LINE, pch = "8", col = rgb(1,0,0,0.25), cex = 1, type = "l")
+  lines(B.RUN.1~GEN, BETAS.LINE, col = rgb(0,0,1,0.25))
+  lines(B.RUN.2~GEN, BETAS.LINE, col = rgb(0,0,1,0.25))
+  lines(B.RUN.4~GEN, BETAS.LINE, col = rgb(0,0,1,0.25))
+  lines(B.RUN.5~GEN, BETAS.LINE, col = rgb(0,0,1,0.25))
+  lines(B.RUN.3~GEN, BETAS.LINE, col = rgb(1,0,0,0.25))
+  lines(B.RUN.6~GEN, BETAS.LINE, col = rgb(1,0,0,0.25))
+  lines(B.RUN.7~GEN, BETAS.LINE, col = rgb(1,0,0,0.25))
+  lines(B.RUN.8~GEN, BETAS.LINE, col = rgb(1,0,0,0.25))
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
   abline(h = 0, lty = 2)
@@ -382,14 +382,14 @@ plot(B.RPM.S ~ GEN.C, BETAS, pch = 16, col = "red", cex = 1, type = "o",
   arrows(x0 = BETAS$GEN.S, y0 = BETAS$B.RPM.S-BETAS$se.RPM.S,
     x1 = BETAS$GEN.S, y1 = BETAS$B.RPM.S+BETAS$se.RPM.S,
     col = "red", code = 3, angle = 90, length = 0)
-  points(B.RPM.1~GEN, BETAS.LINE, pch = "1", col = rgb(0,0,1,0.25), cex = 1, type = "l")
-  points(B.RPM.2~GEN, BETAS.LINE, pch = "2", col = rgb(0,0,1,0.25), cex = 1, type = "l")
-  points(B.RPM.4~GEN, BETAS.LINE, pch = "4", col = rgb(0,0,1,0.25), cex = 1, type = "l")
-  points(B.RPM.5~GEN, BETAS.LINE, pch = "5", col = rgb(0,0,1,0.25), cex = 1, type = "l")
-  points(B.RPM.3~GEN, BETAS.LINE, pch = "3", col = rgb(1,0,0,0.25), cex = 1, type = "l")
-  points(B.RPM.6~GEN, BETAS.LINE, pch = "6", col = rgb(1,0,0,0.25), cex = 1, type = "l")
-  points(B.RPM.7~GEN, BETAS.LINE, pch = "7", col = rgb(1,0,0,0.25), cex = 1, type = "l")
-  points(B.RPM.8~GEN, BETAS.LINE, pch = "8", col = rgb(1,0,0,0.25), cex = 1, type = "l")
+  lines(B.RPM.1~GEN, BETAS.LINE, col = rgb(0,0,1,0.25))
+  lines(B.RPM.2~GEN, BETAS.LINE, col = rgb(0,0,1,0.25))
+  lines(B.RPM.4~GEN, BETAS.LINE, col = rgb(0,0,1,0.25))
+  lines(B.RPM.5~GEN, BETAS.LINE, col = rgb(0,0,1,0.25))
+  lines(B.RPM.3~GEN, BETAS.LINE, col = rgb(1,0,0,0.25))
+  lines(B.RPM.6~GEN, BETAS.LINE, col = rgb(1,0,0,0.25))
+  lines(B.RPM.7~GEN, BETAS.LINE, col = rgb(1,0,0,0.25))
+  lines(B.RPM.8~GEN, BETAS.LINE, col = rgb(1,0,0,0.25))
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
   abline(h = 0, lty = 2)
@@ -436,15 +436,14 @@ plot(B.INT.C~GEN.C, BETAS, pch = 16, col = "white", cex = 1, type = "o",
   arrows(x0 = BETAS$GEN.S, y0 = BETAS$B.INT.S-BETAS$se.INT.S,
     x1 = BETAS$GEN.S, y1 = BETAS$B.INT.S+BETAS$se.INT.S,
     col = "red", code = 3, angle = 90, length = 0)
-  points(B.INT.1~GEN, BETAS.LINE,
-    pch = "1", col = rgb(0,0,1,0.25), cex = 1, type = "l")
-  points(B.INT.2~GEN, BETAS.LINE, pch = "2", col = rgb(0,0,1,0.25), cex = 1, type = "l")
-  points(B.INT.4~GEN, BETAS.LINE, pch = "4", col = rgb(0,0,1,0.25), cex = 1, type = "l")
-  points(B.INT.5~GEN, BETAS.LINE, pch = "5", col = rgb(0,0,1,0.25), cex = 1, type = "l")
-  points(B.INT.3~GEN, BETAS.LINE, pch = "3", col = rgb(1,0,0,0.25), cex = 1, type = "l")
-  points(B.INT.6~GEN, BETAS.LINE, pch = "6", col = rgb(1,0,0,0.25), cex = 1, type = "l")
-  points(B.INT.7~GEN, BETAS.LINE, pch = "7", col = rgb(1,0,0,0.25), cex = 1, type = "l")
-  points(B.INT.8~GEN, BETAS.LINE, pch = "8", col = rgb(1,0,0,0.25), cex = 1, type = "l")
+  lines(B.INT.1~GEN, BETAS.LINE, col = rgb(0,0,1,0.25))
+  lines(B.INT.2~GEN, BETAS.LINE, col = rgb(0,0,1,0.25))
+  lines(B.INT.4~GEN, BETAS.LINE, col = rgb(0,0,1,0.25))
+  lines(B.INT.5~GEN, BETAS.LINE, col = rgb(0,0,1,0.25))
+  lines(B.INT.3~GEN, BETAS.LINE, col = rgb(1,0,0,0.25))
+  lines(B.INT.6~GEN, BETAS.LINE, col = rgb(1,0,0,0.25))
+  lines(B.INT.7~GEN, BETAS.LINE, col = rgb(1,0,0,0.25))
+  lines(B.INT.8~GEN, BETAS.LINE, col = rgb(1,0,0,0.25))
   abline(h = 0, lty = 2)
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
