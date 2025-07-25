@@ -1741,6 +1741,10 @@ Gstat_fun <- function(rw){
        }  
 ## END function definition  ##
 
+
+# ORIENT so that Duration ("INT56l") will be on x-axis (first) and
+## Speed ("RPM56l") will be on y-axis
+
 #XXX following `for` loop can take 9-10 minutes or more
 st <- Sys.time()
 for(l in 1:8){
@@ -1748,10 +1752,10 @@ for(l in 1:8){
   # Control lines
   if(l < 5){
     G[[l]] <- rbind(data.frame(GEN = GEN.lst,
-        Va.RPM = posterior.mode(mcmc(POST.C.LINES$"RPM56l.animal"[, , l])),
+        Va.INT = posterior.mode(mcmc(POST.C.LINES$"INT56l.animal"[, , l])),
         COVl = posterior.mode(mcmc(POST.C.LINES$"RPM56l:INT56l.animal"[, , l])),
         COVu = posterior.mode(mcmc(POST.C.LINES$"RPM56l:INT56l.animal"[, , l])),
-        Va.INT = posterior.mode(mcmc(POST.C.LINES$"INT56l.animal"[, , l]))),
+        Va.RPM = posterior.mode(mcmc(POST.C.LINES$"RPM56l.animal"[, , l]))),
       new_rowsG)
     
     Gstats[[l]] <- rbind(data.frame(GEN = GEN.lst, 
@@ -1761,10 +1765,10 @@ for(l in 1:8){
       new_rowsGstats)
     for(g in 1:length(GEN.lst)){
      if(g %in% seq(1, 71, 10)) cat("gen =", g, "\t")
-      gpostGstats <- t(apply(cbind(POST.C.LINES$"RPM56l.animal"[, g, l],
+      gpostGstats <- t(apply(cbind(POST.C.LINES$"INT56l.animal"[, g, l],
                   POST.C.LINES$"RPM56l:INT56l.animal"[, g, l],
                   POST.C.LINES$"RPM56l:INT56l.animal"[, g, l],
-                  POST.C.LINES$"INT56l.animal"[, g, l]),
+                  POST.C.LINES$"RPM56l.animal"[, g, l]),
         MARGIN = 1, FUN = Gstat_fun))
        Gstats[[l]][g, -1] <- rbind(posterior.mode(mcmc(gpostGstats)),
                                    t(HPDinterval(mcmc(gpostGstats))))
@@ -1773,11 +1777,11 @@ for(l in 1:8){
   
   if(l >= 5){
     G[[l]] <- rbind(data.frame(GEN = GEN.lst,
-        Va.RPM = posterior.mode(mcmc(POST.S.LINES$"RPM56l.animal"[, , l - 4])),
+        Va.INT = posterior.mode(mcmc(POST.S.LINES$"INT56l.animal"[, , l - 4])),
         COVl = posterior.mode(mcmc(POST.S.LINES$"RPM56l:INT56l.animal"[, ,
                                                                        l - 4])),
         COVu = posterior.mode(mcmc(POST.S.LINES$"RPM56l:INT56l.animal"[, , l - 4])),
-        Va.INT = posterior.mode(mcmc(POST.S.LINES$"INT56l.animal"[, ,
+        Va.RPM = posterior.mode(mcmc(POST.S.LINES$"RPM56l.animal"[, ,
                                                                       l - 4]))),
       new_rowsG)
 
@@ -1788,10 +1792,10 @@ for(l in 1:8){
       new_rowsGstats)
     for(g in 1:length(GEN.lst)){
      if(g %in% seq(1, 71, 10)) cat("gen =", g, "\t")
-      gpostGstats <- t(apply(cbind(POST.S.LINES$"RPM56l.animal"[, g, l - 4],
+      gpostGstats <- t(apply(cbind(POST.S.LINES$"INT56l.animal"[, g, l - 4],
                   POST.S.LINES$"RPM56l:INT56l.animal"[, g, l - 4],
                   POST.S.LINES$"RPM56l:INT56l.animal"[, g, l - 4],
-                  POST.S.LINES$"INT56l.animal"[, g, l - 4]),
+                  POST.S.LINES$"RPM56l.animal"[, g, l - 4]),
         MARGIN = 1, FUN = Gstat_fun))
        Gstats[[l]][g, -1] <- rbind(posterior.mode(mcmc(gpostGstats)),
                                    t(HPDinterval(mcmc(gpostGstats))))
@@ -1962,25 +1966,26 @@ legend(65, 0.019, c("replicate control lines", "replicate selected lines"),
   axis(1, at = seq(0, 78, 6), padj= -0.8)
 
   # gmax angle
-  plot(mogmaxAng ~ GEN, data = Gstats[["1"]],
+  ## plot absolute values to reflect values as shortest angle from x-axis
+  plot(abs(mogmaxAng) ~ GEN, data = Gstats[["1"]],
     type = "l", col = "blue",
-    ylim = c(-10, 95), ylab = "", xlab = "n" , xaxt = "n")
+    ylim = c(-0, 95), ylab = "", xlab = "n" , xaxt = "n")
   for(l in c("2", "4", "5")){
 #    with(Gstats[[l]], arrows(x0 = GEN-0.1, y0 = lcigmaxAng,
 #        x1 = GEN-0.1, y1 = ucigmaxAng,
 #      col = "blue", code = 3, angle = 90, length = 0))
-    lines(mogmaxAng ~ GEN, data = Gstats[[l]], col = "blue")
+    lines(abs(mogmaxAng) ~ GEN, data = Gstats[[l]], col = "blue")
   }
   for(l in c("3", "6", "7", "8")){
 #    with(Gstats[[l]], arrows(x0 = GEN+0.1, y0 = lcigmaxAng,
 #        x1 = GEN+0.1, y1 = ucigmaxAng,
 #      col = "red", code = 3, angle = 90, length = 0))
-    lines(mogmaxAng ~ GEN, data = Gstats[[l]], col = "red")
+    lines(abs(mogmaxAng) ~ GEN, data = Gstats[[l]], col = "red")
   }
   abline(h = 0, lty = 3)
   # gene flow event arrows
-  arrows(x0 = 26, y0 = 90, x1 = 26, y1 = 75, length = 0.1, lwd = 2)
-  arrows(x0 = 60, y0 = 90, x1 = 60, y1 = 75, length = 0.1, lwd = 2)
+#  arrows(x0 = 26, y0 = 95, x1 = 26, y1 = 85, length = 0.1, lwd = 2)
+#  arrows(x0 = 60, y0 = 95, x1 = 60, y1 = 85, length = 0.1, lwd = 2)
   mtext("Angle of gmax (degrees)", side = 2, las = 3, line = 4)
   mtext("C", side = 3, adj = 0.015, line = -1.5)
   axis(1, at = 0:78, labels = FALSE)
