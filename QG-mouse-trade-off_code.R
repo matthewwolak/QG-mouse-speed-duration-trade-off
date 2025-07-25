@@ -1827,7 +1827,7 @@ load("QG-mouse-trade-off_Gs.RData")
 dev.new(width = 9, height = 6, units = "cm")
 #pdf("WOLAK_et_al_Figure S4 genetic (co)variance in running speed and duration.pdf",
 #  width = 9, height = 6)
-par(mfrow = c(2, 2), las = 1, oma = c(4, 4, 1, 1), mar = c(1, 1, 1, 1))
+par(mfrow = c(2, 2), las = 1, oma = c(4, 4, 1, 1), mar = c(1, 1.5, 1, 1))
 layout(matrix(c(1, 2, 3, 3), 2, 2, byrow = TRUE))
 #layout.show(3)
 # panel A: VA of RPM trajectories over generations
@@ -1844,7 +1844,7 @@ plot(Va.RPM ~ GEN, data = G[["1"]],
   abline(h = 0, lty = 3)
   arrows(x0 = 26, y0 = 0.014, x1 = 26, y1 = 0.0125, length = 0.1, lwd = 2)
   arrows(x0 = 60, y0 = 0.008, x1 = 60, y1 = 0.0065, length = 0.1, lwd = 2)
-  mtext("Additive genetic variance", side = 2, las = 3, line = 3)
+  mtext("Additive genetic variance", side = 2, las = 3, line = 4)
   mtext("A running speed", side = 3, adj = 0.015, line = -1.5)
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
@@ -1882,7 +1882,7 @@ plot(COVl ~ GEN, data = G[["1"]],
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
   abline(h = 0, lty = 2)
-  mtext("Additive genetic covariance", side = 2, las = 3, line = 3)
+  mtext("Additive genetic covariance", side = 2, las = 3, line = 4)
   mtext("Generation", side = 1, line = 2.5, cex = 1.5)
 
 legend(60, 0.005,
