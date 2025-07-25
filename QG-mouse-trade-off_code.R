@@ -293,7 +293,9 @@ LIM <- range(c(scale(LINE.3[, c("INT56", "RPM56")]),
 
 
 # Figure 1
-dev.new(width=10,height=4, units = "cm")
+dev.new(width = 10, height = 4, units = "cm")
+#pdf(file = "WOLAK_et_al_Figure 1 response to selection.pdf",
+  width = 10, height = 4)
 par(mfrow=c(6,5),las = 1, oma = c(4,3,0.5,0), mar = c(0,2,2,2))
 layout(matrix(c(1,1,1,2,3,
                 1,1,1,2,3,
@@ -434,7 +436,8 @@ plot(B.INT.C~GEN.C, BETAS, pch = 16, col = "white", cex = 1, type = "o",
   arrows(x0 = BETAS$GEN.S, y0 = BETAS$B.INT.S-BETAS$se.INT.S,
     x1 = BETAS$GEN.S, y1 = BETAS$B.INT.S+BETAS$se.INT.S,
     col = "red", code = 3, angle = 90, length = 0)
-  points(B.INT.1~GEN, BETAS.LINE, pch = "1", col = rgb(0,0,1,0.25), cex = 1, type = "l")
+  points(B.INT.1~GEN, BETAS.LINE,
+    pch = "1", col = rgb(0,0,1,0.25), cex = 1, type = "l")
   points(B.INT.2~GEN, BETAS.LINE, pch = "2", col = rgb(0,0,1,0.25), cex = 1, type = "l")
   points(B.INT.4~GEN, BETAS.LINE, pch = "4", col = rgb(0,0,1,0.25), cex = 1, type = "l")
   points(B.INT.5~GEN, BETAS.LINE, pch = "5", col = rgb(0,0,1,0.25), cex = 1, type = "l")
@@ -454,6 +457,7 @@ mtext("Running duration (sd units)", side = 1, line = 2.5, cex = 1, adj = 2)
 
 
 
+dev.off()
 
 
 
@@ -615,6 +619,8 @@ LIMITS$ucl <- LIMITS$limit + LIMITS$CI
 YLIM <- c(-0.7, 5.15)
 # make Figure 2
 dev.new(width = 8, height = 4, units = "cm")
+#pdf(file = "WOLAK_et_al_Figure 2 response to selection.pdf",
+#  width = 8, height = 4)
 par(mfrow = c(6, 3), las = 1, oma = c(3, 5, 1, 0), mar = c(0, 0, 1, 1))
 layout(matrix(c(1,2,3,
                 1,2,3,
@@ -782,6 +788,7 @@ plot(INT ~ GEN, data = subset(MEANS, LINE == "1"),
 mtext("Generation", side = 1,  line = 1.5)
 #
 
+dev.off()
 # END of figure
 
 
@@ -1420,9 +1427,11 @@ load(file = "QG-mouse-trade-off_BVs.RData")
 
 # make figure 3 BREEDING VALUES and rA
 dev.new(width = 9, height = 6, units = "cm")
+#pdf(file = "WOLAK_et_al_Figure 3 genetic merit and correlation.pdf",
+#  width = 9, height = 6)
 par(mfrow = c(2, 2), las = 1, oma = c(4, 4, 1, 1), mar = c(1, 1, 1, 1))
 layout(matrix(c(1, 2, 3, 3), 2, 2, byrow = TRUE))
-layout.show(3)
+#layout.show(3)
 # panel A: BLUPs RPM trajectories over generations
 plot(BLUP.RPM ~ GEN, data = subset(LINE.C, line == "1"),
   type = "l", col = "blue",
@@ -1462,7 +1471,7 @@ plot(BLUP.RPM ~ GEN, data = subset(LINE.C, line == "1"),
 # panel C: cross-trait correlation between RPM and INT over generations
 plot(r ~ GEN, data = Ra.C,
   type = "n",
-  xlab = "", xaxt = "n", xlim = c(1, 77), ylab = "", ylim = c(-0.35, 1))
+  xlab = "", xaxt = "n", xlim = c(1, 77), ylab = "", ylim = c(-0.35, 1.1))
   # credible intervals across lines
   arrows(x0 = Ra.C$GEN, y0 = Ra.C$lower, x1 = Ra.C$GEN, y1 = Ra.C$upper,
     col = "black", code = 3, angle = 90, length = 0)
@@ -1485,9 +1494,9 @@ plot(r ~ GEN, data = Ra.C,
   mtext(expression(paste(italic(r)[A]," (±se)")), side = 2, line = 2.5, las = 3,cex = 2)
   mtext("Generation", side = 1, line = 2.5, cex = 1.5)
 
-legend(0, 1.1, legend = c("control (average)", "selected (average)"),
+legend(0, 1.2, legend = c("control (average)", "selected (average)"),
   pch = c(16, 17), col = c("black", "black"), bty = "n")
-legend(60, 1.1,
+legend(60, 1.2,
   legend = c("replicate control lines", "replicate selected lines"),
   lty = 1, col = c(rgb(0, 0, 1, 0.9), rgb(1, 0, 0, 0.9)), bty = "n")
 arrows(x0 = 26, y0 = 1, x1 = 26, y1 = 0.9, length = 0.1, lwd = 3)
@@ -1496,7 +1505,7 @@ mtext("C", side = 3, adj = 0.015, line = -1.5)
 
 
 
-
+dev.off()
 
 
 
@@ -1518,9 +1527,11 @@ load(file = "QG-mouse-trade-off_BVs.RData")
 
 
 dev.new(width = 9, height = 5, units = "cm")
+#pdf(file = "WOLAK_et_al_Figure 4 the emergence of a trade-off.pdf",
+#  width = 9, height = 5)
 par(mfrow = c(2,4), las = 1, oma = c(5, 5, 0, 0), mar = c(1, 1, 2, 2))
 layout(matrix(c(1, 1, 2, 3, 1, 1, 4, 5), nrow = 2, ncol = 4, byrow = TRUE))
-layout.show(5)
+#layout.show(5)
 # panel A: all individual posterior mode BLUPs for all GENs and LINEs
 plot(BLUP.RPM ~ BLUP.INT, data = DATA, type = "n",
   ylab = "", xlab = "", cex.lab = 2)
@@ -1646,6 +1657,12 @@ plot(BLUP.RPM ~ BLUP.INT, data = LAST.1, type = "n",
 legend("topright",
   legend=c("line S3", "line S6", "line S7", "line S8"),
   col = c(1, 2, 3, 4), pch = c(1, 2, 3, 4), bty = "n")
+
+
+dev.off()
+
+
+
 
 
 with(DATA,
@@ -1809,9 +1826,11 @@ load("QG-mouse-trade-off_Gs.RData")
 
 # make figure S4 genetic (co)variances
 dev.new(width = 9, height = 6, units = "cm")
+#pdf("WOLAK_et_al_Figure S4 genetic (co)variance in running speed and duration.pdf",
+#  width = 9, height = 6)
 par(mfrow = c(2, 2), las = 1, oma = c(4, 4, 1, 1), mar = c(1, 1, 1, 1))
 layout(matrix(c(1, 2, 3, 3), 2, 2, byrow = TRUE))
-layout.show(3)
+#layout.show(3)
 # panel A: VA of RPM trajectories over generations
 plot(Va.RPM ~ GEN, data = G[["1"]],
   type = "l", col = "blue",
@@ -1845,7 +1864,7 @@ plot(Va.RPM ~ GEN, data = G[["1"]],
   abline(h = 0, lty = 3)
   arrows(x0 = 26, y0 = 0.008, x1 = 26, y1 = 0.0065, length = 0.1, lwd = 2)
   arrows(x0 = 60, y0 = 0.0035, x1 = 60, y1 = 0.002, length = 0.1, lwd = 2)
- axis(2, labels = FALSE)
+  axis(2, labels = FALSE)
   axis(1, at = 0:78, labels = FALSE)
   axis(1, at = seq(0, 78, 6), padj = -0.8)
   mtext("B running duration", side = 3, adj = 0.015, line = -1.5)
@@ -1876,7 +1895,7 @@ mtext("C", side = 3, adj = 0.015, line = -1.5)
 
 
 
-
+dev.off()
 
 
 
@@ -1888,19 +1907,21 @@ mtext("C", side = 3, adj = 0.015, line = -1.5)
 # Figure S5: G size, eccentricity, and angle of gmax
 ## plotting the posterior modes
 dev.new(width = 9, height = 6, units = "cm")
+#pdf(file = "WOLAK_et_al_Figure S5 size eccentricity and angle of gmax.pdf",
+#  width = 9, height = 6)
 par(mfrow = c(3, 1), las = 1, oma = c(4, 5, 1, 1), mar = c(1, 1, 1, 1))
   # G size
   plot(moGsz ~ GEN, data = Gstats[["1"]],
     type = "l", col = "blue",
     ylim = c(0.0, 0.02), ylab = "", xlab = "n" , xaxt = "n")    
   for(l in c("2", "4", "5")){
-    with(Gstats[[l]], arrows(x0 = GEN-0.1, y0 = lciGsz, x1 = GEN-0.1, y1 = uciGsz,
-      col = "blue", code = 3, angle = 90, length = 0))
+#    with(Gstats[[l]], arrows(x0 = GEN-0.1, y0 = lciGsz, x1 = GEN-0.1, y1 = uciGsz,
+#      col = "blue", code = 3, angle = 90, length = 0))
     lines(moGsz ~ GEN, data = Gstats[[l]], col = "blue")
   }
   for(l in c("3", "6", "7", "8")){
-    with(Gstats[[l]], arrows(x0 = GEN+0.1, y0 = lciGsz, x1 = GEN+0.1, y1 = uciGsz,
-      col = "red", code = 3, angle = 90, length = 0))
+#    with(Gstats[[l]], arrows(x0 = GEN+0.1, y0 = lciGsz, x1 = GEN+0.1, y1 = uciGsz,
+#      col = "red", code = 3, angle = 90, length = 0))
     lines(moGsz ~ GEN, data = Gstats[[l]], col = "red")
   }
   abline(h = 0, lty = 3)
@@ -1919,17 +1940,17 @@ legend(65, 0.019, c("replicate control lines", "replicate selected lines"),
   # G eccentricity
   plot(moGeccntrcty ~ GEN, data = Gstats[["1"]],
     type = "l", col = "blue",
-    ylim = c(0.5, 1), ylab = "", xlab = "n" , xaxt = "n")
+    ylim = c(0.55, 1), ylab = "", xlab = "n" , xaxt = "n")
   for(l in c("2", "4", "5")){
-    with(Gstats[[l]], arrows(x0 = GEN-0.1, y0 = lciGeccntrcty,
-        x1 = GEN-0.1, y1 = uciGeccntrcty,
-      col = "blue", code = 3, angle = 90, length = 0))
+#    with(Gstats[[l]], arrows(x0 = GEN-0.1, y0 = lciGeccntrcty,
+#        x1 = GEN-0.1, y1 = uciGeccntrcty,
+#      col = "blue", code = 3, angle = 90, length = 0))
     lines(moGeccntrcty ~ GEN, data = Gstats[[l]], col = "blue")
   }
   for(l in c("3", "6", "7", "8")){
-    with(Gstats[[l]], arrows(x0 = GEN+0.1, y0 = lciGeccntrcty,
-        x1 = GEN+0.1, y1 = uciGeccntrcty,
-      col = "red", code = 3, angle = 90, length = 0))
+#    with(Gstats[[l]], arrows(x0 = GEN+0.1, y0 = lciGeccntrcty,
+#        x1 = GEN+0.1, y1 = uciGeccntrcty,
+#      col = "red", code = 3, angle = 90, length = 0))
     lines(moGeccntrcty ~ GEN, data = Gstats[[l]], col = "red")
   }
   abline(h = 0, lty = 3)
@@ -1946,17 +1967,18 @@ legend(65, 0.019, c("replicate control lines", "replicate selected lines"),
     type = "l", col = "blue",
     ylim = c(-10, 95), ylab = "", xlab = "n" , xaxt = "n")
   for(l in c("2", "4", "5")){
-    with(Gstats[[l]], arrows(x0 = GEN-0.1, y0 = lcigmaxAng,
-        x1 = GEN-0.1, y1 = ucigmaxAng,
-      col = "blue", code = 3, angle = 90, length = 0))
+#    with(Gstats[[l]], arrows(x0 = GEN-0.1, y0 = lcigmaxAng,
+#        x1 = GEN-0.1, y1 = ucigmaxAng,
+#      col = "blue", code = 3, angle = 90, length = 0))
     lines(mogmaxAng ~ GEN, data = Gstats[[l]], col = "blue")
   }
   for(l in c("3", "6", "7", "8")){
-    with(Gstats[[l]], arrows(x0 = GEN+0.1, y0 = lcigmaxAng,
-        x1 = GEN+0.1, y1 = ucigmaxAng,
-      col = "red", code = 3, angle = 90, length = 0))
+#    with(Gstats[[l]], arrows(x0 = GEN+0.1, y0 = lcigmaxAng,
+#        x1 = GEN+0.1, y1 = ucigmaxAng,
+#      col = "red", code = 3, angle = 90, length = 0))
     lines(mogmaxAng ~ GEN, data = Gstats[[l]], col = "red")
   }
+  abline(h = 0, lty = 3)
   # gene flow event arrows
   arrows(x0 = 26, y0 = 90, x1 = 26, y1 = 75, length = 0.1, lwd = 2)
   arrows(x0 = 60, y0 = 90, x1 = 60, y1 = 75, length = 0.1, lwd = 2)
@@ -1968,7 +1990,7 @@ legend(65, 0.019, c("replicate control lines", "replicate selected lines"),
  mtext("Generation", side = 1, line = 2.5, cex = 1.5)
 
 
-
+dev.off()
 
 
 
