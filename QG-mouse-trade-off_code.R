@@ -562,7 +562,7 @@ SEL.3$GAIN <- with(SEL.3, Xp - Xp.C)
 SEL.6$GAIN <- with(SEL.6, Xp - Xp.C)
 SEL.7$GAIN <- with(SEL.7, Xp - Xp.C)
 SEL.8$GAIN <- with(SEL.8, Xp - Xp.C)
-## cummulative selection differential
+## cumulative selection differential
 SEL.3$S.cum <- with(SEL.3, cumsum(S.std) - S.std)
 SEL.6$S.cum <- with(SEL.6, cumsum(S.std) - S.std)
 SEL.7$S.cum <- with(SEL.7, cumsum(S.std) - S.std)
@@ -755,7 +755,7 @@ visreg(spline_model.8, ylab = "", xlab = "",
        x2 = SEL.8$S.cum[which(SEL.8$GEN == 77)], y1 = 0, y2 = 10)
   abline(lm(GAIN.std ~ S.cum, data = subset(SEL.8, ERA == 17)), lwd = 2)
 
-mtext("Cummulative differential (sd units)", side = 1, line = 2.5, adj = 2.5)
+mtext("Cumulative differential (sd units)", side = 1, line = 2.5, adj = 2.5)
 #
 # Duration
 par(mar = c(0,0,2,1))
